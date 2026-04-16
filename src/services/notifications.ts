@@ -2,6 +2,8 @@ export const sendTelegramNotification = async (event: string) => {
   const token = import.meta.env.VITE_TELEGRAM_BOT_TOKEN;
   const chatId = import.meta.env.VITE_TELEGRAM_CHAT_ID;
   console.log("Telegram function triggered");
+  console.log(token);
+  console.log(chatId);
 
   if (!token || !chatId) return;
   console.log("Telegram function triggered");
