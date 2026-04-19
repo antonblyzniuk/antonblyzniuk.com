@@ -1,5 +1,5 @@
 import { CVData } from "../types";
-import { sendTelegramNotification } from "./sendTelegramNotification"; // adjust path
+import { sendTelegramNotification } from "./notifications"; // adjust path
 
 export type AIChatMessage = {
   role: "user" | "assistant";
