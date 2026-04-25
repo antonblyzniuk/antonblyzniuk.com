@@ -34,7 +34,6 @@ export default function Gallery({ data }: GalleryProps) {
         {data.photos.map((photo, i) => (
           <motion.div
             key={i}
-            layoutId={`photo-${photo.image}`}
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
@@ -42,7 +41,7 @@ export default function Gallery({ data }: GalleryProps) {
             onClick={() => setSelectedPhoto(photo.image)}
             className="terminal-window bg-secondary/20 border-primary/10 overflow-hidden group hover:border-primary/30 transition-all aspect-square relative cursor-pointer"
           >
-            <motion.img
+            <img
               src={photo.image}
               alt="Gallery"
               className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110"
@@ -73,10 +72,12 @@ export default function Gallery({ data }: GalleryProps) {
             onClick={() => setSelectedPhoto(null)}
           >
             <motion.div
-              layoutId={`photo-${selectedPhoto}`}
+              initial={{ opacity: 0, scale: 0.97, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.97, y: 20 }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
               className="relative max-w-6xl w-full max-h-full terminal-window overflow-hidden bg-secondary/40 border-primary/30 shadow-2xl"
               onClick={(e) => e.stopPropagation()}
-              transition={{ type: "spring", stiffness: 300, damping: 30 }}
             >
               {/* Modal Header - Matching Projects */}
               <div className="bg-secondary/80 border-b border-primary/10 px-4 py-3 flex items-center justify-between">
