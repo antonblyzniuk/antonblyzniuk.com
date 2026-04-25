@@ -26,7 +26,7 @@ const s = StyleSheet.create({
     color: C.dark,
   },
 
-  // ── Header ──────────────────────────────────────────
+  // ── Header (page 1 only — no fixed) ─────────────────
   header: {
     backgroundColor: C.dark,
     paddingHorizontal: 36,
@@ -46,15 +46,14 @@ const s = StyleSheet.create({
   },
   headerName: {
     fontFamily: "Helvetica-Bold",
-    fontSize: 28,
+    fontSize: 26,
     color: C.white,
     marginBottom: 3,
-    letterSpacing: -0.3,
   },
   headerProfession: {
-    fontSize: 12,
+    fontSize: 11,
     color: C.primary,
-    marginBottom: 11,
+    marginBottom: 10,
   },
   headerContacts: {
     flexDirection: "row",
@@ -77,17 +76,13 @@ const s = StyleSheet.create({
   // ── Body ────────────────────────────────────────────
   body: {
     paddingHorizontal: 36,
-    paddingTop: 24,
+    paddingTop: 22,
     paddingBottom: 36,
   },
-  section: {
-    marginBottom: 18,
-  },
 
-  // Section title always stays with at least the first item
-  sectionAnchor: {
-    // wrap=false applied inline — keeps title + first item together
-  },
+  // ── Section title ────────────────────────────────────
+  // Rendered inside the first item's wrap={false} block
+  // so a lone heading can never be stranded at page bottom.
   sectionTitle: {
     fontFamily: "Helvetica-Bold",
     fontSize: 8,
@@ -99,23 +94,23 @@ const s = StyleSheet.create({
     marginBottom: 10,
   },
 
-  // ── About ──────────────────────────────────────────
+  // ── About ────────────────────────────────────────────
+  aboutBlock: {
+    marginBottom: 16,
+  },
   aboutText: {
     fontSize: 9.5,
     color: C.overlay,
     lineHeight: 1.65,
   },
 
-  // ── Skills grid (2 col) ────────────────────────────
+  // ── Skills + Languages (two-column, kept together) ───
   twoCol: {
     flexDirection: "row",
-    marginBottom: 18,
+    marginBottom: 16,
   },
-  col: {
+  skillsCol: {
     flex: 1,
-  },
-  colGap: {
-    width: 32,
   },
   skillsGrid: {
     flexDirection: "row",
@@ -140,8 +135,12 @@ const s = StyleSheet.create({
     fontSize: 9,
     color: C.overlay,
   },
-
-  // ── Languages ──────────────────────────────────────
+  colGap: {
+    width: 32,
+  },
+  langsCol: {
+    width: 155,
+  },
   langRow: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -158,23 +157,21 @@ const s = StyleSheet.create({
     fontFamily: "Helvetica-Oblique",
   },
 
-  // ── Timeline items ─────────────────────────────────
-  timelineItem: {
-    marginBottom: 12,
-    paddingLeft: 12,
-    borderLeftWidth: 1.5,
-    borderLeftColor: C.primary,
+  // ── Timeline items (exp / edu) ───────────────────────
+  // Each item is wrapped with wrap={false} at the call site.
+  // Section title is inside the first item's wrap={false} block.
+  expSection: {
+    marginBottom: 16,
   },
-  timelineItemRest: {
-    // same but without top margin — used for items after the first
-    marginBottom: 12,
+  timelineItem: {
     paddingLeft: 12,
     borderLeftWidth: 1.5,
     borderLeftColor: C.primary,
+    marginBottom: 10,
   },
   itemTitle: {
     fontFamily: "Helvetica-Bold",
-    fontSize: 10.5,
+    fontSize: 10,
     color: C.dark,
     marginBottom: 2,
   },
@@ -190,23 +187,26 @@ const s = StyleSheet.create({
     lineHeight: 1.55,
   },
 
-  // ── Projects ───────────────────────────────────────
-  projectItem: {
-    marginBottom: 12,
+  // ── Projects ─────────────────────────────────────────
+  projectsSection: {
+    marginBottom: 16,
   },
-  projectHeader: {
+  projectItem: {
+    marginBottom: 10,
+  },
+  projectTitleRow: {
     flexDirection: "row",
-    alignItems: "baseline",
+    alignItems: "center",
     marginBottom: 3,
   },
   projectBullet: {
-    fontSize: 10,
+    fontSize: 9,
     color: C.primary,
-    marginRight: 6,
+    marginRight: 7,
   },
   projectTitle: {
     fontFamily: "Helvetica-Bold",
-    fontSize: 10.5,
+    fontSize: 10,
     color: C.dark,
     flex: 1,
   },
@@ -230,8 +230,6 @@ const s = StyleSheet.create({
   },
 });
 
-// ── Helpers ───────────────────────────────────────────
-
 function fmtDate(d: string): string {
   const m = d?.match(/^(\d{4})-(\d{2})/);
   if (!m) return d || "Present";
@@ -243,8 +241,6 @@ function dateRange(from: string, to: string): string {
   return `${fmtDate(from)} — ${to ? fmtDate(to) : "Present"}`;
 }
 
-// ── Component ─────────────────────────────────────────
-
 export default function CVDocument({ data, photoSrc }: CVDocumentProps) {
   const contactLinks = data.links.filter((l) => !l.url.includes("mail.google.com"));
 
@@ -252,8 +248,8 @@ export default function CVDocument({ data, photoSrc }: CVDocumentProps) {
     <Document>
       <Page size="A4" style={s.page}>
 
-        {/* ── Header ── */}
-        <View style={s.header} fixed>
+        {/* ── Header — page 1 only, no fixed prop ── */}
+        <View style={s.header}>
           {photoSrc && <Image src={photoSrc} style={s.photo} />}
           <View style={s.headerRight}>
             <Text style={s.headerName}>{data.frist_name} {data.last_name}</Text>
@@ -271,19 +267,19 @@ export default function CVDocument({ data, photoSrc }: CVDocumentProps) {
 
         <View style={s.body}>
 
-          {/* ── About ── */}
+          {/* ── About — no wrap={false}, text can be long ── */}
           {!!data.about && (
-            <View style={s.section} wrap={false}>
+            <View style={s.aboutBlock}>
               <Text style={s.sectionTitle}>ABOUT</Text>
               <Text style={s.aboutText}>{data.about}</Text>
             </View>
           )}
 
-          {/* ── Skills + Languages ── */}
+          {/* ── Skills + Languages — compact, safe to keep together ── */}
           {(data.skills.length > 0 || data.languages.length > 0) && (
             <View style={s.twoCol} wrap={false}>
               {data.skills.length > 0 && (
-                <View style={s.col}>
+                <View style={s.skillsCol}>
                   <Text style={s.sectionTitle}>SKILLS</Text>
                   <View style={s.skillsGrid}>
                     {data.skills.map((skill) => (
@@ -299,7 +295,7 @@ export default function CVDocument({ data, photoSrc }: CVDocumentProps) {
                 <View style={s.colGap} />
               )}
               {data.languages.length > 0 && (
-                <View style={{ width: 160 }}>
+                <View style={s.langsCol}>
                   <Text style={s.sectionTitle}>LANGUAGES</Text>
                   {data.languages.map((lang) => (
                     <View key={lang.name} style={s.langRow}>
@@ -314,12 +310,12 @@ export default function CVDocument({ data, photoSrc }: CVDocumentProps) {
 
           {/* ── Experience ── */}
           {data.experience_units.length > 0 && (
-            <View style={s.section}>
+            <View style={s.expSection}>
               {data.experience_units.map((exp, i) => (
+                // wrap={false}: title+first item together; subsequent items don't split
                 <View key={i} wrap={false}>
-                  {/* Title stays with first item so header is never orphaned */}
                   {i === 0 && <Text style={s.sectionTitle}>EXPERIENCE</Text>}
-                  <View style={i === 0 ? s.timelineItem : s.timelineItemRest}>
+                  <View style={s.timelineItem}>
                     <Text style={s.itemTitle}>{exp.name}</Text>
                     <Text style={s.itemDates}>{dateRange(exp.from_date, exp.to_date)}</Text>
                     {!!exp.description && <Text style={s.itemDesc}>{exp.description}</Text>}
@@ -331,11 +327,11 @@ export default function CVDocument({ data, photoSrc }: CVDocumentProps) {
 
           {/* ── Education ── */}
           {data.education_units.length > 0 && (
-            <View style={s.section}>
+            <View style={s.expSection}>
               {data.education_units.map((edu, i) => (
                 <View key={i} wrap={false}>
                   {i === 0 && <Text style={s.sectionTitle}>EDUCATION</Text>}
-                  <View style={i === 0 ? s.timelineItem : s.timelineItemRest}>
+                  <View style={s.timelineItem}>
                     <Text style={s.itemTitle}>{edu.name}</Text>
                     <Text style={s.itemDates}>{dateRange(edu.from_date, edu.to_date)}</Text>
                     {!!edu.description && <Text style={s.itemDesc}>{edu.description}</Text>}
@@ -347,12 +343,12 @@ export default function CVDocument({ data, photoSrc }: CVDocumentProps) {
 
           {/* ── Projects ── */}
           {data.projects.length > 0 && (
-            <View style={s.section}>
+            <View style={s.projectsSection}>
               {data.projects.map((proj, i) => (
                 <View key={i} wrap={false}>
                   {i === 0 && <Text style={s.sectionTitle}>PROJECTS</Text>}
                   <View style={s.projectItem}>
-                    <View style={s.projectHeader}>
+                    <View style={s.projectTitleRow}>
                       <Text style={s.projectBullet}>◆</Text>
                       <Text style={s.projectTitle}>{proj.name}</Text>
                     </View>
