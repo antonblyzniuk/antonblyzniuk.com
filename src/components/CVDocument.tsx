@@ -1,6 +1,11 @@
 import { Document, Page, Text, View, StyleSheet, Link, Image } from "@react-pdf/renderer";
 import type { CVData } from "../types";
 
+interface CVDocumentProps {
+  data: CVData;
+  photoSrc: string | null;
+}
+
 const C = {
   dark:    "#1e1e2e",
   surface: "#313244",
@@ -8,7 +13,6 @@ const C = {
   primary: "#b4befe",
   mauve:   "#cba6f7",
   muted:   "#6c7086",
-  sub:     "#a6adc8",
   light:   "#cdd6f4",
   white:   "#ffffff",
   rule:    "#dce0e8",
@@ -22,7 +26,7 @@ const s = StyleSheet.create({
     color: C.dark,
   },
 
-  // ── Header ────────────────────────────────────────
+  // ── Header ──────────────────────────────────────────
   header: {
     backgroundColor: C.dark,
     paddingHorizontal: 36,
@@ -51,7 +55,6 @@ const s = StyleSheet.create({
     fontSize: 12,
     color: C.primary,
     marginBottom: 11,
-    fontFamily: "Helvetica",
   },
   headerContacts: {
     flexDirection: "row",
@@ -71,7 +74,7 @@ const s = StyleSheet.create({
     textDecoration: "none",
   },
 
-  // ── Body ──────────────────────────────────────────
+  // ── Body ────────────────────────────────────────────
   body: {
     paddingHorizontal: 36,
     paddingTop: 24,
@@ -79,6 +82,11 @@ const s = StyleSheet.create({
   },
   section: {
     marginBottom: 18,
+  },
+
+  // Section title always stays with at least the first item
+  sectionAnchor: {
+    // wrap=false applied inline — keeps title + first item together
   },
   sectionTitle: {
     fontFamily: "Helvetica-Bold",
@@ -91,14 +99,24 @@ const s = StyleSheet.create({
     marginBottom: 10,
   },
 
-  // ── About ─────────────────────────────────────────
+  // ── About ──────────────────────────────────────────
   aboutText: {
     fontSize: 9.5,
     color: C.overlay,
     lineHeight: 1.65,
   },
 
-  // ── Skills grid (2 columns) ───────────────────────
+  // ── Skills grid (2 col) ────────────────────────────
+  twoCol: {
+    flexDirection: "row",
+    marginBottom: 18,
+  },
+  col: {
+    flex: 1,
+  },
+  colGap: {
+    width: 32,
+  },
   skillsGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
@@ -123,19 +141,7 @@ const s = StyleSheet.create({
     color: C.overlay,
   },
 
-  // ── Two-column (skills + languages) ──────────────
-  twoCol: {
-    flexDirection: "row",
-    marginBottom: 18,
-  },
-  col: {
-    flex: 1,
-  },
-  colGap: {
-    width: 32,
-  },
-
-  // ── Languages ─────────────────────────────────────
+  // ── Languages ──────────────────────────────────────
   langRow: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -152,8 +158,15 @@ const s = StyleSheet.create({
     fontFamily: "Helvetica-Oblique",
   },
 
-  // ── Timeline items (exp / edu) ────────────────────
+  // ── Timeline items ─────────────────────────────────
   timelineItem: {
+    marginBottom: 12,
+    paddingLeft: 12,
+    borderLeftWidth: 1.5,
+    borderLeftColor: C.primary,
+  },
+  timelineItemRest: {
+    // same but without top margin — used for items after the first
     marginBottom: 12,
     paddingLeft: 12,
     borderLeftWidth: 1.5,
@@ -177,7 +190,7 @@ const s = StyleSheet.create({
     lineHeight: 1.55,
   },
 
-  // ── Projects ──────────────────────────────────────
+  // ── Projects ───────────────────────────────────────
   projectItem: {
     marginBottom: 12,
   },
@@ -187,10 +200,9 @@ const s = StyleSheet.create({
     marginBottom: 3,
   },
   projectBullet: {
-    fontSize: 11,
+    fontSize: 10,
     color: C.primary,
     marginRight: 6,
-    lineHeight: 1,
   },
   projectTitle: {
     fontFamily: "Helvetica-Bold",
@@ -203,12 +215,12 @@ const s = StyleSheet.create({
     color: C.muted,
     lineHeight: 1.55,
     marginBottom: 4,
-    paddingLeft: 17,
+    paddingLeft: 16,
   },
   projectLinks: {
     flexDirection: "row",
     flexWrap: "wrap",
-    paddingLeft: 17,
+    paddingLeft: 16,
   },
   projectLink: {
     fontSize: 8.5,
@@ -217,6 +229,8 @@ const s = StyleSheet.create({
     textDecoration: "none",
   },
 });
+
+// ── Helpers ───────────────────────────────────────────
 
 function fmtDate(d: string): string {
   const m = d?.match(/^(\d{4})-(\d{2})/);
@@ -229,17 +243,18 @@ function dateRange(from: string, to: string): string {
   return `${fmtDate(from)} — ${to ? fmtDate(to) : "Present"}`;
 }
 
-export default function CVDocument({ data }: { data: CVData }) {
-  const mainPhoto = data.photos.find((p) => p.is_main)?.image ?? data.photos[0]?.image;
+// ── Component ─────────────────────────────────────────
+
+export default function CVDocument({ data, photoSrc }: CVDocumentProps) {
   const contactLinks = data.links.filter((l) => !l.url.includes("mail.google.com"));
 
   return (
     <Document>
       <Page size="A4" style={s.page}>
 
-        {/* ── Header with photo ── */}
-        <View style={s.header}>
-          {mainPhoto && <Image src={mainPhoto} style={s.photo} />}
+        {/* ── Header ── */}
+        <View style={s.header} fixed>
+          {photoSrc && <Image src={photoSrc} style={s.photo} />}
           <View style={s.headerRight}>
             <Text style={s.headerName}>{data.frist_name} {data.last_name}</Text>
             <Text style={s.headerProfession}>{data.profession}</Text>
@@ -258,15 +273,15 @@ export default function CVDocument({ data }: { data: CVData }) {
 
           {/* ── About ── */}
           {!!data.about && (
-            <View style={s.section}>
+            <View style={s.section} wrap={false}>
               <Text style={s.sectionTitle}>ABOUT</Text>
               <Text style={s.aboutText}>{data.about}</Text>
             </View>
           )}
 
-          {/* ── Skills + Languages side by side ── */}
+          {/* ── Skills + Languages ── */}
           {(data.skills.length > 0 || data.languages.length > 0) && (
-            <View style={s.twoCol}>
+            <View style={s.twoCol} wrap={false}>
               {data.skills.length > 0 && (
                 <View style={s.col}>
                   <Text style={s.sectionTitle}>SKILLS</Text>
@@ -300,12 +315,15 @@ export default function CVDocument({ data }: { data: CVData }) {
           {/* ── Experience ── */}
           {data.experience_units.length > 0 && (
             <View style={s.section}>
-              <Text style={s.sectionTitle}>EXPERIENCE</Text>
               {data.experience_units.map((exp, i) => (
-                <View key={i} style={s.timelineItem}>
-                  <Text style={s.itemTitle}>{exp.name}</Text>
-                  <Text style={s.itemDates}>{dateRange(exp.from_date, exp.to_date)}</Text>
-                  {!!exp.description && <Text style={s.itemDesc}>{exp.description}</Text>}
+                <View key={i} wrap={false}>
+                  {/* Title stays with first item so header is never orphaned */}
+                  {i === 0 && <Text style={s.sectionTitle}>EXPERIENCE</Text>}
+                  <View style={i === 0 ? s.timelineItem : s.timelineItemRest}>
+                    <Text style={s.itemTitle}>{exp.name}</Text>
+                    <Text style={s.itemDates}>{dateRange(exp.from_date, exp.to_date)}</Text>
+                    {!!exp.description && <Text style={s.itemDesc}>{exp.description}</Text>}
+                  </View>
                 </View>
               ))}
             </View>
@@ -314,12 +332,14 @@ export default function CVDocument({ data }: { data: CVData }) {
           {/* ── Education ── */}
           {data.education_units.length > 0 && (
             <View style={s.section}>
-              <Text style={s.sectionTitle}>EDUCATION</Text>
               {data.education_units.map((edu, i) => (
-                <View key={i} style={s.timelineItem}>
-                  <Text style={s.itemTitle}>{edu.name}</Text>
-                  <Text style={s.itemDates}>{dateRange(edu.from_date, edu.to_date)}</Text>
-                  {!!edu.description && <Text style={s.itemDesc}>{edu.description}</Text>}
+                <View key={i} wrap={false}>
+                  {i === 0 && <Text style={s.sectionTitle}>EDUCATION</Text>}
+                  <View style={i === 0 ? s.timelineItem : s.timelineItemRest}>
+                    <Text style={s.itemTitle}>{edu.name}</Text>
+                    <Text style={s.itemDates}>{dateRange(edu.from_date, edu.to_date)}</Text>
+                    {!!edu.description && <Text style={s.itemDesc}>{edu.description}</Text>}
+                  </View>
                 </View>
               ))}
             </View>
@@ -328,25 +348,27 @@ export default function CVDocument({ data }: { data: CVData }) {
           {/* ── Projects ── */}
           {data.projects.length > 0 && (
             <View style={s.section}>
-              <Text style={s.sectionTitle}>PROJECTS</Text>
               {data.projects.map((proj, i) => (
-                <View key={i} style={s.projectItem}>
-                  <View style={s.projectHeader}>
-                    <Text style={s.projectBullet}>◆</Text>
-                    <Text style={s.projectTitle}>{proj.name}</Text>
-                  </View>
-                  {!!proj.description && (
-                    <Text style={s.projectDesc}>{proj.description}</Text>
-                  )}
-                  {proj.links.length > 0 && (
-                    <View style={s.projectLinks}>
-                      {proj.links.map((link) => (
-                        <Link key={link.name} src={link.url} style={s.projectLink}>
-                          {link.name}
-                        </Link>
-                      ))}
+                <View key={i} wrap={false}>
+                  {i === 0 && <Text style={s.sectionTitle}>PROJECTS</Text>}
+                  <View style={s.projectItem}>
+                    <View style={s.projectHeader}>
+                      <Text style={s.projectBullet}>◆</Text>
+                      <Text style={s.projectTitle}>{proj.name}</Text>
                     </View>
-                  )}
+                    {!!proj.description && (
+                      <Text style={s.projectDesc}>{proj.description}</Text>
+                    )}
+                    {proj.links.length > 0 && (
+                      <View style={s.projectLinks}>
+                        {proj.links.map((link) => (
+                          <Link key={link.name} src={link.url} style={s.projectLink}>
+                            {link.name}
+                          </Link>
+                        ))}
+                      </View>
+                    )}
+                  </View>
                 </View>
               ))}
             </View>
