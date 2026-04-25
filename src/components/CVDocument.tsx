@@ -18,6 +18,7 @@ const C = {
   rule:    "#dce0e8",
 } as const;
 
+// A4 = 595 × 841pt. Horizontal padding = 36 each side → content width = 523pt.
 const s = StyleSheet.create({
   page: {
     fontFamily: "Helvetica",
@@ -26,19 +27,19 @@ const s = StyleSheet.create({
     color: C.dark,
   },
 
-  // ── Header (page 1 only — no fixed) ─────────────────
+  // ── Header — renders once on page 1 only ──────────────
   header: {
     backgroundColor: C.dark,
     paddingHorizontal: 36,
-    paddingVertical: 26,
+    paddingVertical: 24,
     flexDirection: "row",
     alignItems: "center",
   },
   photo: {
-    width: 90,
-    height: 90,
-    borderRadius: 7,
-    marginRight: 24,
+    width: 84,
+    height: 84,
+    borderRadius: 6,
+    marginRight: 22,
     objectFit: "cover",
   },
   headerRight: {
@@ -46,7 +47,7 @@ const s = StyleSheet.create({
   },
   headerName: {
     fontFamily: "Helvetica-Bold",
-    fontSize: 26,
+    fontSize: 24,
     color: C.white,
     marginBottom: 3,
   },
@@ -59,55 +60,77 @@ const s = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
   },
-  headerContactText: {
+  contactText: {
     fontSize: 8.5,
     color: C.light,
-    marginRight: 16,
+    marginRight: 14,
     marginBottom: 2,
   },
-  headerContactLink: {
+  contactLink: {
     fontSize: 8.5,
     color: C.light,
-    marginRight: 16,
+    marginRight: 14,
     marginBottom: 2,
     textDecoration: "none",
   },
 
-  // ── Body ────────────────────────────────────────────
-  body: {
-    paddingHorizontal: 36,
-    paddingTop: 22,
-    paddingBottom: 36,
+  // ── Fixed footer — appears on every page ──────────────
+  footer: {
+    position: "absolute",
+    bottom: 18,
+    left: 36,
+    right: 36,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    borderTopWidth: 0.5,
+    borderTopColor: C.rule,
+    paddingTop: 5,
+  },
+  footerName: {
+    fontSize: 7.5,
+    color: C.muted,
+  },
+  footerPage: {
+    fontSize: 7.5,
+    color: C.muted,
   },
 
-  // ── Section title ────────────────────────────────────
-  // Rendered inside the first item's wrap={false} block
-  // so a lone heading can never be stranded at page bottom.
+  // ── Body ─────────────────────────────────────────────
+  body: {
+    paddingHorizontal: 36,
+    paddingTop: 20,
+    paddingBottom: 48, // extra room for footer
+  },
+
+  // ── Shared section title ──────────────────────────────
+  // Always placed inside the first item's wrap={false} block
+  // so it can never be orphaned at the bottom of a page.
   sectionTitle: {
     fontFamily: "Helvetica-Bold",
-    fontSize: 8,
+    fontSize: 7.5,
     color: C.primary,
     letterSpacing: 1.8,
     borderBottomWidth: 0.5,
     borderBottomColor: C.rule,
     paddingBottom: 4,
-    marginBottom: 10,
+    marginBottom: 9,
   },
 
-  // ── About ────────────────────────────────────────────
+  // ── About ─────────────────────────────────────────────
   aboutBlock: {
-    marginBottom: 16,
+    marginBottom: 14,
   },
   aboutText: {
-    fontSize: 9.5,
+    fontSize: 9,
     color: C.overlay,
-    lineHeight: 1.65,
+    lineHeight: 1.6,
   },
 
-  // ── Skills + Languages (two-column, kept together) ───
+  // ── Skills + Languages (two-column, kept together) ────
   twoCol: {
     flexDirection: "row",
-    marginBottom: 16,
+    marginBottom: 14,
   },
   skillsCol: {
     flex: 1,
@@ -121,25 +144,25 @@ const s = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 4,
-    paddingRight: 8,
+    paddingRight: 6,
   },
   skillDot: {
-    width: 4,
-    height: 4,
+    width: 3.5,
+    height: 3.5,
     borderRadius: 2,
     backgroundColor: C.primary,
-    marginRight: 7,
+    marginRight: 6,
     flexShrink: 0,
   },
   skillText: {
-    fontSize: 9,
+    fontSize: 8.5,
     color: C.overlay,
   },
   colGap: {
-    width: 32,
+    width: 28,
   },
   langsCol: {
-    width: 155,
+    width: 148,
   },
   langRow: {
     flexDirection: "row",
@@ -148,51 +171,63 @@ const s = StyleSheet.create({
     marginBottom: 5,
   },
   langName: {
-    fontSize: 9,
+    fontSize: 8.5,
     color: C.overlay,
   },
   langLevel: {
-    fontSize: 8,
+    fontSize: 7.5,
     color: C.primary,
     fontFamily: "Helvetica-Oblique",
   },
 
-  // ── Timeline items (exp / edu) ───────────────────────
-  // Each item is wrapped with wrap={false} at the call site.
-  // Section title is inside the first item's wrap={false} block.
-  expSection: {
-    marginBottom: 16,
+  // ── Experience / Education (timeline) ─────────────────
+  timelineSection: {
+    marginBottom: 14,
   },
   timelineItem: {
-    paddingLeft: 12,
+    paddingLeft: 11,
     borderLeftWidth: 1.5,
     borderLeftColor: C.primary,
-    marginBottom: 10,
+    marginBottom: 9,
   },
   itemTitle: {
     fontFamily: "Helvetica-Bold",
-    fontSize: 10,
+    fontSize: 9.5,
     color: C.dark,
     marginBottom: 2,
   },
   itemDates: {
-    fontSize: 8,
+    fontSize: 7.5,
     color: C.mauve,
     fontFamily: "Helvetica-Oblique",
-    marginBottom: 4,
+    marginBottom: 3,
   },
   itemDesc: {
-    fontSize: 9,
+    fontSize: 8.5,
     color: C.muted,
-    lineHeight: 1.55,
+    lineHeight: 1.5,
   },
 
-  // ── Projects ─────────────────────────────────────────
+  // ── Projects (2-column grid) ──────────────────────────
+  // Projects are paired into rows of 2 so that with many
+  // projects the section stays compact and multi-page safe.
   projectsSection: {
-    marginBottom: 16,
+    marginBottom: 14,
   },
-  projectItem: {
-    marginBottom: 10,
+  projectRow: {
+    flexDirection: "row",
+    marginBottom: 9,
+  },
+  // Left card gets a right border + margin acting as column gap
+  projectCardLeft: {
+    flex: 1,
+    paddingRight: 14,
+    marginRight: 14,
+    borderRightWidth: 0.5,
+    borderRightColor: C.rule,
+  },
+  projectCard: {
+    flex: 1,
   },
   projectTitleRow: {
     flexDirection: "row",
@@ -200,32 +235,33 @@ const s = StyleSheet.create({
     marginBottom: 3,
   },
   projectBullet: {
-    fontSize: 9,
+    fontSize: 8,
     color: C.primary,
-    marginRight: 7,
+    marginRight: 5,
+    lineHeight: 1.2,
   },
   projectTitle: {
     fontFamily: "Helvetica-Bold",
-    fontSize: 10,
+    fontSize: 9.5,
     color: C.dark,
     flex: 1,
   },
   projectDesc: {
-    fontSize: 9,
+    fontSize: 8.5,
     color: C.muted,
-    lineHeight: 1.55,
-    marginBottom: 4,
-    paddingLeft: 16,
+    lineHeight: 1.5,
+    marginBottom: 3,
+    paddingLeft: 13,
   },
   projectLinks: {
     flexDirection: "row",
     flexWrap: "wrap",
-    paddingLeft: 16,
+    paddingLeft: 13,
   },
   projectLink: {
-    fontSize: 8.5,
+    fontSize: 8,
     color: C.primary,
-    marginRight: 14,
+    marginRight: 10,
     textDecoration: "none",
   },
 });
@@ -233,7 +269,8 @@ const s = StyleSheet.create({
 function fmtDate(d: string): string {
   const m = d?.match(/^(\d{4})-(\d{2})/);
   if (!m) return d || "Present";
-  const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  const months = ["Jan","Feb","Mar","Apr","May","Jun",
+                  "Jul","Aug","Sep","Oct","Nov","Dec"];
   return `${months[parseInt(m[2]) - 1]} ${m[1]}`;
 }
 
@@ -244,20 +281,37 @@ function dateRange(from: string, to: string): string {
 export default function CVDocument({ data, photoSrc }: CVDocumentProps) {
   const contactLinks = data.links.filter((l) => !l.url.includes("mail.google.com"));
 
+  // Group projects into rows of 2 for the two-column layout
+  const projectRows: (typeof data.projects)[] = [];
+  for (let i = 0; i < data.projects.length; i += 2) {
+    projectRows.push(data.projects.slice(i, i + 2));
+  }
+
   return (
     <Document>
       <Page size="A4" style={s.page}>
 
-        {/* ── Header — page 1 only, no fixed prop ── */}
+        {/* ── Fixed footer on every page ── */}
+        <View fixed style={s.footer}>
+          <Text style={s.footerName}>
+            {data.frist_name} {data.last_name} — {data.profession}
+          </Text>
+          <Text
+            style={s.footerPage}
+            render={({ pageNumber, totalPages }) => `${pageNumber} / ${totalPages}`}
+          />
+        </View>
+
+        {/* ── Header — page 1 only, no fixed ── */}
         <View style={s.header}>
           {photoSrc && <Image src={photoSrc} style={s.photo} />}
           <View style={s.headerRight}>
             <Text style={s.headerName}>{data.frist_name} {data.last_name}</Text>
             <Text style={s.headerProfession}>{data.profession}</Text>
             <View style={s.headerContacts}>
-              <Text style={s.headerContactText}>{data.email}</Text>
+              <Text style={s.contactText}>{data.email}</Text>
               {contactLinks.map((l) => (
-                <Link key={l.name} src={l.url} style={s.headerContactLink}>
+                <Link key={l.name} src={l.url} style={s.contactLink}>
                   {l.name}
                 </Link>
               ))}
@@ -275,7 +329,7 @@ export default function CVDocument({ data, photoSrc }: CVDocumentProps) {
             </View>
           )}
 
-          {/* ── Skills + Languages — compact, safe to keep together ── */}
+          {/* ── Skills + Languages — compact, safe to keep as one block ── */}
           {(data.skills.length > 0 || data.languages.length > 0) && (
             <View style={s.twoCol} wrap={false}>
               {data.skills.length > 0 && (
@@ -310,15 +364,16 @@ export default function CVDocument({ data, photoSrc }: CVDocumentProps) {
 
           {/* ── Experience ── */}
           {data.experience_units.length > 0 && (
-            <View style={s.expSection}>
+            <View style={s.timelineSection}>
               {data.experience_units.map((exp, i) => (
-                // wrap={false}: title+first item together; subsequent items don't split
                 <View key={i} wrap={false}>
                   {i === 0 && <Text style={s.sectionTitle}>EXPERIENCE</Text>}
                   <View style={s.timelineItem}>
                     <Text style={s.itemTitle}>{exp.name}</Text>
                     <Text style={s.itemDates}>{dateRange(exp.from_date, exp.to_date)}</Text>
-                    {!!exp.description && <Text style={s.itemDesc}>{exp.description}</Text>}
+                    {!!exp.description && (
+                      <Text style={s.itemDesc}>{exp.description}</Text>
+                    )}
                   </View>
                 </View>
               ))}
@@ -327,43 +382,54 @@ export default function CVDocument({ data, photoSrc }: CVDocumentProps) {
 
           {/* ── Education ── */}
           {data.education_units.length > 0 && (
-            <View style={s.expSection}>
+            <View style={s.timelineSection}>
               {data.education_units.map((edu, i) => (
                 <View key={i} wrap={false}>
                   {i === 0 && <Text style={s.sectionTitle}>EDUCATION</Text>}
                   <View style={s.timelineItem}>
                     <Text style={s.itemTitle}>{edu.name}</Text>
                     <Text style={s.itemDates}>{dateRange(edu.from_date, edu.to_date)}</Text>
-                    {!!edu.description && <Text style={s.itemDesc}>{edu.description}</Text>}
+                    {!!edu.description && (
+                      <Text style={s.itemDesc}>{edu.description}</Text>
+                    )}
                   </View>
                 </View>
               ))}
             </View>
           )}
 
-          {/* ── Projects ── */}
-          {data.projects.length > 0 && (
+          {/* ── Projects (2-column grid) ── */}
+          {projectRows.length > 0 && (
             <View style={s.projectsSection}>
-              {data.projects.map((proj, i) => (
-                <View key={i} wrap={false}>
-                  {i === 0 && <Text style={s.sectionTitle}>PROJECTS</Text>}
-                  <View style={s.projectItem}>
-                    <View style={s.projectTitleRow}>
-                      <Text style={s.projectBullet}>◆</Text>
-                      <Text style={s.projectTitle}>{proj.name}</Text>
-                    </View>
-                    {!!proj.description && (
-                      <Text style={s.projectDesc}>{proj.description}</Text>
-                    )}
-                    {proj.links.length > 0 && (
-                      <View style={s.projectLinks}>
-                        {proj.links.map((link) => (
-                          <Link key={link.name} src={link.url} style={s.projectLink}>
-                            {link.name}
-                          </Link>
-                        ))}
+              {projectRows.map((pair, rowIdx) => (
+                <View key={rowIdx} wrap={false}>
+                  {rowIdx === 0 && <Text style={s.sectionTitle}>PROJECTS</Text>}
+                  <View style={s.projectRow}>
+                    {pair.map((proj, colIdx) => (
+                      <View
+                        key={proj.name}
+                        style={colIdx === 0 && pair.length === 2
+                          ? s.projectCardLeft
+                          : s.projectCard}
+                      >
+                        <View style={s.projectTitleRow}>
+                          <Text style={s.projectBullet}>◆</Text>
+                          <Text style={s.projectTitle}>{proj.name}</Text>
+                        </View>
+                        {!!proj.description && (
+                          <Text style={s.projectDesc}>{proj.description}</Text>
+                        )}
+                        {proj.links.length > 0 && (
+                          <View style={s.projectLinks}>
+                            {proj.links.map((link) => (
+                              <Link key={link.name} src={link.url} style={s.projectLink}>
+                                {link.name}
+                              </Link>
+                            ))}
+                          </View>
+                        )}
                       </View>
-                    )}
+                    ))}
                   </View>
                 </View>
               ))}
