@@ -15,10 +15,25 @@ import FallingNumbers from "./components/FallingNumbers";
 import AIChat from "./components/AIChat";
 import { TooltipProvider } from "./components/ui/tooltip";
 
+const ADMIN_SEQUENCE = ["ArrowDown", "ArrowDown", "ArrowUp", "ArrowUp"];
+
 export default function App() {
   const [data, setData] = useState<CVData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const buffer: string[] = [];
+    const onKeyDown = (e: KeyboardEvent) => {
+      buffer.push(e.key);
+      if (buffer.length > ADMIN_SEQUENCE.length) buffer.shift();
+      if (buffer.join() === ADMIN_SEQUENCE.join()) {
+        window.location.href = "https://pwb.api.antonblyzniuk.com/admin/";
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, []);
 
   useEffect(() => {
     const loadData = async () => {
