@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Menu, X, Terminal, FileText, Check, Copy, Loader2 } from "lucide-react";
+import { Menu, X, Terminal, FileText, Check, Copy } from "lucide-react";
 import { Button } from "./ui/button";
 import { CVData } from "../types";
 import { sendTelegramNotification } from "../services/notifications";
-import { generateCVPDF } from "../lib/generatePDF";
 import { cn } from "../lib/utils";
 import Typewriter from "./Typewriter";
 
@@ -16,7 +15,6 @@ export default function Navbar({ data }: NavbarProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const [connectionStatus, setConnectionStatus] = useState("initializing backend connection...");
 
   useEffect(() => {
@@ -39,14 +37,8 @@ export default function Navbar({ data }: NavbarProps) {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleDownloadPDF = async () => {
-    setIsGeneratingPDF(true);
-    try {
-      await generateCVPDF(data);
-      sendTelegramNotification("CV Downloaded");
-    } finally {
-      setIsGeneratingPDF(false);
-    }
+  const notifyDownload = () => {
+    sendTelegramNotification("CV Downloaded");
   };
 
   const navLinks = [
@@ -141,18 +133,23 @@ export default function Navbar({ data }: NavbarProps) {
               </Button>
               
               <Button
+                asChild
                 variant="outline"
                 size="sm"
                 className="font-mono text-[10px] h-7 border-primary/30 hover:bg-primary/10 hover:border-primary group relative overflow-hidden px-3"
-                onClick={handleDownloadPDF}
-                disabled={isGeneratingPDF}
               >
-                <span className="relative z-10 flex items-center gap-1.5">
-                  {isGeneratingPDF
-                    ? <Loader2 className="w-3 h-3 animate-spin" />
-                    : <FileText className="w-3 h-3" />}
-                  {isGeneratingPDF ? "BUILDING..." : "RESUME"}
-                </span>
+                <a
+                  href={data.pdf_resume}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  download={`Resume_${data.frist_name}_${data.last_name}.pdf`}
+                  onClick={notifyDownload}
+                >
+                  <span className="relative z-10 flex items-center gap-1.5">
+                    <FileText className="w-3 h-3" />
+                    RESUME
+                  </span>
+                </a>
               </Button>
             </div>
 
@@ -203,15 +200,20 @@ export default function Navbar({ data }: NavbarProps) {
                     <span className="truncate">{copied ? "EMAIL_COPIED" : "COPY_EMAIL"}</span>
                   </Button>
                   <Button
+                    asChild
                     size="sm"
                     className="w-full font-mono bg-primary text-secondary hover:bg-primary/90 h-9"
-                    onClick={handleDownloadPDF}
-                    disabled={isGeneratingPDF}
                   >
-                    {isGeneratingPDF
-                      ? <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      : <FileText className="w-4 h-4 mr-2" />}
-                    {isGeneratingPDF ? "BUILDING..." : "RESUME.sh"}
+                    <a
+                      href={data.pdf_resume}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      download={`Resume_${data.frist_name}_${data.last_name}.pdf`}
+                      onClick={notifyDownload}
+                    >
+                      <FileText className="w-4 h-4 mr-2" />
+                      RESUME.sh
+                    </a>
                   </Button>
                 </div>
               </div>
