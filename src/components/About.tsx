@@ -46,7 +46,7 @@ export default function About({ data }: AboutProps) {
               <div className="space-y-4 font-mono text-sm">
                 <div className="flex justify-between items-center py-2 border-b border-primary/5">
                   <span className="text-muted-foreground">USER</span>
-                  <span className="text-primary">{data.frist_name.toLowerCase()}</span>
+                  <span className="text-primary">{data.first_name.toLowerCase()}</span>
                 </div>
                 <div className="flex justify-between items-center py-2 border-b border-primary/5">
                   <span className="text-muted-foreground">UPTIME</span>

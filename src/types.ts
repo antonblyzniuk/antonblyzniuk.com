@@ -24,28 +24,31 @@ export interface EducationUnit {
   description: string;
   from_date: string;
   to_date: string;
-  image: string;
+  image: string | null;
 }
 
 export interface Project {
   name: string;
   description: string;
   links: Link[];
-  image: string;
+  image: string | null;
 }
 
 export interface Photo {
+  id: number;
   image: string;
   is_main: boolean;
 }
 
 export interface CVData {
-  frist_name: string;
+  first_name: string;
   last_name: string;
   profession: string;
   email: string;
+  phone?: string | null;
+  location?: string | null;
   about: string;
-  pdf_resume: string;
+  pdf_resume: string | null;
   skills: Skill[];
   links: Link[];
   languages: Language[];

@@ -51,7 +51,7 @@ export default function Hero({ data }: HeroProps) {
                     <div className="w-full h-full rounded-xl overflow-hidden relative">
                       <img
                         src={mainPhoto || "https://picsum.photos/seed/profile/400/400"}
-                        alt={`${data.frist_name} ${data.last_name}`}
+                        alt={`${data.first_name} ${data.last_name}`}
                         className="w-full h-full object-cover transition-all duration-700 scale-110 group-hover:scale-100"
                         referrerPolicy="no-referrer"
                       />
@@ -75,7 +75,7 @@ export default function Hero({ data }: HeroProps) {
                       transition={{ delay: 0.2 }}
                       className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tighter leading-none"
                     >
-                      {data.frist_name}{" "}
+                      {data.first_name}{" "}
                       <span className="text-primary text-glow block sm:inline">{data.last_name}</span>
                     </motion.h1>
                     <div className="flex flex-wrap items-center gap-3 justify-center md:justify-start mt-4">

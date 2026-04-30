@@ -142,7 +142,7 @@ export default function Navbar({ data }: NavbarProps) {
                   href={data.pdf_resume}
                   target="_blank"
                   rel="noopener noreferrer"
-                  download={`Resume_${data.frist_name}_${data.last_name}.pdf`}
+                  download={`Resume_${data.first_name}_${data.last_name}.pdf`}
                   onClick={notifyDownload}
                 >
                   <span className="relative z-10 flex items-center gap-1.5">
@@ -208,7 +208,7 @@ export default function Navbar({ data }: NavbarProps) {
                       href={data.pdf_resume}
                       target="_blank"
                       rel="noopener noreferrer"
-                      download={`Resume_${data.frist_name}_${data.last_name}.pdf`}
+                      download={`Resume_${data.first_name}_${data.last_name}.pdf`}
                       onClick={notifyDownload}
                     >
                       <FileText className="w-4 h-4 mr-2" />

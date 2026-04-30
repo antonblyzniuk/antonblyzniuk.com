@@ -25,7 +25,6 @@ type ChatMessage = {
 };
 
 type CVContext = {
-  frist_name?: string;
   first_name?: string;
   last_name?: string;
   profession?: string;
@@ -41,24 +40,72 @@ type CVContext = {
 };
 
 app.get("/api/cv", async (_req: Request, res: Response) => {
-  const cvApiUrl = process.env.VITE_API_URL;
+  const baseUrl = process.env.PWB_API_BASE_URL;
+  const unitName = process.env.PWB_UNIT_NAME;
 
-  if (!cvApiUrl) {
+  if (!baseUrl || !unitName) {
     return res.status(500).json({
-      error: "VITE_API_URL is not configured. Add the CV API URL to the environment variables.",
+      error: "PWB_API_BASE_URL and PWB_UNIT_NAME must be set in environment variables.",
     });
   }
 
+  const url = `${baseUrl.replace(/\/$/, "")}/pwbunits/${unitName}/`;
+
+  const headers: Record<string, string> = {};
+  const apiKey = process.env.PWB_API_KEY;
+  const apiSecret = process.env.PWB_API_SECRET;
+  if (apiKey && apiSecret) {
+    headers["X-Api-Key"] = apiKey;
+    headers["X-Api-Secret"] = apiSecret;
+  }
+
   try {
-    const response = await fetch(cvApiUrl);
-    const contentType = response.headers.get("content-type") || "application/json";
-    const body = await response.text();
+    const response = await fetch(url, { headers });
 
     if (!response.ok) {
-      return res.status(response.status).type(contentType).send(body);
+      const body = await response.text();
+      return res.status(response.status).json({ error: body });
     }
 
-    return res.type(contentType).send(body);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const raw: any = await response.json();
+
+    // Map backend PWBUnit shape to the CVData shape the frontend expects
+    const data = {
+      first_name: raw.first_name ?? "",
+      last_name: raw.last_name ?? "",
+      profession: raw.headline ?? "",
+      email: raw.email ?? "",
+      phone: raw.phone ?? null,
+      location: raw.location ?? null,
+      about: raw.about ?? "",
+      pdf_resume: raw.pdf_resume ?? null,
+      photos: raw.photos ?? [],
+      skills: raw.skills ?? [],
+      links: raw.links ?? [],
+      languages: raw.languages ?? [],
+      experience_units: (raw.experience_units ?? []).map((exp: any) => ({
+        name: exp.title ?? "",
+        description: exp.description ?? "",
+        from_date: exp.from_date ?? "",
+        to_date: exp.to_date ?? "",
+      })),
+      education_units: (raw.education_units ?? []).map((edu: any) => ({
+        name: edu.institution ?? "",
+        description: edu.description ?? "",
+        from_date: edu.from_date ?? "",
+        to_date: edu.to_date ?? "",
+        image: edu.image ?? null,
+      })),
+      projects: (raw.portfolio_items ?? []).map((item: any) => ({
+        name: item.title ?? "",
+        description: item.description ?? "",
+        links: item.links ?? [],
+        image: item.image ?? null,
+      })),
+    };
+
+    return res.json(data);
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to fetch CV data.";
     return res.status(502).json({ error: message });
@@ -92,7 +139,7 @@ function shouldTryNextKey(status: number) {
 }
 
 function compactCvContext(cv: CVContext) {
-  const fullName = `${cv.frist_name || cv.first_name || ""} ${cv.last_name || ""}`.trim();
+  const fullName = `${cv.first_name || ""} ${cv.last_name || ""}`.trim();
 
   return {
     name: fullName,
