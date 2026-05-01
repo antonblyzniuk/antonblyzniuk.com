@@ -11,6 +11,8 @@ interface GalleryProps {
 export default function Gallery({ data }: GalleryProps) {
   const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
 
+  if (data.photos.length === 0) return null;
+
   return (
     <section id="gallery" className="py-20 scroll-mt-20">
       <div className="max-w-6xl mx-auto">

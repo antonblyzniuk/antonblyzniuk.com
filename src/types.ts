@@ -14,6 +14,7 @@ export interface Language {
 
 export interface ExperienceUnit {
   name: string;
+  organization: string | null;
   description: string;
   from_date: string;
   to_date: string;
@@ -21,6 +22,8 @@ export interface ExperienceUnit {
 
 export interface EducationUnit {
   name: string;
+  degree: string | null;
+  field_of_study: string | null;
   description: string;
   from_date: string;
   to_date: string;

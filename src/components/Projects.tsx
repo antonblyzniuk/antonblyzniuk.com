@@ -56,19 +56,21 @@ export default function Projects({ data }: ProjectsProps) {
                 </div>
               </div>
 
-              <div className="relative aspect-video overflow-hidden">
-                <motion.img
-                  src={project.image}
-                  alt={project.name}
-                  className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
-                  referrerPolicy="no-referrer"
-                />
-                <div className="absolute inset-0 bg-secondary/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4 backdrop-blur-sm">
-                  <div className="p-3 rounded-xl bg-primary/20 border border-primary/40 transform scale-90 group-hover:scale-100 transition-transform">
-                    <Search className="w-6 h-6 text-primary" />
+              {project.image && (
+                <div className="relative aspect-video overflow-hidden">
+                  <motion.img
+                    src={project.image}
+                    alt={project.name}
+                    className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
+                    referrerPolicy="no-referrer"
+                  />
+                  <div className="absolute inset-0 bg-secondary/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4 backdrop-blur-sm">
+                    <div className="p-3 rounded-xl bg-primary/20 border border-primary/40 transform scale-90 group-hover:scale-100 transition-transform">
+                      <Search className="w-6 h-6 text-primary" />
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
 
               <div className="p-6 space-y-4">
                 <div className="space-y-2">
@@ -135,15 +137,17 @@ export default function Projects({ data }: ProjectsProps) {
               </div>
 
               <div className="overflow-y-auto max-h-[calc(90vh-100px)]">
-                <div className="relative aspect-video w-full">
-                  <img
-                    src={selectedProject.image}
-                    alt={selectedProject.name}
-                    className="w-full h-full object-cover"
-                    referrerPolicy="no-referrer"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-secondary to-transparent opacity-60" />
-                </div>
+                {selectedProject.image && (
+                  <div className="relative aspect-video w-full">
+                    <img
+                      src={selectedProject.image}
+                      alt={selectedProject.name}
+                      className="w-full h-full object-cover"
+                      referrerPolicy="no-referrer"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-secondary to-transparent opacity-60" />
+                  </div>
+                )}
 
                 <div className="p-6 md:p-10 space-y-8">
                   <div className="space-y-4">

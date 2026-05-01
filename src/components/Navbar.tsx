@@ -132,25 +132,27 @@ export default function Navbar({ data }: NavbarProps) {
                 <span className="truncate max-w-[80px]">{copied ? "COPIED" : "EMAIL"}</span>
               </Button>
               
-              <Button
-                asChild
-                variant="outline"
-                size="sm"
-                className="font-mono text-[10px] h-7 border-primary/30 hover:bg-primary/10 hover:border-primary group relative overflow-hidden px-3"
-              >
-                <a
-                  href={data.pdf_resume}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  download={`Resume_${data.first_name}_${data.last_name}.pdf`}
-                  onClick={notifyDownload}
+              {data.pdf_resume && (
+                <Button
+                  asChild
+                  variant="outline"
+                  size="sm"
+                  className="font-mono text-[10px] h-7 border-primary/30 hover:bg-primary/10 hover:border-primary group relative overflow-hidden px-3"
                 >
-                  <span className="relative z-10 flex items-center gap-1.5">
-                    <FileText className="w-3 h-3" />
-                    RESUME
-                  </span>
-                </a>
-              </Button>
+                  <a
+                    href={data.pdf_resume}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    download={`Resume_${data.first_name}_${data.last_name}.pdf`}
+                    onClick={notifyDownload}
+                  >
+                    <span className="relative z-10 flex items-center gap-1.5">
+                      <FileText className="w-3 h-3" />
+                      RESUME
+                    </span>
+                  </a>
+                </Button>
+              )}
             </div>
 
             {/* Mobile Menu Toggle */}
@@ -199,22 +201,24 @@ export default function Navbar({ data }: NavbarProps) {
                     {copied ? <Check className="w-4 h-4 text-primary" /> : <Copy className="w-4 h-4" />}
                     <span className="truncate">{copied ? "EMAIL_COPIED" : "COPY_EMAIL"}</span>
                   </Button>
-                  <Button
-                    asChild
-                    size="sm"
-                    className="w-full font-mono bg-primary text-secondary hover:bg-primary/90 h-9"
-                  >
-                    <a
-                      href={data.pdf_resume}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      download={`Resume_${data.first_name}_${data.last_name}.pdf`}
-                      onClick={notifyDownload}
+                  {data.pdf_resume && (
+                    <Button
+                      asChild
+                      size="sm"
+                      className="w-full font-mono bg-primary text-secondary hover:bg-primary/90 h-9"
                     >
-                      <FileText className="w-4 h-4 mr-2" />
-                      RESUME.sh
-                    </a>
-                  </Button>
+                      <a
+                        href={data.pdf_resume}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        download={`Resume_${data.first_name}_${data.last_name}.pdf`}
+                        onClick={notifyDownload}
+                      >
+                        <FileText className="w-4 h-4 mr-2" />
+                        RESUME.sh
+                      </a>
+                    </Button>
+                  )}
                 </div>
               </div>
             </motion.div>
