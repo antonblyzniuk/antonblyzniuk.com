@@ -40,16 +40,13 @@ type CVContext = {
 };
 
 app.get("/api/cv", async (_req: Request, res: Response) => {
-  const baseUrl = process.env.PWB_API_BASE_URL;
-  const unitName = process.env.PWB_UNIT_NAME;
+  const url = process.env.PWB_API_URL;
 
-  if (!baseUrl || !unitName) {
+  if (!url) {
     return res.status(500).json({
-      error: "PWB_API_BASE_URL and PWB_UNIT_NAME must be set in environment variables.",
+      error: "PWB_API_URL must be set in environment variables.",
     });
   }
-
-  const url = `${baseUrl.replace(/\/$/, "")}/pwbunits/${unitName}/`;
 
   const headers: Record<string, string> = {};
   const apiKey = process.env.PWB_API_KEY;
