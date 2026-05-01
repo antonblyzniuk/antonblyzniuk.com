@@ -47,7 +47,7 @@ export default function Hero({ data }: HeroProps) {
                   transition={{ duration: 0.5 }}
                   className="relative group shrink-0"
                 >
-                  <div className="w-48 h-48 md:w-64 md:h-64 rounded-2xl border-2 border-primary/30 p-2 bg-secondary/50 group-hover:border-primary transition-all duration-500 shadow-[0_0_30px_rgba(180,190,254,0.1)] group-hover:shadow-[0_0_50px_rgba(180,190,254,0.2)]">
+                  <div className="w-36 h-36 sm:w-48 sm:h-48 md:w-64 md:h-64 rounded-2xl border-2 border-primary/30 p-2 bg-secondary/50 group-hover:border-primary transition-all duration-500 shadow-[0_0_30px_rgba(180,190,254,0.1)] group-hover:shadow-[0_0_50px_rgba(180,190,254,0.2)]">
                     <div className="w-full h-full rounded-xl overflow-hidden relative">
                       <img
                         src={mainPhoto || "https://picsum.photos/seed/profile/400/400"}
@@ -73,7 +73,7 @@ export default function Hero({ data }: HeroProps) {
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.2 }}
-                      className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tighter leading-none"
+                      className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold tracking-tighter leading-none"
                     >
                       {data.first_name}{" "}
                       <span className="text-primary text-glow block sm:inline">{data.last_name}</span>
@@ -132,7 +132,7 @@ export default function Hero({ data }: HeroProps) {
                                   {link.name}
                                 </span>
                                 <div className="flex items-center gap-1.5 font-mono text-[7px] text-muted-foreground uppercase tracking-tighter opacity-60 group-hover:opacity-100 transition-opacity">
-                                  <span className="truncate max-w-[80px]">{link.url.replace(/^https?:\/\//, "").split("/")[0]}</span>
+                                  <span className="truncate max-w-[40%]">{link.url.replace(/^https?:\/\//, "").split("/")[0]}</span>
                                   <span className="text-accent/50">{10 + i * 5}ms</span>
                                 </div>
                               </div>
@@ -167,7 +167,7 @@ export default function Hero({ data }: HeroProps) {
               
               {/* Terminal Footer Status */}
               <div className="pt-6 border-t border-primary/10 flex flex-wrap items-center justify-between gap-4 font-mono text-[10px] text-muted-foreground uppercase tracking-widest">
-                <div className="flex items-center gap-6">
+                <div className="flex flex-wrap items-center gap-x-6 gap-y-1">
                   <span className="flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                     System Online

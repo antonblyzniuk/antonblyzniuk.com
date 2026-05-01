@@ -12,10 +12,10 @@ export default function Skills({ data }: SkillsProps) {
     <section id="skills" className="py-20 scroll-mt-20">
       <div className="max-w-6xl mx-auto">
         <div className="mb-12">
-          <div className="flex items-center gap-2 mb-4 font-mono text-sm">
-            <span className="text-primary">root@portfolio:</span>
-            <span className="text-accent">~</span>
-            <span className="text-foreground">$ <Typewriter text="ls --expertise" speed={50} /></span>
+          <div className="flex items-center gap-2 mb-4 font-mono text-xs sm:text-sm overflow-hidden">
+            <span className="text-primary shrink-0">root@portfolio:</span>
+            <span className="text-accent shrink-0">~</span>
+            <span className="text-foreground truncate">$ <Typewriter text="ls --expertise" speed={50} /></span>
           </div>
           <motion.h2
             initial={{ opacity: 0, y: 10 }}
@@ -27,7 +27,7 @@ export default function Skills({ data }: SkillsProps) {
           </motion.h2>
         </div>
 
-        <div className="terminal-window bg-secondary/20 p-8 border-primary/10">
+        <div className="terminal-window bg-secondary/20 p-4 sm:p-8 border-primary/10">
           <div className="flex flex-wrap gap-4 justify-center">
             {data.skills.map((skill, i) => (
               <motion.div
@@ -46,7 +46,7 @@ export default function Skills({ data }: SkillsProps) {
               >
                 <Badge
                   variant="secondary"
-                  className="bg-secondary/80 hover:bg-primary/20 text-muted-foreground hover:text-primary border border-primary/10 hover:border-primary/40 transition-all font-mono text-sm py-2 px-4 shadow-[0_0_10px_rgba(158,206,106,0.05)] hover:shadow-[0_0_20px_rgba(158,206,106,0.2)]"
+                  className="bg-secondary/80 hover:bg-primary/20 text-muted-foreground hover:text-primary border border-primary/10 hover:border-primary/40 transition-all font-mono text-sm py-2 px-4 shadow-[0_0_10px_rgba(158,206,106,0.05)] hover:shadow-[0_0_20px_rgba(158,206,106,0.2)] whitespace-normal"
                 >
                   <span className="text-accent mr-2">#</span>
                   <Typewriter text={skill.name} speed={50} delay={1000 + i * 100} />

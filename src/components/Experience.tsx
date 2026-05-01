@@ -13,16 +13,16 @@ export default function Experience({ data }: ExperienceProps) {
     <section id="experience" className="py-20 scroll-mt-20">
       <div className="max-w-6xl mx-auto">
         <div className="mb-12">
-          <div className="flex items-center gap-2 mb-4 font-mono text-sm">
-            <span className="text-primary">root@portfolio:</span>
-            <span className="text-accent">~</span>
-            <span className="text-foreground">$ <Typewriter text="journalctl --unit=career --no-pager" speed={50} /></span>
+          <div className="flex items-center gap-2 mb-4 font-mono text-xs sm:text-sm overflow-hidden">
+            <span className="text-primary shrink-0">root@portfolio:</span>
+            <span className="text-accent shrink-0">~</span>
+            <span className="text-foreground truncate">$ <Typewriter text="journalctl --unit=career --no-pager" speed={50} /></span>
           </div>
           <motion.h2
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-4xl md:text-5xl font-bold tracking-tight text-glow"
+            className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-glow"
           >
             System Logs: Career & Education
           </motion.h2>

@@ -17,10 +17,10 @@ export default function Projects({ data }: ProjectsProps) {
     <section id="projects" className="py-20 scroll-mt-20">
       <div className="max-w-6xl mx-auto">
         <div className="mb-12">
-          <div className="flex items-center gap-2 mb-4 font-mono text-sm">
-            <span className="text-primary">root@portfolio:</span>
-            <span className="text-accent">~</span>
-            <span className="text-foreground">$ <Typewriter text="find ./projects -type d" speed={50} /></span>
+          <div className="flex items-center gap-2 mb-4 font-mono text-xs sm:text-sm overflow-hidden">
+            <span className="text-primary shrink-0">root@portfolio:</span>
+            <span className="text-accent shrink-0">~</span>
+            <span className="text-foreground truncate">$ <Typewriter text="find ./projects -type d" speed={50} /></span>
           </div>
           <motion.h2
             initial={{ opacity: 0, y: 10 }}
@@ -36,7 +36,7 @@ export default function Projects({ data }: ProjectsProps) {
           {data.projects.map((project, i) => (
             <motion.div
               key={i}
-              layoutId={`project-${project.name}`}
+              layoutId={`project-${project.name.toLowerCase().replace(/\s+/g, "_")}`}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -46,9 +46,9 @@ export default function Projects({ data }: ProjectsProps) {
             >
               {/* Project Header */}
               <div className="bg-secondary/50 border-b border-primary/10 px-4 py-2 flex items-center justify-between">
-                <div className="flex items-center gap-2 font-mono text-[10px] text-muted-foreground uppercase tracking-widest">
-                  <Folder className="w-3 h-3 text-accent" />
-                  {project.name.toLowerCase().replace(/\s+/g, "_")}
+                <div className="flex items-center gap-2 font-mono text-[10px] text-muted-foreground uppercase tracking-widest min-w-0">
+                  <Folder className="w-3 h-3 text-accent shrink-0" />
+                  <span className="truncate">{project.name.toLowerCase().replace(/\s+/g, "_")}</span>
                 </div>
                 <div className="flex gap-1.5">
                   <div className="w-2 h-2 rounded-full bg-primary/30" />
@@ -110,7 +110,7 @@ export default function Projects({ data }: ProjectsProps) {
             onClick={() => setSelectedProject(null)}
           >
             <motion.div
-              layoutId={`project-${selectedProject.name}`}
+              layoutId={`project-${selectedProject.name.toLowerCase().replace(/\s+/g, "_")}`}
               className="relative max-w-6xl w-full max-h-full terminal-window overflow-hidden bg-secondary/40 border-primary/30 shadow-2xl"
               onClick={(e) => e.stopPropagation()}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
@@ -130,7 +130,8 @@ export default function Projects({ data }: ProjectsProps) {
                 </div>
                 <button
                   onClick={() => setSelectedProject(null)}
-                  className="p-1.5 rounded-md hover:bg-primary/10 text-muted-foreground hover:text-primary transition-colors"
+                  className="p-2.5 rounded-md hover:bg-primary/10 text-muted-foreground hover:text-primary transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
+                  aria-label="Close project"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -138,7 +139,7 @@ export default function Projects({ data }: ProjectsProps) {
 
               <div className="overflow-y-auto max-h-[calc(90vh-100px)]">
                 {selectedProject.image && (
-                  <div className="relative aspect-video w-full">
+                  <div className="relative w-full max-h-[40vh] sm:max-h-none sm:aspect-video overflow-hidden">
                     <img
                       src={selectedProject.image}
                       alt={selectedProject.name}
@@ -149,7 +150,7 @@ export default function Projects({ data }: ProjectsProps) {
                   </div>
                 )}
 
-                <div className="p-6 md:p-10 space-y-8">
+                <div className="p-4 md:p-6 lg:p-10 space-y-8">
                   <div className="space-y-4">
                     <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-glow">
                       {selectedProject.name}

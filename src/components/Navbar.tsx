@@ -19,14 +19,19 @@ export default function Navbar({ data }: NavbarProps) {
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setIsMobileMenuOpen(false);
+    };
     window.addEventListener("scroll", handleScroll);
-    
+    window.addEventListener("keydown", handleKeyDown);
+
     const timer = setTimeout(() => {
       setConnectionStatus("connection established");
     }, 3000);
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("keydown", handleKeyDown);
       clearTimeout(timer);
     };
   }, []);
@@ -68,9 +73,9 @@ export default function Navbar({ data }: NavbarProps) {
               <div className="w-2 h-2 rounded-full bg-accent/50" />
               <div className="w-2 h-2 rounded-full bg-primary/50" />
             </div>
-            <div className="text-[9px] font-mono text-muted-foreground flex items-center gap-2 uppercase tracking-tighter">
-              <Terminal className="w-2.5 h-2.5" />
-              <Typewriter text={connectionStatus} speed={50} />
+            <div className="text-[9px] font-mono text-muted-foreground flex items-center gap-2 uppercase tracking-tighter overflow-hidden max-w-[40vw] sm:max-w-none">
+              <Terminal className="w-2.5 h-2.5 shrink-0" />
+              <span className="truncate"><Typewriter text={connectionStatus} speed={50} /></span>
             </div>
             <div className="w-8" />
           </div>
@@ -95,7 +100,7 @@ export default function Navbar({ data }: NavbarProps) {
               <div className="font-mono flex flex-col">
                 <div className="text-sm sm:text-lg font-black tracking-tighter flex items-center">
                   <span className="text-primary text-glow">antonblyzniuk</span>
-                  <span className="text-foreground/90 hidden xs:inline">.com</span>
+                  <span className="text-foreground/90 hidden sm:inline">.com</span>
                   <motion.span
                     animate={{ opacity: [1, 0] }}
                     transition={{ duration: 0.8, repeat: Infinity }}
@@ -158,8 +163,9 @@ export default function Navbar({ data }: NavbarProps) {
             {/* Mobile Menu Toggle */}
             <div className="lg:hidden flex items-center">
               <button
-                className="text-foreground p-1 hover:text-primary transition-colors"
+                className="text-foreground p-2.5 hover:text-primary transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                aria-label="Toggle menu"
               >
                 {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
               </button>
@@ -171,6 +177,12 @@ export default function Navbar({ data }: NavbarProps) {
         {/* Mobile Nav */}
         <AnimatePresence>
           {isMobileMenuOpen && (
+            <>
+            <div
+              className="fixed inset-0 z-[49]"
+              onClick={() => setIsMobileMenuOpen(false)}
+              aria-hidden="true"
+            />
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -222,6 +234,7 @@ export default function Navbar({ data }: NavbarProps) {
                 </div>
               </div>
             </motion.div>
+          </>
           )}
         </AnimatePresence>
       </nav>
