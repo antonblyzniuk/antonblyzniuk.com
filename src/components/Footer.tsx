@@ -15,7 +15,7 @@ export default function Footer({ data }: FooterProps) {
     <footer className="py-20 border-t border-primary/10 relative overflow-hidden">
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-6xl mx-auto">
-          <div className="terminal-window bg-secondary/20 border-primary/10 p-8 md:p-12">
+          <div className="terminal-window bg-secondary/20 border-primary/10 p-5 sm:p-8 md:p-12">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
               <div className="space-y-6">
                 <div className="flex items-center gap-2 font-mono text-sm text-primary mb-4">
@@ -28,7 +28,7 @@ export default function Footer({ data }: FooterProps) {
                 <div className="text-muted-foreground font-mono text-sm leading-relaxed">
                   <Typewriter text="System is ready for new project requests or collaborative inquiries. Response latency: < 24 hours." speed={20} delay={500} />
                 </div>
-                <div className="flex gap-4">
+                <div className="flex flex-wrap gap-4">
                   {data.links.map((link, i) => (
                     <Button
                       key={i}
@@ -83,7 +83,7 @@ export default function Footer({ data }: FooterProps) {
               </div>
             </div>
 
-            <div className="mt-16 pt-8 border-t border-primary/10 flex flex-col md:flex-row items-center justify-between gap-6 font-mono text-[10px] text-muted-foreground uppercase tracking-widest">
+            <div className="mt-16 pt-8 border-t border-primary/10 flex flex-wrap items-center justify-between gap-6 font-mono text-[10px] text-muted-foreground uppercase tracking-widest">
               <div className="flex items-center gap-2">
                 <Terminal className="w-3 h-3" />
                 <span>© {currentYear} antonblyzniuk.com — ALL_RIGHTS_RESERVED</span>

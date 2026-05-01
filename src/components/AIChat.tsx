@@ -206,14 +206,14 @@ export default function AIChat({ data }: AIChatProps) {
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
-                className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary"
+                className="rounded-md p-2.5 text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary min-h-[44px] min-w-[44px] flex items-center justify-center"
                 aria-label="Close AI chat"
               >
                 <X className="h-4 w-4" />
               </button>
             </div>
 
-            <div className="max-h-[360px] min-h-[180px] space-y-3 overflow-y-auto px-4 py-4">
+            <div className="max-h-[min(360px,calc(100dvh-190px))] min-h-[180px] space-y-3 overflow-y-auto px-4 py-4">
               {messages.map((message, index) => (
                 <div
                   key={`${message.role}-${index}`}
@@ -303,7 +303,7 @@ export default function AIChat({ data }: AIChatProps) {
         aria-label="Open AI chat"
       >
         <MessageCircle className="h-5 w-5" />
-        AI chat
+        <span className="hidden sm:inline">AI chat</span>
       </Button>
     </div>
   );

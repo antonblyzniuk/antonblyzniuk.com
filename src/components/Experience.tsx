@@ -13,16 +13,16 @@ export default function Experience({ data }: ExperienceProps) {
     <section id="experience" className="py-20 scroll-mt-20">
       <div className="max-w-6xl mx-auto">
         <div className="mb-12">
-          <div className="flex items-center gap-2 mb-4 font-mono text-sm">
-            <span className="text-primary">root@portfolio:</span>
-            <span className="text-accent">~</span>
-            <span className="text-foreground">$ <Typewriter text="journalctl --unit=career --no-pager" speed={50} /></span>
+          <div className="flex items-center gap-2 mb-4 font-mono text-xs sm:text-sm overflow-hidden">
+            <span className="text-primary shrink-0">root@portfolio:</span>
+            <span className="text-accent shrink-0">~</span>
+            <span className="text-foreground truncate">$ <Typewriter text="journalctl --unit=career --no-pager" speed={50} /></span>
           </div>
           <motion.h2
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-4xl md:text-5xl font-bold tracking-tight text-glow"
+            className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-glow"
           >
             System Logs: Career & Education
           </motion.h2>
@@ -53,7 +53,7 @@ export default function Experience({ data }: ExperienceProps) {
                     
                     <div className="flex-1 pt-1 ml-10">
                       <div className="bg-secondary/20 p-5 rounded-lg border border-primary/5 hover:border-primary/20 transition-all group-hover:bg-secondary/30">
-                        <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+                        <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
                           <h4 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors">
                             <Typewriter text={exp.name} speed={50} delay={500 + i * 200} />
                           </h4>
@@ -61,6 +61,9 @@ export default function Experience({ data }: ExperienceProps) {
                             {exp.from_date} — {exp.to_date}
                           </Badge>
                         </div>
+                        {exp.organization && (
+                          <div className="text-sm text-accent font-mono mb-3">{exp.organization}</div>
+                        )}
                         <div className="text-sm text-muted-foreground leading-relaxed font-mono">
                           <span className="text-accent mr-2">{">>"}</span>
                           <Typewriter text={exp.description} speed={10} delay={1000 + i * 300} />
@@ -97,7 +100,7 @@ export default function Experience({ data }: ExperienceProps) {
                     
                     <div className="flex-1 pt-1 ml-10">
                       <div className="bg-secondary/20 p-5 rounded-lg border border-accent/5 hover:border-accent/20 transition-all group-hover:bg-secondary/30">
-                        <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+                        <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
                           <h4 className="text-lg font-bold text-foreground group-hover:text-accent transition-colors">
                             <Typewriter text={edu.name} speed={50} delay={500 + i * 200} />
                           </h4>
@@ -105,6 +108,11 @@ export default function Experience({ data }: ExperienceProps) {
                             {edu.from_date} — {edu.to_date}
                           </Badge>
                         </div>
+                        {(edu.degree || edu.field_of_study) && (
+                          <div className="text-sm text-primary font-mono mb-3">
+                            {[edu.degree, edu.field_of_study].filter(Boolean).join(" · ")}
+                          </div>
+                        )}
                         <div className="text-sm text-muted-foreground leading-relaxed font-mono">
                           <span className="text-primary mr-2">#</span>
                           <Typewriter text={edu.description} speed={10} delay={1000 + i * 300} />

@@ -11,14 +11,16 @@ interface GalleryProps {
 export default function Gallery({ data }: GalleryProps) {
   const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
 
+  if (data.photos.length === 0) return null;
+
   return (
     <section id="gallery" className="py-20 scroll-mt-20">
       <div className="max-w-6xl mx-auto">
         <div className="mb-12">
-        <div className="flex items-center gap-2 mb-4 font-mono text-sm">
-          <span className="text-primary">root@portfolio:</span>
-          <span className="text-accent">~</span>
-          <span className="text-foreground">$ <Typewriter text="view ./gallery/*.jpg" speed={50} /></span>
+        <div className="flex items-center gap-2 mb-4 font-mono text-xs sm:text-sm overflow-hidden">
+          <span className="text-primary shrink-0">root@portfolio:</span>
+          <span className="text-accent shrink-0">~</span>
+          <span className="text-foreground truncate">$ <Typewriter text="view ./gallery/*.jpg" speed={50} /></span>
         </div>
         <motion.h2
           initial={{ opacity: 0, y: 10 }}
@@ -30,7 +32,7 @@ export default function Gallery({ data }: GalleryProps) {
         </motion.h2>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
         {data.photos.map((photo, i) => (
           <motion.div
             key={i}
@@ -94,24 +96,25 @@ export default function Gallery({ data }: GalleryProps) {
                 </div>
                 <button
                   onClick={() => setSelectedPhoto(null)}
-                  className="p-1.5 rounded-md hover:bg-primary/10 text-muted-foreground hover:text-primary transition-colors"
+                  className="p-2.5 rounded-md hover:bg-primary/10 text-muted-foreground hover:text-primary transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
+                  aria-label="Close image"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
-              <div className="relative overflow-hidden bg-black/20 flex items-center justify-center">
+              <div className="relative overflow-hidden bg-black/20 flex items-center justify-center max-h-[75vh]">
                 <img
                   src={selectedPhoto}
                   alt="Fullscreen"
-                  className="w-full h-full object-contain max-h-[75vh]"
+                  className="w-full max-h-[75vh] object-contain"
                   referrerPolicy="no-referrer"
                 />
               </div>
 
               <div className="p-4 bg-secondary/80 border-t border-primary/10 flex flex-wrap items-center justify-between gap-4 font-mono text-[10px] text-muted-foreground uppercase tracking-widest">
                 <div className="flex items-center gap-4">
-                  <span className="text-primary">FILE: {selectedPhoto.split('/').pop()}</span>
+                  <span className="text-primary truncate max-w-[40vw]">FILE: {selectedPhoto.split('/').pop()}</span>
                   <span className="hidden sm:inline">TYPE: IMAGE/JPEG</span>
                 </div>
                 <div className="flex items-center gap-4">

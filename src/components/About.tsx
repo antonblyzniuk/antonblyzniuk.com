@@ -12,10 +12,10 @@ export default function About({ data }: AboutProps) {
     <section id="about" className="py-20 scroll-mt-20">
       <div className="max-w-6xl mx-auto">
         <div className="mb-12">
-          <div className="flex items-center gap-2 mb-4 font-mono text-sm">
-            <span className="text-primary">root@portfolio:</span>
-            <span className="text-accent">~</span>
-            <span className="text-foreground">$ <Typewriter text="cat profile_summary" speed={50} /></span>
+          <div className="flex items-center gap-2 mb-4 font-mono text-xs sm:text-sm overflow-hidden">
+            <span className="text-primary shrink-0">root@portfolio:</span>
+            <span className="text-accent shrink-0">~</span>
+            <span className="text-foreground truncate">$ <Typewriter text="cat profile_summary" speed={50} /></span>
           </div>
           <motion.h2
             initial={{ opacity: 0, y: 10 }}
@@ -29,7 +29,7 @@ export default function About({ data }: AboutProps) {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
           <div className="lg:col-span-2 space-y-6">
-            <div className="terminal-window bg-secondary/20 p-8 border-primary/10">
+            <div className="terminal-window bg-secondary/20 p-4 sm:p-8 border-primary/10">
               <div className="text-lg text-muted-foreground leading-relaxed font-mono">
                 <span className="text-primary mr-2">#</span>
                 {data.about}
@@ -46,7 +46,7 @@ export default function About({ data }: AboutProps) {
               <div className="space-y-4 font-mono text-sm">
                 <div className="flex justify-between items-center py-2 border-b border-primary/5">
                   <span className="text-muted-foreground">USER</span>
-                  <span className="text-primary">{data.frist_name.toLowerCase()}</span>
+                  <span className="text-primary truncate max-w-[60%]">{data.first_name.toLowerCase()}</span>
                 </div>
                 <div className="flex justify-between items-center py-2 border-b border-primary/5">
                   <span className="text-muted-foreground">UPTIME</span>
