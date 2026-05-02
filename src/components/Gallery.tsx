@@ -1,150 +1,138 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { CVData } from "../types";
-import { Terminal, Image as ImageIcon, Search, ChevronRight, X, Maximize2 } from "lucide-react";
-import Typewriter from "./Typewriter";
+import { Image as ImageIcon, X, Maximize2 } from "lucide-react";
 
-interface GalleryProps {
-  data: CVData;
-}
-
-export default function Gallery({ data }: GalleryProps) {
-  const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
-
+export default function Gallery({ data }: { data: CVData }) {
+  const [selected, setSelected] = useState<string | null>(null);
   if (data.photos.length === 0) return null;
 
   return (
-    <section id="gallery" className="py-20 scroll-mt-20">
-      <div className="max-w-6xl mx-auto">
-        <div className="mb-12">
-        <div className="flex items-center gap-2 mb-4 font-mono text-xs sm:text-sm overflow-hidden">
-          <span className="text-primary shrink-0">root@portfolio:</span>
-          <span className="text-accent shrink-0">~</span>
-          <span className="text-foreground truncate">$ <Typewriter text="view ./gallery/*.jpg" speed={50} /></span>
-        </div>
-        <motion.h2
-          initial={{ opacity: 0, y: 10 }}
+    <section id="gallery" className="py-24 scroll-mt-24 relative overflow-x-hidden">
+      <div className="max-w-6xl mx-auto relative z-10">
+        {/* Section header */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-4xl md:text-5xl font-bold tracking-tight text-glow"
+          className="mb-14"
         >
-          Photo Stream
-        </motion.h2>
-      </div>
-
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-        {data.photos.map((photo, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: i * 0.05 }}
-            onClick={() => setSelectedPhoto(photo.image)}
-            className="terminal-window bg-secondary/20 border-primary/10 overflow-hidden group hover:border-primary/30 transition-all aspect-square relative cursor-pointer"
+          <div className="section-eyebrow mb-5">
+            <div className="h-px flex-1 max-w-[48px] bg-gradient-to-r from-transparent to-primary/25" />
+            <span>gallery</span>
+            <div className="h-px w-6 bg-primary/20" />
+          </div>
+          <h2
+            className="font-display font-black tracking-tight leading-[0.86]"
+            style={{ fontSize: "clamp(3rem, 8vw, 7rem)" }}
           >
-            <img
-              src={photo.image}
-              alt="Gallery"
-              className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110"
-              referrerPolicy="no-referrer"
-            />
-            <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
-              <div className="p-2 rounded-xl bg-secondary border border-primary/20 transform scale-90 group-hover:scale-100 transition-transform">
-                <Maximize2 className="w-5 h-5 text-primary" />
+            <span className="block text-foreground">Photo</span>
+            <span className="block gradient-text">Stream</span>
+          </h2>
+        </motion.div>
+
+        {/* Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+          {data.photos.map((photo, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.05, type: "spring", stiffness: 180, damping: 22 }}
+              whileHover={{ y: -5 }}
+              onClick={() => setSelected(photo.image)}
+              className="bento-card hover:border-primary/32 overflow-hidden group aspect-square relative cursor-pointer transition-all duration-300 hover:shadow-[0_20px_56px_rgba(0,0,0,0.6),0_0_36px_rgba(180,190,254,0.09)]"
+            >
+              <img
+                src={photo.image}
+                alt="Gallery"
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.1]"
+                referrerPolicy="no-referrer"
+              />
+              <div className="absolute inset-0 bg-background/38 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
+                <div className="p-3 rounded-xl glass border border-primary/30 translate-y-3 group-hover:translate-y-0 transition-transform duration-300 shadow-[0_0_24px_rgba(180,190,254,0.22)]">
+                  <Maximize2 className="w-5 h-5 text-primary" />
+                </div>
               </div>
-            </div>
-            {photo.is_main && (
-              <div className="absolute top-2 right-2 px-2 py-0.5 bg-primary text-secondary font-mono text-[8px] uppercase tracking-widest rounded-none">
-                Main_Asset
-              </div>
-            )}
-          </motion.div>
-        ))}
+              {photo.is_main && (
+                <div className="absolute top-2 right-2 px-2 py-0.5 bg-primary/90 text-background font-mono text-[8px] uppercase tracking-widest rounded-md">
+                  Main
+                </div>
+              )}
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Status */}
+        <div className="mt-8 pt-5 border-t border-primary/7 flex items-center justify-between font-mono text-[10px] text-muted-foreground/40 uppercase tracking-widest">
+          <span className="flex items-center gap-2">
+            <ImageIcon className="w-3 h-3" />
+            {data.photos.length} assets loaded
+          </span>
+          <span className="flex items-center gap-1.5 text-emerald-400/60">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+            buffer ready
+          </span>
+        </div>
       </div>
 
-      {/* Fullscreen Lightbox */}
+      {/* Lightbox */}
       <AnimatePresence>
-        {selectedPhoto && (
+        {selected && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-10 bg-background/95 backdrop-blur-xl"
-            onClick={() => setSelectedPhoto(null)}
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-10 bg-background/94 backdrop-blur-2xl"
+            onClick={() => setSelected(null)}
           >
             <motion.div
-              initial={{ opacity: 0, scale: 0.97, y: 20 }}
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.97, y: 20 }}
-              transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              className="relative max-w-6xl w-full max-h-full terminal-window overflow-hidden bg-secondary/40 border-primary/30 shadow-2xl"
+              exit={{ opacity: 0, scale: 0.92, y: 16 }}
+              transition={{ type: "spring", stiffness: 280, damping: 28 }}
+              className="relative max-w-6xl w-full bento-card overflow-hidden border-primary/22 shadow-[0_40px_120px_rgba(0,0,0,0.88)]"
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Modal Header - Matching Projects */}
-              <div className="bg-secondary/80 border-b border-primary/10 px-4 py-3 flex items-center justify-between">
-                <div className="flex items-center gap-4">
+              <div className="px-5 py-3 border-b border-primary/10 flex items-center justify-between">
+                <div className="flex items-center gap-3">
                   <div className="flex gap-1.5">
                     <div className="w-3 h-3 rounded-full bg-destructive/60" />
                     <div className="w-3 h-3 rounded-full bg-accent/60" />
                     <div className="w-3 h-3 rounded-full bg-primary/60" />
                   </div>
-                  <div className="text-xs font-mono text-muted-foreground uppercase tracking-widest flex items-center gap-2">
+                  <span className="text-xs font-mono text-muted-foreground uppercase tracking-widest flex items-center gap-2">
                     <ImageIcon className="w-3.5 h-3.5" />
                     Image_Inspector
-                  </div>
+                  </span>
                 </div>
                 <button
-                  onClick={() => setSelectedPhoto(null)}
-                  className="p-2.5 rounded-md hover:bg-primary/10 text-muted-foreground hover:text-primary transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
-                  aria-label="Close image"
+                  onClick={() => setSelected(null)}
+                  className="p-2.5 rounded-xl hover:bg-primary/10 text-muted-foreground hover:text-primary transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
+                  aria-label="Close"
                 >
-                  <X className="w-5 h-5" />
+                  <X className="w-4 h-4" />
                 </button>
               </div>
-
-              <div className="relative overflow-hidden bg-black/20 flex items-center justify-center max-h-[75vh]">
+              <div className="relative bg-black/20 flex items-center justify-center max-h-[75vh]">
                 <img
-                  src={selectedPhoto}
+                  src={selected}
                   alt="Fullscreen"
                   className="w-full max-h-[75vh] object-contain"
                   referrerPolicy="no-referrer"
                 />
               </div>
-
-              <div className="p-4 bg-secondary/80 border-t border-primary/10 flex flex-wrap items-center justify-between gap-4 font-mono text-[10px] text-muted-foreground uppercase tracking-widest">
-                <div className="flex items-center gap-4">
-                  <span className="text-primary truncate max-w-[40vw]">FILE: {selectedPhoto.split('/').pop()}</span>
-                  <span className="hidden sm:inline">TYPE: IMAGE/JPEG</span>
-                </div>
-                <div className="flex items-center gap-4">
-                  <span className="hidden sm:inline">ZOOM: 100%</span>
-                  <span className="text-accent">STATUS: RENDERED</span>
-                </div>
+              <div className="px-5 py-2.5 border-t border-primary/8 flex items-center justify-between font-mono text-[10px] text-muted-foreground/45">
+                <span className="text-primary/45 truncate max-w-[50vw]">
+                  FILE: {selected.split("/").pop()}
+                </span>
+                <span className="text-primary font-bold tracking-widest">READY_</span>
               </div>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Terminal Status Line */}
-      <div className="mt-8 pt-4 border-t border-primary/5 flex items-center justify-between font-mono text-[10px] text-muted-foreground uppercase tracking-widest">
-        <div className="flex items-center gap-4">
-          <span className="flex items-center gap-1.5">
-            <ImageIcon className="w-3 h-3" />
-            {data.photos.length} Assets Loaded
-          </span>
-          <span className="flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-            Buffer Ready
-          </span>
-        </div>
-        <div className="flex items-center gap-4">
-          <span>1920x1080</span>
-          <span>SRGB</span>
-        </div>
-      </div>
-    </div>
-  </section>
+    </section>
   );
 }

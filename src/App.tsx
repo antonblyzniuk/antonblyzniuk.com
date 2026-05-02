@@ -15,6 +15,7 @@ import Gallery from "./components/Gallery";
 import Footer from "./components/Footer";
 import FallingNumbers from "./components/FallingNumbers";
 import AIChat from "./components/AIChat";
+import CustomCursor from "./components/CustomCursor";
 import { TooltipProvider } from "./components/ui/tooltip";
 
 const ADMIN_SEQUENCE = ["ArrowDown", "ArrowDown", "ArrowUp", "ArrowUp"];
@@ -94,9 +95,10 @@ export default function App() {
 
   return (
     <TooltipProvider>
+      <CustomCursor />
       <FallingNumbers />
       <div className="scanline" />
-      <div className="min-h-screen text-foreground font-sans selection:bg-primary/30 selection:text-primary relative z-[2]">
+      <div className="min-h-screen text-foreground font-sans selection:bg-primary/30 selection:text-primary relative z-[2] md:cursor-none">
         <Navbar data={data} />
 
         <main className="container mx-auto px-4 sm:px-6 lg:px-8">

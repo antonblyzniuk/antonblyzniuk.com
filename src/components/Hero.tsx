@@ -9,7 +9,7 @@ export default function Hero({ data }: { data: CVData }) {
 
   const getIcon = (name: string) => {
     const n = name.toLowerCase();
-    if (n.includes("github")) return <Github className="w-4 h-4" />;
+    if (n.includes("github"))   return <Github   className="w-4 h-4" />;
     if (n.includes("linkedin")) return <Linkedin className="w-4 h-4" />;
     if (n.includes("mail") || n.includes("email")) return <Mail className="w-4 h-4" />;
     return <Globe className="w-4 h-4" />;
@@ -17,77 +17,139 @@ export default function Hero({ data }: { data: CVData }) {
 
   return (
     <section className="min-h-screen pt-28 pb-20 flex flex-col justify-center relative overflow-hidden">
-      {/* Dot-grid, fades toward edges */}
+
+      {/* ── Aurora background ── */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden -z-10">
+        <div
+          className="aurora-blob"
+          style={{
+            width: "900px", height: "900px",
+            background: "radial-gradient(circle, rgba(180,190,254,0.15) 0%, transparent 70%)",
+            top: "-300px", left: "-250px",
+            animation: "aurora-1 24s ease-in-out infinite",
+          }}
+        />
+        <div
+          className="aurora-blob"
+          style={{
+            width: "700px", height: "700px",
+            background: "radial-gradient(circle, rgba(203,166,247,0.12) 0%, transparent 70%)",
+            top: "20%", right: "-200px",
+            animation: "aurora-2 30s ease-in-out infinite",
+          }}
+        />
+        <div
+          className="aurora-blob"
+          style={{
+            width: "550px", height: "550px",
+            background: "radial-gradient(circle, rgba(250,179,135,0.09) 0%, transparent 70%)",
+            bottom: "-100px", left: "25%",
+            animation: "aurora-3 20s ease-in-out infinite",
+          }}
+        />
+        <div
+          className="aurora-blob"
+          style={{
+            width: "450px", height: "450px",
+            background: "radial-gradient(circle, rgba(137,220,235,0.08) 0%, transparent 70%)",
+            top: "55%", left: "5%",
+            animation: "aurora-4 27s ease-in-out infinite",
+          }}
+        />
+      </div>
+
+      {/* ── Dot grid ── */}
       <div
         className="absolute inset-0 dot-grid pointer-events-none"
         style={{
-          maskImage: "radial-gradient(ellipse 85% 85% at 50% 50%, black 20%, transparent 90%)",
-          WebkitMaskImage: "radial-gradient(ellipse 85% 85% at 50% 50%, black 20%, transparent 90%)",
-          opacity: 0.5,
+          maskImage: "radial-gradient(ellipse 80% 80% at 50% 50%, black 15%, transparent 82%)",
+          WebkitMaskImage: "radial-gradient(ellipse 80% 80% at 50% 50%, black 15%, transparent 82%)",
+          opacity: 0.35,
         }}
       />
 
-      {/* Ambient blobs */}
-      <div className="absolute top-1/4 -left-48 w-[700px] h-[700px] bg-primary/5 rounded-full blur-[140px] pointer-events-none -z-10" />
-      <div className="absolute bottom-1/4 -right-48 w-[600px] h-[600px] bg-accent/4 rounded-full blur-[140px] pointer-events-none -z-10" />
-
       <div className="container max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] xl:grid-cols-[1fr_400px] gap-12 lg:gap-20 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] xl:grid-cols-[1fr_420px] gap-12 lg:gap-20 items-center">
 
           {/* ── Left: Content ── */}
           <div className="space-y-8 order-2 lg:order-1">
 
             {/* Terminal prompt */}
             <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="flex items-center gap-2 font-mono text-sm text-primary"
+              initial={{ opacity: 0, x: -24 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
+              className="flex items-center gap-2 font-mono text-sm text-primary/70"
             >
-              <ChevronRight className="w-4 h-4 shrink-0" />
-              <Typewriter text="whoami --verbose" speed={80} />
+              <span className="text-primary/35">~/</span>
+              <Typewriter text="whoami --verbose" speed={70} />
+              <motion.span
+                animate={{ opacity: [1, 0, 1] }}
+                transition={{ duration: 1.1, repeat: Infinity }}
+                className="inline-block w-[7px] h-[15px] bg-primary/60 ml-0.5"
+              />
             </motion.div>
 
-            {/* Name — MASSIVE */}
-            <motion.h1
-              initial={{ opacity: 0, y: 28 }}
+            {/* Name — MASSIVE, Space Grotesk */}
+            <motion.div
+              initial={{ opacity: 0, y: 36 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.15 }}
-              className="font-black tracking-tighter leading-[0.86]"
-              style={{ fontSize: "clamp(3.2rem, 10.5vw, 9rem)" }}
+              transition={{ delay: 0.1, type: "spring", stiffness: 55, damping: 14 }}
             >
-              <span className="block text-foreground">{data.first_name.toUpperCase()}</span>
-              <span className="block gradient-text">{data.last_name.toUpperCase()}</span>
-            </motion.h1>
+              <h1
+                className="font-display font-black tracking-tighter leading-[0.84]"
+                style={{ fontSize: "clamp(3.6rem, 11.5vw, 10.5rem)" }}
+              >
+                <span className="block text-foreground glitch-hover">{data.first_name.toUpperCase()}</span>
+                <span className="block gradient-text text-glow">{data.last_name.toUpperCase()}</span>
+              </h1>
+            </motion.div>
 
             {/* Profession + meta chips */}
             <motion.div
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.32 }}
               className="flex flex-wrap items-center gap-2.5"
             >
-              <div className="flex items-center gap-2.5 px-4 py-2.5 glass rounded-xl border border-primary/15 shadow-lg">
+              <div
+                className="relative flex items-center gap-2.5 px-4 py-2.5 rounded-xl border border-primary/18 overflow-hidden group cursor-default"
+                style={{ background: "rgba(180,190,254,0.05)" }}
+              >
+                {/* Shimmer sweep on hover */}
+                <span className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/6 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 pointer-events-none" />
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-                <Typewriter text={data.profession} delay={700} speed={35} className="font-mono text-sm text-foreground/90" />
+                <Typewriter
+                  text={data.profession}
+                  delay={700}
+                  speed={30}
+                  className="font-mono text-sm text-foreground/90 relative z-10"
+                />
               </div>
               {data.location && (
-                <div className="flex items-center gap-1.5 px-3 py-2.5 glass rounded-xl border border-primary/10 font-mono text-xs text-muted-foreground">
-                  <MapPin className="w-3 h-3 text-primary/60 shrink-0" />
+                <div
+                  className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl border border-primary/10 font-mono text-xs text-muted-foreground"
+                  style={{ background: "rgba(8,8,16,0.6)" }}
+                >
+                  <MapPin className="w-3 h-3 text-primary/50 shrink-0" />
                   {data.location}
                 </div>
               )}
               {data.phone && (
-                <div className="flex items-center gap-1.5 px-3 py-2.5 glass rounded-xl border border-accent/10 font-mono text-xs text-muted-foreground">
-                  <Phone className="w-3 h-3 text-accent/60 shrink-0" />
+                <div
+                  className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl border border-accent/15 font-mono text-xs text-muted-foreground"
+                  style={{ background: "rgba(8,8,16,0.6)" }}
+                >
+                  <Phone className="w-3 h-3 text-accent/50 shrink-0" />
                   {data.phone}
                 </div>
               )}
             </motion.div>
 
-            {/* Social links + resume CTA */}
+            {/* Social links + resume */}
             {data.links.length > 0 && (
               <motion.div
-                initial={{ opacity: 0, y: 10 }}
+                initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5 }}
                 className="flex flex-wrap gap-2.5"
@@ -98,15 +160,17 @@ export default function Hero({ data }: { data: CVData }) {
                     href={link.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    initial={{ opacity: 0, scale: 0.9 }}
+                    initial={{ opacity: 0, scale: 0.85 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.65 + i * 0.07 }}
-                    whileHover={{ y: -3 }}
-                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl glass border border-primary/15 hover:border-primary/45 hover:bg-primary/8 transition-all duration-200 font-mono text-sm text-muted-foreground hover:text-primary group"
+                    transition={{ delay: 0.62 + i * 0.07, type: "spring", stiffness: 280 }}
+                    whileHover={{ y: -4, scale: 1.04 }}
+                    whileTap={{ scale: 0.97 }}
+                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-primary/14 hover:border-primary/45 hover:bg-primary/8 transition-colors duration-200 font-mono text-sm text-muted-foreground hover:text-primary group"
+                    style={{ background: "rgba(8,8,16,0.55)" }}
                   >
                     {getIcon(link.name)}
                     <span>{link.name}</span>
-                    <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-60 transition-opacity" />
+                    <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-55 transition-opacity" />
                   </motion.a>
                 ))}
                 {data.pdf_resume && (
@@ -115,15 +179,21 @@ export default function Hero({ data }: { data: CVData }) {
                     target="_blank"
                     rel="noopener noreferrer"
                     download
-                    initial={{ opacity: 0, scale: 0.9 }}
+                    initial={{ opacity: 0, scale: 0.85 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.65 + data.links.length * 0.07 }}
-                    whileHover={{ y: -3 }}
+                    transition={{ delay: 0.62 + data.links.length * 0.07, type: "spring", stiffness: 280 }}
+                    whileHover={{ y: -4, scale: 1.04 }}
+                    whileTap={{ scale: 0.97 }}
                     onClick={() => sendTelegramNotification("CV Downloaded")}
-                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary/15 border border-primary/40 hover:bg-primary/25 hover:border-primary/65 transition-all font-mono text-sm text-primary font-semibold shadow-[0_0_24px_rgba(180,190,254,0.15)]"
+                    className="relative flex items-center gap-2 px-4 py-2.5 rounded-xl border border-primary/38 font-mono text-sm text-primary font-semibold overflow-hidden group"
+                    style={{
+                      background: "rgba(180,190,254,0.1)",
+                      boxShadow: "0 0 28px rgba(180,190,254,0.12)",
+                    }}
                   >
-                    <Download className="w-3.5 h-3.5" />
-                    Resume.pdf
+                    <span className="absolute inset-0 bg-primary/8 -translate-x-full group-hover:translate-x-0 transition-transform duration-300 pointer-events-none" />
+                    <Download className="w-3.5 h-3.5 relative z-10" />
+                    <span className="relative z-10">Resume.pdf</span>
                   </motion.a>
                 )}
               </motion.div>
@@ -133,10 +203,10 @@ export default function Hero({ data }: { data: CVData }) {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 1 }}
-              className="flex flex-wrap items-center gap-6 font-mono text-[11px] text-muted-foreground/55 pt-4 border-t border-primary/8"
+              transition={{ delay: 0.95 }}
+              className="flex flex-wrap items-center gap-5 font-mono text-[11px] text-muted-foreground/45 pt-5 border-t border-primary/7"
             >
-              <span className="flex items-center gap-1.5 text-emerald-400/90">
+              <span className="flex items-center gap-1.5 text-emerald-400/85">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                 AVAILABLE
               </span>
@@ -145,65 +215,112 @@ export default function Hero({ data }: { data: CVData }) {
                 REMOTE
               </span>
               <span className="hidden sm:flex items-center gap-1.5">
-                <Mail className="w-3 h-3 text-primary/40" />
+                <Mail className="w-3 h-3 text-primary/38" />
                 {data.email}
               </span>
-              <span className="ml-auto text-primary font-bold tracking-widest">READY_</span>
+              <span className="ml-auto text-primary font-bold tracking-widest text-shimmer">READY_</span>
             </motion.div>
           </div>
 
           {/* ── Right: Photo ── */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.85 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2, type: "spring", stiffness: 90, damping: 18 }}
+            initial={{ opacity: 0, scale: 0.8, y: 24 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ delay: 0.18, type: "spring", stiffness: 65, damping: 17 }}
             className="flex justify-center lg:justify-end order-1 lg:order-2"
           >
             <div className="relative">
-              {/* Spinning conic gradient ring */}
+              {/* Outer pulsing aura */}
               <div
-                className="absolute -inset-[4px] rounded-2xl z-0"
+                className="absolute -inset-10 rounded-3xl opacity-25 blur-[80px]"
                 style={{
-                  background: "conic-gradient(from 0deg, rgba(180,190,254,0.75), rgba(203,166,247,0.65), rgba(250,179,135,0.65), rgba(137,180,250,0.55), rgba(180,190,254,0.75))",
-                  animation: "ring-spin 9s linear infinite",
+                  background: "conic-gradient(from 0deg, #b4befe, #cba6f7, #fab387, #89dceb, #b4befe)",
+                  animation: "ring-spin 14s linear infinite",
+                }}
+              />
+              {/* Secondary pulse ring */}
+              <div
+                className="absolute -inset-6 rounded-3xl opacity-15 blur-[40px]"
+                style={{
+                  background: "conic-gradient(from 180deg, #cba6f7, #b4befe, #89dceb, #cba6f7)",
+                  animation: "ring-spin 9s linear infinite reverse",
+                }}
+              />
+
+              {/* Spinning gradient ring */}
+              <div
+                className="absolute -inset-[5px] rounded-2xl z-0"
+                style={{
+                  background: "conic-gradient(from 0deg, #b4befe, #cba6f7, #fab387, #89dceb, #a6e3a1, #b4befe)",
+                  animation: "ring-spin 7s linear infinite",
                   filter: "blur(3px)",
                 }}
               />
               {/* Gap layer */}
-              <div className="absolute -inset-[3px] rounded-2xl bg-background z-0" />
+              <div
+                className="absolute -inset-[4px] rounded-2xl z-0"
+                style={{ background: "var(--color-background)" }}
+              />
 
-              {/* Photo box */}
-              <div className="relative z-10 w-64 h-64 sm:w-[290px] sm:h-[290px] lg:w-[320px] lg:h-[320px] rounded-2xl overflow-hidden shadow-[0_0_80px_rgba(180,190,254,0.18),0_40px_100px_rgba(0,0,0,0.65)] group">
+              {/* Photo */}
+              <div className="relative z-10 w-[260px] h-[260px] sm:w-[300px] sm:h-[300px] lg:w-[340px] lg:h-[340px] rounded-2xl overflow-hidden group"
+                style={{ boxShadow: "0 0 100px rgba(180,190,254,0.2), 0 40px 120px rgba(0,0,0,0.85)" }}
+              >
                 <img
                   src={mainPhoto || "https://picsum.photos/seed/profile/400/400"}
                   alt={`${data.first_name} ${data.last_name}`}
-                  className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105 group-hover:brightness-110"
+                  className="w-full h-full object-cover transition-all duration-700 group-hover:scale-[1.07] group-hover:brightness-110"
                   referrerPolicy="no-referrer"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-background/35 via-transparent to-transparent" />
-                <div className="absolute inset-0 bg-[repeating-linear-gradient(0deg,transparent,transparent_3px,rgba(0,0,0,0.03)_3px,rgba(0,0,0,0.03)_4px)] pointer-events-none opacity-40" />
+                <div className="absolute inset-0 bg-gradient-to-t from-background/45 via-transparent to-transparent" />
               </div>
 
               {/* ONLINE badge */}
               <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.85 }}
-                className="absolute -bottom-5 left-1/2 -translate-x-1/2 px-4 py-1.5 glass rounded-full border border-emerald-400/25 font-mono text-[10px] text-emerald-400 flex items-center gap-1.5 whitespace-nowrap shadow-xl z-20"
+                initial={{ opacity: 0, y: 12, scale: 0.8 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ delay: 1.1, type: "spring", stiffness: 300 }}
+                className="absolute -bottom-5 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full border border-emerald-400/25 font-mono text-[10px] text-emerald-400 flex items-center gap-1.5 whitespace-nowrap z-20"
+                style={{
+                  background: "rgba(8,8,16,0.88)",
+                  backdropFilter: "blur(12px)",
+                  boxShadow: "0 4px 24px rgba(74,222,128,0.15)",
+                }}
               >
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                 ONLINE
               </motion.div>
 
               {/* Corner brackets */}
-              <div className="absolute -top-3 -left-3 w-6 h-6 border-t-2 border-l-2 border-primary/55 z-20 pointer-events-none" />
-              <div className="absolute -top-3 -right-3 w-6 h-6 border-t-2 border-r-2 border-primary/55 z-20 pointer-events-none" />
-              <div className="absolute -bottom-3 -left-3 w-6 h-6 border-b-2 border-l-2 border-primary/55 z-20 pointer-events-none" />
-              <div className="absolute -bottom-3 -right-3 w-6 h-6 border-b-2 border-r-2 border-primary/55 z-20 pointer-events-none" />
+              {(["top-left", "top-right", "bottom-left", "bottom-right"] as const).map((pos) => (
+                <div
+                  key={pos}
+                  className={`absolute w-7 h-7 z-20 pointer-events-none ${
+                    pos === "top-left"     ? "-top-3 -left-3 border-t-2 border-l-2" :
+                    pos === "top-right"    ? "-top-3 -right-3 border-t-2 border-r-2" :
+                    pos === "bottom-left"  ? "-bottom-3 -left-3 border-b-2 border-l-2" :
+                                            "-bottom-3 -right-3 border-b-2 border-r-2"
+                  } border-primary/55`}
+                />
+              ))}
             </div>
           </motion.div>
         </div>
       </div>
+
+      {/* Scroll indicator */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 2.2 }}
+        className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 font-mono text-[10px] text-muted-foreground/35 pointer-events-none select-none"
+      >
+        <span className="tracking-widest uppercase">scroll</span>
+        <div
+          className="w-px h-8 bg-gradient-to-b from-primary/40 to-transparent"
+          style={{ animation: "bounce-y 1.8s ease-in-out infinite" }}
+        />
+      </motion.div>
     </section>
   );
 }

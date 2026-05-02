@@ -2,84 +2,88 @@ import { motion } from "motion/react";
 import { CVData } from "../types";
 import { ChevronRight, ExternalLink } from "lucide-react";
 import { Badge } from "./ui/badge";
-import Typewriter from "./Typewriter";
 
-interface CustomSectionsProps {
-  data: CVData;
-}
-
-export default function CustomSections({ data }: CustomSectionsProps) {
+export default function CustomSections({ data }: { data: CVData }) {
   if (data.custom_sections.length === 0) return null;
 
   return (
     <>
       {data.custom_sections.map((section, sIdx) => (
-        <section key={sIdx} className="py-20 scroll-mt-20">
-          <div className="max-w-6xl mx-auto">
-            <div className="mb-12">
-              <div className="flex items-center gap-2 mb-4 font-mono text-xs sm:text-sm overflow-hidden">
-                <span className="text-primary shrink-0">root@portfolio:</span>
-                <span className="text-accent shrink-0">~</span>
-                <span className="text-foreground truncate">
-                  $ <Typewriter text={`cat ./${section.title.toLowerCase().replace(/\s+/g, "_")}.log`} speed={50} />
-                </span>
+        <section key={sIdx} className="py-24 scroll-mt-24 relative overflow-x-hidden">
+          <div className="max-w-6xl mx-auto relative z-10">
+            {/* Section header */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="mb-14"
+            >
+              <div className="section-eyebrow mb-5">
+                <div className="h-px flex-1 max-w-[48px] bg-gradient-to-r from-transparent to-primary/25" />
+                <span>{section.title.toLowerCase()}</span>
+                <div className="h-px w-6 bg-primary/20" />
               </div>
-              <motion.h2
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-glow"
+              <h2
+                className="font-display font-black tracking-tight leading-[0.86]"
+                style={{ fontSize: "clamp(3rem, 8vw, 7rem)" }}
               >
-                {section.title}
-              </motion.h2>
-            </div>
+                <span className="block gradient-text">{section.title}</span>
+              </h2>
+            </motion.div>
 
-            <div className="relative space-y-8 before:absolute before:inset-0 before:ml-5 before:-translate-x-px before:h-full before:w-0.5 before:bg-gradient-to-b before:from-primary/50 before:via-primary/20 before:to-transparent max-w-3xl">
+            <div className="relative space-y-5 before:absolute before:inset-0 before:ml-[19px] before:h-full before:w-px before:bg-gradient-to-b before:from-primary/45 before:via-primary/10 before:to-transparent max-w-3xl">
               {section.items.map((item, i) => (
                 <motion.div
                   key={i}
-                  initial={{ opacity: 0, x: -20 }}
+                  initial={{ opacity: 0, x: -18 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
-                  className="relative flex items-start gap-6 group"
+                  transition={{ delay: i * 0.08, type: "spring", stiffness: 110, damping: 20 }}
+                  className="relative flex items-start gap-5 group"
                 >
-                  <div className="absolute left-0 w-10 h-10 rounded-xl bg-secondary border border-primary/20 flex items-center justify-center z-10 group-hover:border-primary/50 transition-colors shadow-[0_0_15px_rgba(158,206,106,0.1)]">
-                    <ChevronRight className="w-5 h-5 text-primary" />
+                  {/* Node */}
+                  <div className="shrink-0 w-10 h-10 z-10 relative">
+                    <div className="w-full h-full rounded-xl glass border border-primary/18 group-hover:border-primary/50 flex items-center justify-center transition-all group-hover:shadow-[0_0_20px_rgba(180,190,254,0.18)]">
+                      <ChevronRight className="w-4 h-4 text-primary" />
+                    </div>
                   </div>
-                  <div className="flex-1 pt-1 ml-10">
-                    <div className="bg-secondary/20 p-5 rounded-lg border border-primary/5 hover:border-primary/20 transition-all group-hover:bg-secondary/30">
-                      <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
-                        <h4 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors">
-                          <Typewriter text={item.title} speed={50} delay={500 + i * 200} />
-                        </h4>
-                        {(item.from_date || item.to_date) && (
-                          <Badge variant="outline" className="font-mono text-[10px] border-primary/20 text-primary">
-                            {item.from_date ?? ""}
-                            {item.to_date ? ` — ${item.to_date}` : ""}
-                          </Badge>
+
+                  {/* Card */}
+                  <div className="flex-1 min-w-0">
+                    <div className="relative bento-card hover:border-primary/22 transition-all duration-300 overflow-hidden group-hover:shadow-[0_10px_36px_rgba(0,0,0,0.45)]">
+                      <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-gradient-to-b from-primary/55 via-primary/15 to-transparent" />
+                      <div className="p-4 pl-5">
+                        <div className="flex flex-wrap items-start justify-between gap-2 mb-1.5">
+                          <h4 className="text-sm font-bold text-foreground group-hover:text-primary transition-colors leading-snug">
+                            {item.title}
+                          </h4>
+                          {(item.from_date || item.to_date) && (
+                            <Badge variant="outline" className="font-mono text-[9px] border-primary/16 text-primary/50 shrink-0 px-2">
+                              {item.from_date ?? ""}{item.to_date ? ` — ${item.to_date}` : ""}
+                            </Badge>
+                          )}
+                        </div>
+                        {item.subtitle && (
+                          <div className="text-sm text-accent font-mono mb-2">{item.subtitle}</div>
+                        )}
+                        {item.description && (
+                          <p className="text-xs text-muted-foreground/70 leading-relaxed font-mono">
+                            <span className="text-accent/45 mr-2">{">>"}</span>
+                            {item.description}
+                          </p>
+                        )}
+                        {item.url && (
+                          <a
+                            href={item.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1.5 text-xs font-mono text-primary/55 hover:text-primary transition-colors mt-2"
+                          >
+                            <ExternalLink className="w-3 h-3" />
+                            Open Link
+                          </a>
                         )}
                       </div>
-                      {item.subtitle && (
-                        <div className="text-sm text-accent font-mono mb-3">{item.subtitle}</div>
-                      )}
-                      {item.description && (
-                        <div className="text-sm text-muted-foreground leading-relaxed font-mono">
-                          <span className="text-accent mr-2">{">>"}</span>
-                          {item.description}
-                        </div>
-                      )}
-                      {item.url && (
-                        <a
-                          href={item.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 text-xs font-mono text-primary/70 hover:text-primary transition-colors mt-2"
-                        >
-                          <ExternalLink className="w-3 h-3" />
-                          Open Link
-                        </a>
-                      )}
                     </div>
                   </div>
                 </motion.div>
