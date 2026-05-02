@@ -91,6 +91,7 @@ app.get("/api/cv", async (_req: Request, res: Response) => {
       experience_units: (raw.experience_units ?? []).map((exp: any) => ({
         name: exp.title ?? "",
         organization: exp.organization ?? null,
+        location: exp.location ?? null,
         description: exp.description ?? "",
         from_date: exp.from_date ?? "",
         to_date: exp.to_date ?? "Present",
@@ -99,6 +100,7 @@ app.get("/api/cv", async (_req: Request, res: Response) => {
         name: edu.institution ?? "",
         degree: edu.degree ?? null,
         field_of_study: edu.field_of_study ?? null,
+        location: edu.location ?? null,
         description: edu.description ?? "",
         from_date: edu.from_date ?? "",
         to_date: edu.to_date ?? "Present",

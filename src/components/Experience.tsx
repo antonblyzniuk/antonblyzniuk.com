@@ -1,6 +1,6 @@
 import { motion } from "motion/react";
 import { CVData } from "../types";
-import { Terminal, Calendar, ChevronRight, GitCommitVertical } from "lucide-react";
+import { Terminal, ChevronRight, GitCommitVertical, MapPin } from "lucide-react";
 import { Badge } from "./ui/badge";
 import Typewriter from "./Typewriter";
 
@@ -61,8 +61,18 @@ export default function Experience({ data }: ExperienceProps) {
                             {exp.from_date} — {exp.to_date}
                           </Badge>
                         </div>
-                        {exp.organization && (
-                          <div className="text-sm text-accent font-mono mb-3">{exp.organization}</div>
+                        {(exp.organization || exp.location) && (
+                          <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 mb-3">
+                            {exp.organization && (
+                              <span className="text-sm text-accent font-mono">{exp.organization}</span>
+                            )}
+                            {exp.location && (
+                              <span className="flex items-center gap-1 text-xs text-muted-foreground font-mono">
+                                <MapPin className="w-3 h-3" />
+                                {exp.location}
+                              </span>
+                            )}
+                          </div>
                         )}
                         <div className="text-sm text-muted-foreground leading-relaxed font-mono">
                           <span className="text-accent mr-2">{">>"}</span>
@@ -108,9 +118,19 @@ export default function Experience({ data }: ExperienceProps) {
                             {edu.from_date} — {edu.to_date}
                           </Badge>
                         </div>
-                        {(edu.degree || edu.field_of_study) && (
-                          <div className="text-sm text-primary font-mono mb-3">
-                            {[edu.degree, edu.field_of_study].filter(Boolean).join(" · ")}
+                        {(edu.degree || edu.field_of_study || edu.location) && (
+                          <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 mb-3">
+                            {(edu.degree || edu.field_of_study) && (
+                              <span className="text-sm text-primary font-mono">
+                                {[edu.degree, edu.field_of_study].filter(Boolean).join(" · ")}
+                              </span>
+                            )}
+                            {edu.location && (
+                              <span className="flex items-center gap-1 text-xs text-muted-foreground font-mono">
+                                <MapPin className="w-3 h-3" />
+                                {edu.location}
+                              </span>
+                            )}
                           </div>
                         )}
                         <div className="text-sm text-muted-foreground leading-relaxed font-mono">
