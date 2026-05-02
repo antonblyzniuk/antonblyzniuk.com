@@ -1,6 +1,6 @@
 import { motion } from "motion/react";
 import { CVData } from "../types";
-import { Terminal, Github, Linkedin, Mail, ChevronRight, Monitor, ExternalLink, Globe } from "lucide-react";
+import { Terminal, Github, Linkedin, Mail, ChevronRight, Monitor, ExternalLink, Globe, Phone, MapPin } from "lucide-react";
 import { Button } from "./ui/button";
 import Typewriter from "./Typewriter";
 
@@ -87,6 +87,28 @@ export default function Hero({ data }: HeroProps) {
                       >
                         <Typewriter text={data.profession} delay={1000} speed={50} />
                       </motion.div>
+                      {data.phone && (
+                        <motion.span
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ delay: 0.5 }}
+                          className="flex items-center gap-1.5 font-mono text-xs text-muted-foreground"
+                        >
+                          <Phone className="w-3 h-3 text-primary/60" />
+                          {data.phone}
+                        </motion.span>
+                      )}
+                      {data.location && (
+                        <motion.span
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ delay: 0.6 }}
+                          className="flex items-center gap-1.5 font-mono text-xs text-muted-foreground"
+                        >
+                          <MapPin className="w-3 h-3 text-primary/60" />
+                          {data.location}
+                        </motion.span>
+                      )}
                     </div>
                   </div>
 

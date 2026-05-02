@@ -1,5 +1,7 @@
 export interface Skill {
   name: string;
+  level: string | null;
+  category: string | null;
 }
 
 export interface Link {
@@ -43,6 +45,36 @@ export interface Photo {
   is_main: boolean;
 }
 
+export interface Certification {
+  name: string;
+  issuing_organization: string | null;
+  issue_date: string | null;
+  expiry_date: string | null;
+  credential_id: string | null;
+  credential_url: string | null;
+}
+
+export interface Award {
+  title: string;
+  issuer: string | null;
+  date: string | null;
+  description: string;
+}
+
+export interface CustomSectionItem {
+  title: string;
+  subtitle: string | null;
+  from_date: string | null;
+  to_date: string | null;
+  description: string;
+  url: string | null;
+}
+
+export interface CustomSection {
+  title: string;
+  items: CustomSectionItem[];
+}
+
 export interface CVData {
   first_name: string;
   last_name: string;
@@ -59,4 +91,7 @@ export interface CVData {
   education_units: EducationUnit[];
   projects: Project[];
   photos: Photo[];
+  certifications: Certification[];
+  awards: Award[];
+  custom_sections: CustomSection[];
 }

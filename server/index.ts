@@ -31,12 +31,15 @@ type CVContext = {
   email?: string;
   about?: string;
   pdf_resume?: string;
-  skills?: Array<{ name?: string }>;
+  skills?: Array<{ name?: string; level?: string | null; category?: string | null }>;
   links?: Array<{ name?: string; url?: string }>;
   languages?: Array<{ name?: string; level?: string }>;
   experience_units?: Array<{ name?: string; description?: string; from_date?: string; to_date?: string }>;
   education_units?: Array<{ name?: string; description?: string; from_date?: string; to_date?: string }>;
   projects?: Array<{ name?: string; description?: string; links?: Array<{ name?: string; url?: string }> }>;
+  certifications?: Array<{ name?: string; issuing_organization?: string | null; issue_date?: string | null; expiry_date?: string | null; credential_url?: string | null }>;
+  awards?: Array<{ title?: string; issuer?: string | null; date?: string | null; description?: string }>;
+  custom_sections?: Array<{ title?: string; items?: Array<{ title?: string; subtitle?: string | null; from_date?: string | null; to_date?: string | null; description?: string }> }>;
 };
 
 app.get("/api/cv", async (_req: Request, res: Response) => {
@@ -78,7 +81,11 @@ app.get("/api/cv", async (_req: Request, res: Response) => {
       about: raw.about ?? "",
       pdf_resume: raw.pdf_resume ?? null,
       photos: raw.photos ?? [],
-      skills: raw.skills ?? [],
+      skills: (raw.skills ?? []).map((skill: any) => ({
+        name: skill.name ?? "",
+        level: skill.level ?? null,
+        category: skill.category ?? null,
+      })),
       links: raw.links ?? [],
       languages: raw.languages ?? [],
       experience_units: (raw.experience_units ?? []).map((exp: any) => ({
@@ -102,6 +109,31 @@ app.get("/api/cv", async (_req: Request, res: Response) => {
         description: item.description ?? "",
         links: item.links ?? [],
         image: item.image ?? null,
+      })),
+      certifications: (raw.certifications ?? []).map((cert: any) => ({
+        name: cert.name ?? "",
+        issuing_organization: cert.issuing_organization ?? null,
+        issue_date: cert.issue_date ?? null,
+        expiry_date: cert.expiry_date ?? null,
+        credential_id: cert.credential_id ?? null,
+        credential_url: cert.credential_url ?? null,
+      })),
+      awards: (raw.awards ?? []).map((award: any) => ({
+        title: award.title ?? "",
+        issuer: award.issuer ?? null,
+        date: award.date ?? null,
+        description: award.description ?? "",
+      })),
+      custom_sections: (raw.custom_sections ?? []).map((section: any) => ({
+        title: section.title ?? "",
+        items: (section.items ?? []).map((item: any) => ({
+          title: item.title ?? "",
+          subtitle: item.subtitle ?? null,
+          from_date: item.from_date ?? null,
+          to_date: item.to_date ?? null,
+          description: item.description ?? "",
+          url: item.url ?? null,
+        })),
       })),
     };
 
@@ -147,7 +179,7 @@ function compactCvContext(cv: CVContext) {
     email: cv.email,
     about: cv.about,
     resume: cv.pdf_resume,
-    skills: cv.skills?.map((skill) => skill.name).filter(Boolean),
+    skills: cv.skills?.map((skill) => skill.level ? `${skill.name} (${skill.level})` : skill.name).filter(Boolean),
     links: cv.links,
     languages: cv.languages,
     experience: cv.experience_units?.map((item) => ({
@@ -164,6 +196,26 @@ function compactCvContext(cv: CVContext) {
       name: project.name,
       description: project.description,
       links: project.links,
+    })),
+    certifications: cv.certifications?.map((cert) => ({
+      name: cert.name,
+      org: cert.issuing_organization,
+      dates: [cert.issue_date, cert.expiry_date].filter(Boolean).join(" - "),
+      url: cert.credential_url,
+    })),
+    awards: cv.awards?.map((award) => ({
+      title: award.title,
+      issuer: award.issuer,
+      date: award.date,
+      description: award.description,
+    })),
+    custom_sections: cv.custom_sections?.map((section) => ({
+      title: section.title,
+      items: section.items?.map((item) => ({
+        title: item.title,
+        dates: [item.from_date, item.to_date].filter(Boolean).join(" - "),
+        description: item.description,
+      })),
     })),
   };
 }

@@ -294,7 +294,7 @@ export default function CVDocument({ data, photoSrc }: CVDocumentProps) {
         {/* ── Fixed footer on every page ── */}
         <View fixed style={s.footer}>
           <Text style={s.footerName}>
-            {data.frist_name} {data.last_name} — {data.profession}
+            {data.first_name} {data.last_name} — {data.profession}
           </Text>
           <Text
             style={s.footerPage}
@@ -306,7 +306,7 @@ export default function CVDocument({ data, photoSrc }: CVDocumentProps) {
         <View style={s.header}>
           {photoSrc && <Image src={photoSrc} style={s.photo} />}
           <View style={s.headerRight}>
-            <Text style={s.headerName}>{data.frist_name} {data.last_name}</Text>
+            <Text style={s.headerName}>{data.first_name} {data.last_name}</Text>
             <Text style={s.headerProfession}>{data.profession}</Text>
             <View style={s.headerContacts}>
               <Text style={s.contactText}>{data.email}</Text>

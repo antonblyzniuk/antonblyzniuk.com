@@ -9,6 +9,8 @@ import About from "./components/About";
 import Skills from "./components/Skills";
 import Experience from "./components/Experience";
 import Projects from "./components/Projects";
+import Achievements from "./components/Achievements";
+import CustomSections from "./components/CustomSections";
 import Gallery from "./components/Gallery";
 import Footer from "./components/Footer";
 import FallingNumbers from "./components/FallingNumbers";
@@ -107,7 +109,9 @@ export default function App() {
           <About data={data} />
           <Skills data={data} />
           <Experience data={data} />
+          <Achievements data={data} />
           <Projects data={data} />
+          <CustomSections data={data} />
           <Gallery data={data} />
         </main>
 

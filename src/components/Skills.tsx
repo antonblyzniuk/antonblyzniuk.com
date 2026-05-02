@@ -1,13 +1,34 @@
 import { motion } from "motion/react";
 import { CVData } from "../types";
 import { Badge } from "./ui/badge";
+import { cn } from "../lib/utils";
 import Typewriter from "./Typewriter";
 
 interface SkillsProps {
   data: CVData;
 }
 
+function getLevelColor(level: string | null) {
+  switch (level?.toLowerCase()) {
+    case "expert": return "bg-primary";
+    case "advanced": return "bg-accent";
+    case "intermediate": return "bg-foreground/40";
+    default: return "bg-muted-foreground/30";
+  }
+}
+
 export default function Skills({ data }: SkillsProps) {
+  const hasCategories = data.skills.some((s) => s.category);
+
+  const groupedSkills = hasCategories
+    ? data.skills.reduce((acc, skill) => {
+        const cat = skill.category || "Other";
+        if (!acc[cat]) acc[cat] = [];
+        acc[cat].push(skill);
+        return acc;
+      }, {} as Record<string, typeof data.skills>)
+    : null;
+
   return (
     <section id="skills" className="py-20 scroll-mt-20">
       <div className="max-w-6xl mx-auto">
@@ -28,32 +49,25 @@ export default function Skills({ data }: SkillsProps) {
         </div>
 
         <div className="terminal-window bg-secondary/20 p-4 sm:p-8 border-primary/10">
-          <div className="flex flex-wrap gap-4 justify-center">
-            {data.skills.map((skill, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ 
-                  delay: i * 0.05,
-                  type: "spring",
-                  stiffness: 260,
-                  damping: 20 
-                }}
-                whileHover={{ scale: 1.1, y: -5 }}
-                className="group"
-              >
-                <Badge
-                  variant="secondary"
-                  className="bg-secondary/80 hover:bg-primary/20 text-muted-foreground hover:text-primary border border-primary/10 hover:border-primary/40 transition-all font-mono text-sm py-2 px-4 shadow-[0_0_10px_rgba(158,206,106,0.05)] hover:shadow-[0_0_20px_rgba(158,206,106,0.2)] whitespace-normal"
-                >
-                  <span className="text-accent mr-2">#</span>
-                  <Typewriter text={skill.name} speed={50} delay={1000 + i * 100} />
-                </Badge>
-              </motion.div>
-            ))}
-          </div>
+          {groupedSkills ? (
+            <div className="space-y-8">
+              {Object.entries(groupedSkills).map(([category, skills], catIdx) => (
+                <div key={catIdx}>
+                  <div className="text-[10px] font-mono text-muted-foreground uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+                    <span className="text-primary">&gt;</span>
+                    {category}
+                  </div>
+                  <div className="flex flex-wrap gap-4">
+                    {skills.map((skill, i) => renderSkillBadge(skill, catIdx * 200 + i * 50, i))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-wrap gap-4 justify-center">
+              {data.skills.map((skill, i) => renderSkillBadge(skill, i * 50, i))}
+            </div>
+          )}
         </div>
 
         {/* Languages Section */}
@@ -81,10 +95,10 @@ export default function Skills({ data }: SkillsProps) {
                     {lang.level}
                   </div>
                 </div>
-                <motion.div 
+                <motion.div
                   animate={{ opacity: [0.3, 1, 0.3] }}
                   transition={{ duration: 2, repeat: Infinity }}
-                  className="w-2 h-2 rounded-full bg-primary" 
+                  className="w-2 h-2 rounded-full bg-primary"
                 />
               </motion.div>
             ))}
@@ -92,5 +106,33 @@ export default function Skills({ data }: SkillsProps) {
         </div>
       </div>
     </section>
+  );
+}
+
+function renderSkillBadge(skill: CVData["skills"][number], delay: number, key: number) {
+  return (
+    <motion.div
+      key={key}
+      initial={{ opacity: 0, scale: 0.8 }}
+      whileInView={{ opacity: 1, scale: 1 }}
+      viewport={{ once: true }}
+      transition={{ delay: delay * 0.001, type: "spring", stiffness: 260, damping: 20 }}
+      whileHover={{ scale: 1.1, y: -5 }}
+      className="group"
+    >
+      <Badge
+        variant="secondary"
+        className="bg-secondary/80 hover:bg-primary/20 text-muted-foreground hover:text-primary border border-primary/10 hover:border-primary/40 transition-all font-mono text-sm py-2 px-4 shadow-[0_0_10px_rgba(158,206,106,0.05)] hover:shadow-[0_0_20px_rgba(158,206,106,0.2)] whitespace-normal"
+      >
+        <span className="text-accent mr-2">#</span>
+        <Typewriter text={skill.name} speed={50} delay={1000 + delay} />
+        {skill.level && (
+          <span
+            className={cn("w-1.5 h-1.5 rounded-full ml-2 inline-block shrink-0", getLevelColor(skill.level))}
+            title={skill.level}
+          />
+        )}
+      </Badge>
+    </motion.div>
   );
 }
