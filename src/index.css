@@ -8,7 +8,7 @@
   --color-background: #1e1e2e;
   --color-foreground: #cdd6f4;
 
-  --color-primary: #b4befe; /* Catppuccin Lavender */
+  --color-primary: #b4befe;
   --color-primary-foreground: #1e1e2e;
 
   --color-secondary: #313244;
@@ -17,7 +17,7 @@
   --color-muted: #313244;
   --color-muted-foreground: #6c7086;
 
-  --color-accent: #fab387; /* Catppuccin Peach */
+  --color-accent: #fab387;
   --color-accent-foreground: #1e1e2e;
 
   --color-destructive: #f38ba8;
@@ -27,9 +27,9 @@
   --color-input: #45475a;
   --color-ring: #cba6f7;
 
-  --radius-lg: 12px;
+  --radius-lg: 14px;
   --radius-md: 12px;
-  --radius-sm: 12px;
+  --radius-sm: 10px;
 }
 
 @layer base {
@@ -39,9 +39,9 @@
   body {
     background-color: var(--color-background);
     background-image:
-      radial-gradient(ellipse 100% 50% at 50% 0%, rgba(180, 190, 254, 0.07), transparent),
-      radial-gradient(ellipse 70% 50% at 80% 100%, rgba(250, 179, 135, 0.05), transparent),
-      radial-gradient(ellipse 60% 40% at 0% 60%, rgba(203, 166, 247, 0.03), transparent);
+      radial-gradient(ellipse 100% 50% at 50% 0%, rgba(180, 190, 254, 0.08), transparent),
+      radial-gradient(ellipse 70% 50% at 80% 100%, rgba(250, 179, 135, 0.06), transparent),
+      radial-gradient(ellipse 60% 40% at 0% 60%, rgba(203, 166, 247, 0.04), transparent);
     color: var(--color-foreground);
     font-feature-settings: "rlig" 1, "calt" 1;
     cursor: auto;
@@ -49,15 +49,66 @@
 }
 
 @layer utilities {
+  /* ── Gradient text: lavender → mauve → peach ── */
+  .gradient-text {
+    background: linear-gradient(125deg, #b4befe 0%, #cba6f7 45%, #fab387 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* ── Glass card ── */
+  .glass {
+    background: rgba(30, 30, 46, 0.55);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+  }
+
+  /* ── Subtle dot-grid pattern ── */
+  .dot-grid {
+    background-image: radial-gradient(rgba(180, 190, 254, 0.1) 1px, transparent 1px);
+    background-size: 30px 30px;
+  }
+
+  /* ── Decorative large section number ── */
+  .section-num {
+    font-size: clamp(5rem, 16vw, 13rem);
+    font-weight: 900;
+    line-height: 0.85;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(180, 190, 254, 0.065);
+    pointer-events: none;
+    user-select: none;
+    font-family: var(--font-mono);
+  }
+
+  /* ── Card wow hover: lift + glow ── */
+  .card-wow {
+    transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 0.28s ease,
+                border-color 0.28s ease;
+  }
+  .card-wow:hover {
+    transform: translateY(-5px);
+    box-shadow:
+      0 20px 60px rgba(0, 0, 0, 0.45),
+      0 0 40px rgba(180, 190, 254, 0.1);
+  }
+
+  /* ── Primary glow ── */
   .glow-primary {
     box-shadow: 0 0 20px rgba(180, 190, 254, 0.3), 0 0 40px rgba(180, 190, 254, 0.1);
   }
+
+  /* ── Text glows ── */
   .text-glow {
-    text-shadow: 0 0 20px rgba(180, 190, 254, 0.7), 0 0 60px rgba(180, 190, 254, 0.3), 0 0 100px rgba(180, 190, 254, 0.1);
+    text-shadow: 0 0 20px rgba(180, 190, 254, 0.6), 0 0 60px rgba(180, 190, 254, 0.25);
   }
   .text-glow-accent {
     text-shadow: 0 0 20px rgba(250, 179, 135, 0.6), 0 0 40px rgba(250, 179, 135, 0.2);
   }
+
+  /* ── Terminal window ── */
   .terminal-window {
     background: linear-gradient(160deg, #1e1e2e 0%, #23223a 100%);
     border: 1px solid rgba(180, 190, 254, 0.13);
@@ -70,7 +121,6 @@
     border-radius: var(--radius-lg);
     position: relative;
   }
-  /* CRT scanlines overlay on all terminal windows */
   .terminal-window::after {
     content: '';
     position: absolute;
@@ -90,6 +140,8 @@
     background: linear-gradient(90deg, #292938 0%, #252535 100%);
     border-bottom: 1px solid rgba(180, 190, 254, 0.08);
   }
+
+  /* ── Page-wide scanline ── */
   .scanline {
     width: 100%;
     height: 3px;
@@ -99,17 +151,20 @@
     left: 0;
     z-index: 200;
     pointer-events: none;
-    animation: scanline 12s linear infinite;
+    animation: scanline 14s linear infinite;
   }
+
   .skill-bar-fill {
     transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   }
 }
 
+/* ─────────────── Keyframes ─────────────── */
+
 @keyframes scanline {
-  0% { transform: translateY(-4px); opacity: 0; }
-  5% { opacity: 1; }
-  95% { opacity: 0.6; }
+  0%   { transform: translateY(-4px); opacity: 0; }
+  5%   { opacity: 1; }
+  95%  { opacity: 0.6; }
   100% { transform: translateY(100vh); opacity: 0; }
 }
 
@@ -118,6 +173,21 @@
   88% { transform: translate(-3px, 0); clip-path: polygon(0 20%, 100% 20%, 100% 40%, 0 40%); color: rgba(250, 179, 135, 0.9); }
   89% { transform: translate(3px, 0); clip-path: polygon(0 60%, 100% 60%, 100% 80%, 0 80%); }
   90% { transform: none; clip-path: none; color: inherit; }
+}
+
+@keyframes ring-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-10px); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
 }
 
 .glitch-hover:hover {
