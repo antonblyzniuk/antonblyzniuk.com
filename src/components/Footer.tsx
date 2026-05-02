@@ -1,106 +1,140 @@
 import { motion } from "motion/react";
 import { CVData } from "../types";
-import { Github, Linkedin, Mail, Terminal, Heart, ChevronRight, Globe } from "lucide-react";
+import { Github, Linkedin, Mail, Terminal, Globe, MapPin, Phone } from "lucide-react";
 import { Button } from "./ui/button";
 import Typewriter from "./Typewriter";
 
-interface FooterProps {
-  data: CVData;
-}
-
-export default function Footer({ data }: FooterProps) {
+export default function Footer({ data }: { data: CVData }) {
   const currentYear = new Date().getFullYear();
+
+  const getLinkIcon = (name: string) => {
+    const n = name.toLowerCase();
+    if (n.includes("github")) return <Github className="w-4 h-4" />;
+    if (n.includes("linkedin")) return <Linkedin className="w-4 h-4" />;
+    return <Globe className="w-4 h-4" />;
+  };
 
   return (
     <footer className="py-20 border-t border-primary/10 relative overflow-hidden">
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-6xl mx-auto">
-          <div className="terminal-window bg-secondary/20 border-primary/10 p-5 sm:p-8 md:p-12">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-              <div className="space-y-6">
-                <div className="flex items-center gap-2 font-mono text-sm text-primary mb-4">
-                  <ChevronRight className="w-4 h-4" />
-                  <Typewriter text="./contact" speed={100} />
-                </div>
-                <h2 className="text-4xl font-bold tracking-tighter">
-                  Initialize <span className="text-primary text-glow">Connection</span>
-                </h2>
-                <div className="text-muted-foreground font-mono text-sm leading-relaxed">
-                  <Typewriter text="System is ready for new project requests or collaborative inquiries. Response latency: < 24 hours." speed={20} delay={500} />
-                </div>
-                <div className="flex flex-wrap gap-4">
-                  {data.links.map((link, i) => (
-                    <Button
-                      key={i}
-                      variant="outline"
-                      size="icon"
-                      className="border-primary/20 hover:border-primary hover:bg-primary/5 text-muted-foreground hover:text-primary transition-all"
-                      asChild
-                    >
-                      <a href={link.url} target="_blank" rel="noopener noreferrer">
-                        {link.name.toLowerCase().includes("github") ? (
-                          <Github className="w-5 h-5" />
-                        ) : link.name.toLowerCase().includes("linkedin") ? (
-                          <Linkedin className="w-5 h-5" />
-                        ) : (
-                          <Globe className="w-5 h-5" />
-                        )}
-                      </a>
-                    </Button>
-                  ))}
-                </div>
+          <div className="terminal-window bg-secondary/20 border-primary/10 overflow-hidden">
+            {/* Terminal header */}
+            <div className="bg-secondary border-b border-primary/10 px-4 py-2.5 flex items-center justify-between">
+              <div className="flex gap-1.5">
+                <div className="w-2.5 h-2.5 rounded-full bg-destructive/60" />
+                <div className="w-2.5 h-2.5 rounded-full bg-accent/60" />
+                <div className="w-2.5 h-2.5 rounded-full bg-primary/60" />
               </div>
+              <div className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest flex items-center gap-2">
+                <Terminal className="w-3 h-3" />
+                ~/contact.sh
+              </div>
+              <div className="w-10" />
+            </div>
 
-              <div className="space-y-8">
-                <div className="terminal-window bg-secondary/40 p-6 border-primary/5 space-y-4">
-                  <div className="flex items-center gap-4 group cursor-pointer" onClick={() => window.location.href = `mailto:${data.email}`}>
-                    <div className="p-3 rounded-xl bg-secondary border border-primary/10 group-hover:border-primary/40 transition-colors">
-                      <Mail className="w-5 h-5 text-primary" />
+            <div className="p-6 sm:p-8 md:p-12">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16">
+                {/* CTA */}
+                <div className="space-y-6">
+                  <div className="flex items-center gap-2 font-mono text-sm text-primary">
+                    <span className="text-muted-foreground">$</span>
+                    <Typewriter text="./initialize_connection.sh" speed={60} />
+                  </div>
+                  <h2 className="text-3xl sm:text-4xl font-bold tracking-tighter leading-tight">
+                    Let's build<br />
+                    <span className="text-primary text-glow">something great</span>
+                  </h2>
+                  <p className="text-muted-foreground font-mono text-sm leading-relaxed max-w-sm">
+                    Open to new projects and collaborations. Response time under 24h.
+                  </p>
+                  <div className="flex flex-wrap gap-3">
+                    {data.links.map((link, i) => (
+                      <Button
+                        key={i}
+                        variant="outline"
+                        size="sm"
+                        className="border-primary/20 hover:border-primary hover:bg-primary/5 text-muted-foreground hover:text-primary transition-all font-mono text-xs gap-2"
+                        asChild
+                      >
+                        <a href={link.url} target="_blank" rel="noopener noreferrer">
+                          {getLinkIcon(link.name)}
+                          {link.name}
+                        </a>
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Contact details */}
+                <div className="space-y-4">
+                  <div className="text-[10px] font-mono text-muted-foreground uppercase tracking-[0.2em] mb-6">
+                    Direct Lines
+                  </div>
+
+                  <a
+                    href={`mailto:${data.email}`}
+                    className="group flex items-center gap-4 p-4 rounded-xl bg-secondary/40 border border-primary/10 hover:border-primary/30 hover:bg-secondary/60 transition-all"
+                  >
+                    <div className="p-2.5 rounded-lg bg-primary/10 border border-primary/20 group-hover:bg-primary/20 transition-colors shrink-0">
+                      <Mail className="w-4 h-4 text-primary" />
                     </div>
-                    <div className="overflow-hidden">
-                      <div className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest">Direct Line</div>
-                      <div className="text-sm font-bold text-foreground group-hover:text-primary transition-colors truncate max-w-full">
-                        <Typewriter text={data.email} speed={50} delay={1000} />
+                    <div className="min-w-0">
+                      <div className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest mb-0.5">Email</div>
+                      <div className="font-mono text-sm text-foreground group-hover:text-primary transition-colors truncate">
+                        {data.email}
                       </div>
                     </div>
-                  </div>
-                  
-                  <div className="pt-4 border-t border-primary/5">
-                    <div className="flex items-center justify-between text-[10px] font-mono text-muted-foreground mb-2">
-                      <span>CONNECTION_STATUS</span>
-                      <span className="text-emerald-500">ENCRYPTED</span>
+                  </a>
+
+                  {data.phone && (
+                    <a
+                      href={`tel:${data.phone}`}
+                      className="group flex items-center gap-4 p-4 rounded-xl bg-secondary/40 border border-accent/10 hover:border-accent/30 hover:bg-secondary/60 transition-all"
+                    >
+                      <div className="p-2.5 rounded-lg bg-accent/10 border border-accent/20 group-hover:bg-accent/20 transition-colors shrink-0">
+                        <Phone className="w-4 h-4 text-accent" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest mb-0.5">Phone</div>
+                        <div className="font-mono text-sm text-foreground group-hover:text-accent transition-colors truncate">
+                          {data.phone}
+                        </div>
+                      </div>
+                    </a>
+                  )}
+
+                  {data.location && (
+                    <div className="flex items-center gap-4 p-4 rounded-xl bg-secondary/40 border border-primary/10">
+                      <div className="p-2.5 rounded-lg bg-primary/10 border border-primary/20 shrink-0">
+                        <MapPin className="w-4 h-4 text-primary" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest mb-0.5">Location</div>
+                        <div className="font-mono text-sm text-foreground truncate">
+                          {data.location}
+                        </div>
+                      </div>
                     </div>
-                    <div className="w-full h-1 bg-secondary rounded-full overflow-hidden">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        whileInView={{ width: "100%" }}
-                        className="h-full bg-primary"
-                        transition={{ duration: 2, ease: "easeInOut" }}
-                      />
-                    </div>
-                  </div>
+                  )}
                 </div>
               </div>
             </div>
 
-            <div className="mt-16 pt-8 border-t border-primary/10 flex flex-wrap items-center justify-between gap-6 font-mono text-[10px] text-muted-foreground uppercase tracking-widest">
+            {/* Footer bar */}
+            <div className="px-6 py-3 bg-secondary border-t border-primary/10 flex flex-wrap items-center justify-between gap-3 font-mono text-[10px] text-muted-foreground">
               <div className="flex items-center gap-2">
                 <Terminal className="w-3 h-3" />
-                <span>© {currentYear} antonblyzniuk.com — ALL_RIGHTS_RESERVED</span>
+                <span>© {currentYear} {data.first_name.toLowerCase()}{data.last_name.toLowerCase()}.com</span>
               </div>
-              <div className="flex items-center gap-4">
-                <span className="flex items-center gap-1.5">
-                  Built with <Heart className="w-3 h-3 text-destructive fill-destructive" /> by Anton
-                </span>
-                <span className="text-primary">v2.4.0</span>
-              </div>
+              <span className="text-primary/50">exit 0  <span className="text-muted-foreground/40"># crafted by {data.first_name}</span></span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Background Glow */}
-      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-1/2 bg-gradient-to-t from-primary/5 to-transparent -z-10" />
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1/2 h-32 bg-primary/4 blur-[60px] -z-10 rounded-full" />
     </footer>
   );
 }
