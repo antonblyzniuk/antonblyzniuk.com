@@ -21,7 +21,7 @@ export default function About({ data }: { data: CVData }) {
       <div className="max-w-6xl mx-auto">
         <div className="mb-12">
           <div className="flex items-center gap-2 mb-4 font-mono text-xs sm:text-sm overflow-hidden">
-            <span className="text-primary shrink-0">root@portfolio:</span>
+            <span className="text-primary shrink-0">{data.first_name.toLowerCase()}@portfolio:</span>
             <span className="text-accent shrink-0">~</span>
             <span className="text-foreground truncate">$ <Typewriter text="cat profile_summary" speed={50} /></span>
           </div>
@@ -44,11 +44,11 @@ export default function About({ data }: { data: CVData }) {
             className="lg:col-span-2"
           >
             <div className="terminal-window bg-secondary/20 p-6 sm:p-8 border-primary/10 h-full">
-              <div className="text-[10px] font-mono text-muted-foreground uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+              <div className="text-[10px] font-mono text-muted-foreground uppercase tracking-[0.2em] mb-4 flex items-center gap-2 relative z-[1]">
                 <span className="text-primary">#</span>
                 profile_summary.txt
               </div>
-              <p className="text-base sm:text-lg text-foreground/80 leading-relaxed font-mono">
+              <p className="text-base sm:text-lg text-foreground/80 leading-relaxed font-mono relative z-[1]">
                 {data.about}
               </p>
             </div>
@@ -61,11 +61,11 @@ export default function About({ data }: { data: CVData }) {
             viewport={{ once: true }}
           >
             <div className="terminal-window bg-secondary/40 border-primary/10 overflow-hidden">
-              <div className="bg-secondary border-b border-primary/10 px-4 py-2 flex items-center gap-2 font-mono text-[10px] text-muted-foreground uppercase tracking-widest">
+              <div className="terminal-header px-4 py-2 flex items-center gap-2 font-mono text-[10px] text-muted-foreground uppercase tracking-widest">
                 <span className="w-2 h-2 rounded-full bg-primary/60" />
-                sys_info.json
+                {data.first_name.toLowerCase()}_profile
               </div>
-              <div className="p-4 space-y-1 font-mono text-sm">
+              <div className="p-4 space-y-1 font-mono text-sm relative z-[1]">
                 {sysInfo.map((item, i) => {
                   const Icon = "icon" in item ? item.icon : null;
                   return (

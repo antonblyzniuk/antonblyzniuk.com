@@ -15,7 +15,9 @@ export default function Navbar({ data }: NavbarProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [connectionStatus, setConnectionStatus] = useState("initializing backend connection...");
+  const [connectionStatus, setConnectionStatus] = useState(
+    `connecting to ${data.first_name.toLowerCase()}.portfolio...`
+  );
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
@@ -26,7 +28,7 @@ export default function Navbar({ data }: NavbarProps) {
     window.addEventListener("keydown", handleKeyDown);
 
     const timer = setTimeout(() => {
-      setConnectionStatus("connection established");
+      setConnectionStatus(`${data.first_name.toLowerCase()}@portfolio — session active`);
     }, 3000);
 
     return () => {
@@ -34,7 +36,7 @@ export default function Navbar({ data }: NavbarProps) {
       window.removeEventListener("keydown", handleKeyDown);
       clearTimeout(timer);
     };
-  }, []);
+  }, [data.first_name]);
 
   const copyEmail = () => {
     navigator.clipboard.writeText(data.email);
@@ -67,7 +69,7 @@ export default function Navbar({ data }: NavbarProps) {
           "w-full max-w-6xl"
         )}>
           {/* Terminal Header - Thinner */}
-          <div className="bg-secondary/50 border-b border-primary/10 px-3 py-1 flex items-center justify-between">
+          <div className="terminal-header px-3 py-1 flex items-center justify-between">
             <div className="flex gap-1.5">
               <div className="w-2 h-2 rounded-full bg-destructive/50" />
               <div className="w-2 h-2 rounded-full bg-accent/50" />
@@ -80,7 +82,7 @@ export default function Navbar({ data }: NavbarProps) {
             <div className="w-8" />
           </div>
 
-          <div className="px-3 sm:px-4 py-2 flex items-center justify-between gap-4">
+          <div className="px-3 sm:px-4 py-2 flex items-center justify-between gap-4 relative z-[1]">
             {/* Unified Logo & Name Section */}
             <motion.a
               href="#"
@@ -125,7 +127,7 @@ export default function Navbar({ data }: NavbarProps) {
                 </a>
               ))}
             </div>
-            
+
             <div className="hidden md:flex items-center gap-3">
               <Button
                 variant="ghost"
@@ -136,7 +138,7 @@ export default function Navbar({ data }: NavbarProps) {
                 {copied ? <Check className="w-3 h-3 text-primary" /> : <Copy className="w-3 h-3" />}
                 <span className="truncate max-w-[80px]">{copied ? "COPIED" : "EMAIL"}</span>
               </Button>
-              
+
               {data.pdf_resume && (
                 <Button
                   asChild
@@ -190,7 +192,7 @@ export default function Navbar({ data }: NavbarProps) {
               className="md:hidden container mx-auto px-4 mt-2 flex justify-end"
             >
               <div className="terminal-window bg-secondary border-primary/20 p-5 space-y-5 w-full max-w-xs shadow-2xl rounded-xl">
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-3 relative z-[1]">
                   {navLinks.map((link) => (
                     <a
                       key={link.name}
@@ -203,7 +205,7 @@ export default function Navbar({ data }: NavbarProps) {
                     </a>
                   ))}
                 </div>
-                <div className="flex flex-col gap-2 pt-4 border-t border-primary/10">
+                <div className="flex flex-col gap-2 pt-4 border-t border-primary/10 relative z-[1]">
                   <Button
                     onClick={copyEmail}
                     variant="outline"

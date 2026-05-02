@@ -20,7 +20,7 @@ export default function Hero({ data }: { data: CVData }) {
         <div className="max-w-6xl mx-auto">
           <div className="terminal-window bg-secondary/30 backdrop-blur-sm overflow-hidden">
             {/* Terminal header */}
-            <div className="bg-secondary border-b border-primary/10 px-4 py-2.5 flex items-center justify-between">
+            <div className="terminal-header px-4 py-2.5 flex items-center justify-between">
               <div className="flex gap-2">
                 <div className="w-3 h-3 rounded-full bg-destructive/70 hover:bg-destructive transition-colors cursor-default" />
                 <div className="w-3 h-3 rounded-full bg-accent/70 hover:bg-accent transition-colors cursor-default" />
@@ -28,7 +28,7 @@ export default function Hero({ data }: { data: CVData }) {
               </div>
               <div className="text-[11px] font-mono text-muted-foreground flex items-center gap-2 uppercase tracking-widest">
                 <Monitor className="w-3 h-3" />
-                ~/profile.sh
+                {data.first_name.toLowerCase()}@portfolio ~ profile.sh
               </div>
               <div className="font-mono text-[10px] text-emerald-400/80 flex items-center gap-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
@@ -36,7 +36,7 @@ export default function Hero({ data }: { data: CVData }) {
               </div>
             </div>
 
-            <div className="p-6 md:p-10">
+            <div className="p-6 md:p-10 relative z-[1]">
               <div className="flex flex-col md:flex-row gap-8 lg:gap-12 items-center md:items-start">
                 {/* Profile photo */}
                 <motion.div
@@ -46,12 +46,12 @@ export default function Hero({ data }: { data: CVData }) {
                   className="relative group shrink-0"
                 >
                   <div className="w-36 h-36 sm:w-48 sm:h-48 md:w-56 md:h-56 relative">
-                    <div className="absolute -top-2 -left-2 w-5 h-5 border-t-2 border-l-2 border-primary z-10 transition-all duration-500 group-hover:w-7 group-hover:h-7" />
-                    <div className="absolute -top-2 -right-2 w-5 h-5 border-t-2 border-r-2 border-primary z-10 transition-all duration-500 group-hover:w-7 group-hover:h-7" />
-                    <div className="absolute -bottom-2 -left-2 w-5 h-5 border-b-2 border-l-2 border-primary z-10 transition-all duration-500 group-hover:w-7 group-hover:h-7" />
-                    <div className="absolute -bottom-2 -right-2 w-5 h-5 border-b-2 border-r-2 border-primary z-10 transition-all duration-500 group-hover:w-7 group-hover:h-7" />
+                    <div className="absolute -top-2 -left-2 w-5 h-5 border-t-2 border-l-2 border-primary z-10 transition-all duration-500 group-hover:w-8 group-hover:h-8" />
+                    <div className="absolute -top-2 -right-2 w-5 h-5 border-t-2 border-r-2 border-primary z-10 transition-all duration-500 group-hover:w-8 group-hover:h-8" />
+                    <div className="absolute -bottom-2 -left-2 w-5 h-5 border-b-2 border-l-2 border-primary z-10 transition-all duration-500 group-hover:w-8 group-hover:h-8" />
+                    <div className="absolute -bottom-2 -right-2 w-5 h-5 border-b-2 border-r-2 border-primary z-10 transition-all duration-500 group-hover:w-8 group-hover:h-8" />
 
-                    <div className="w-full h-full rounded-lg overflow-hidden border border-primary/20 bg-secondary/50 shadow-[0_0_40px_rgba(180,190,254,0.08)] group-hover:shadow-[0_0_60px_rgba(180,190,254,0.15)] transition-shadow duration-500">
+                    <div className="w-full h-full rounded-lg overflow-hidden border border-primary/20 ring-1 ring-primary/20 bg-secondary/50 shadow-[0_0_40px_rgba(180,190,254,0.08)] group-hover:shadow-[0_0_60px_rgba(180,190,254,0.15)] transition-shadow duration-500">
                       <img
                         src={mainPhoto || "https://picsum.photos/seed/profile/400/400"}
                         alt={`${data.first_name} ${data.last_name}`}
@@ -80,10 +80,10 @@ export default function Hero({ data }: { data: CVData }) {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2 }}
-                    className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter leading-[0.9]"
+                    className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tighter leading-[0.9]"
                   >
                     <span className="block text-foreground">{data.first_name}</span>
-                    <span className="block text-primary text-glow">{data.last_name}</span>
+                    <span className="block text-primary text-glow glitch-hover">{data.last_name}</span>
                   </motion.h1>
 
                   <motion.div
@@ -100,7 +100,7 @@ export default function Hero({ data }: { data: CVData }) {
                     {(data.location || data.phone) && (
                       <div className="flex flex-wrap items-center gap-2 justify-center md:justify-start">
                         {data.location && (
-                          <div className="flex items-center gap-2 px-3 py-1.5 bg-secondary/80 border border-primary/15 rounded-md font-mono text-sm text-foreground/70">
+                          <div className="flex items-center gap-2 px-3 py-1.5 bg-primary/15 border border-primary/30 rounded-md font-mono text-sm text-primary/90">
                             <MapPin className="w-3.5 h-3.5 text-primary shrink-0" />
                             <span>{data.location}</span>
                           </div>
@@ -152,7 +152,7 @@ export default function Hero({ data }: { data: CVData }) {
             </div>
 
             {/* Status bar */}
-            <div className="px-5 py-2 bg-secondary border-t border-primary/10 flex flex-wrap items-center justify-between gap-3 font-mono text-[10px] text-muted-foreground">
+            <div className="px-5 py-2 bg-secondary border-t border-primary/10 flex flex-wrap items-center justify-between gap-3 font-mono text-[10px] text-muted-foreground relative z-[1]">
               <div className="flex flex-wrap items-center gap-x-5 gap-y-1">
                 <span className="flex items-center gap-1.5 text-emerald-400/90">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
@@ -169,7 +169,12 @@ export default function Hero({ data }: { data: CVData }) {
                   </span>
                 )}
               </div>
-              <span className="text-primary font-bold tracking-widest">READY_</span>
+              <div className="flex items-center gap-4">
+                <span className="text-muted-foreground/60 hidden sm:inline">
+                  {data.first_name} {data.last_name}
+                </span>
+                <span className="text-primary font-bold tracking-widest">READY_</span>
+              </div>
             </div>
           </div>
         </div>

@@ -42,10 +42,10 @@ export default function App() {
       try {
         const cvData = await fetchCVData();
         setData(cvData);
-        
+
         // Notify on visit (Client-side)
         sendTelegramNotification("Website Visited");
-        
+
       } catch (err) {
         setError(err instanceof Error ? err.message : "An unexpected error occurred");
       } finally {
@@ -96,14 +96,9 @@ export default function App() {
     <TooltipProvider>
       <FallingNumbers />
       <div className="scanline" />
-      <div className="min-h-screen bg-background text-foreground font-sans selection:bg-primary/30 selection:text-primary">
-        {/* Background Grid Effect */}
-        <div className="fixed inset-0 z-[-1] opacity-[0.03] pointer-events-none">
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,#808080_1px,transparent_1px),linear-gradient(to_bottom,#808080_1px,transparent_1px)] bg-[size:4rem_4rem]" />
-        </div>
-
+      <div className="min-h-screen text-foreground font-sans selection:bg-primary/30 selection:text-primary relative z-[2]">
         <Navbar data={data} />
-        
+
         <main className="container mx-auto px-4 sm:px-6 lg:px-8">
           <Hero data={data} />
           <About data={data} />
