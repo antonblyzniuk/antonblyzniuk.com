@@ -1,6 +1,6 @@
 import { motion } from "motion/react";
 import { CVData } from "../types";
-import { Github, Linkedin, Mail, ChevronRight, Monitor, ExternalLink, Globe, Phone, MapPin, Download } from "lucide-react";
+import { Github, Linkedin, Mail, Monitor, ExternalLink, Globe, Phone, MapPin, Download } from "lucide-react";
 import Typewriter from "./Typewriter";
 import { sendTelegramNotification } from "../services/notifications";
 
@@ -16,15 +16,15 @@ export default function Hero({ data }: { data: CVData }) {
   };
 
   return (
-    <section className="min-h-screen pt-28 pb-20 flex flex-col justify-center relative overflow-hidden">
+    <section className="min-h-screen pt-24 pb-24 flex flex-col justify-center relative overflow-x-hidden">
 
       {/* ── Aurora background ── */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden -z-10">
+      <div className="absolute inset-0 pointer-events-none -z-10">
         <div
           className="aurora-blob"
           style={{
             width: "900px", height: "900px",
-            background: "radial-gradient(circle, rgba(180,190,254,0.15) 0%, transparent 70%)",
+            background: "radial-gradient(circle, rgba(180,190,254,0.14) 0%, transparent 70%)",
             top: "-300px", left: "-250px",
             animation: "aurora-1 24s ease-in-out infinite",
           }}
@@ -33,7 +33,7 @@ export default function Hero({ data }: { data: CVData }) {
           className="aurora-blob"
           style={{
             width: "700px", height: "700px",
-            background: "radial-gradient(circle, rgba(203,166,247,0.12) 0%, transparent 70%)",
+            background: "radial-gradient(circle, rgba(203,166,247,0.11) 0%, transparent 70%)",
             top: "20%", right: "-200px",
             animation: "aurora-2 30s ease-in-out infinite",
           }}
@@ -51,7 +51,7 @@ export default function Hero({ data }: { data: CVData }) {
           className="aurora-blob"
           style={{
             width: "450px", height: "450px",
-            background: "radial-gradient(circle, rgba(137,220,235,0.08) 0%, transparent 70%)",
+            background: "radial-gradient(circle, rgba(137,220,235,0.07) 0%, transparent 70%)",
             top: "55%", left: "5%",
             animation: "aurora-4 27s ease-in-out infinite",
           }}
@@ -69,10 +69,10 @@ export default function Hero({ data }: { data: CVData }) {
       />
 
       <div className="container max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] xl:grid-cols-[1fr_420px] gap-12 lg:gap-20 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] xl:grid-cols-[1fr_440px] gap-10 lg:gap-16 items-center">
 
           {/* ── Left: Content ── */}
-          <div className="space-y-8 order-2 lg:order-1">
+          <div className="space-y-7 order-2 lg:order-1">
 
             {/* Terminal prompt */}
             <motion.div
@@ -90,7 +90,7 @@ export default function Hero({ data }: { data: CVData }) {
               />
             </motion.div>
 
-            {/* Name — MASSIVE, Space Grotesk */}
+            {/* Name */}
             <motion.div
               initial={{ opacity: 0, y: 36 }}
               animate={{ opacity: 1, y: 0 }}
@@ -98,7 +98,7 @@ export default function Hero({ data }: { data: CVData }) {
             >
               <h1
                 className="font-display font-black tracking-tighter leading-[0.84]"
-                style={{ fontSize: "clamp(3.6rem, 11.5vw, 10.5rem)" }}
+                style={{ fontSize: "clamp(3.2rem, 10.5vw, 10rem)" }}
               >
                 <span className="block text-foreground glitch-hover">{data.first_name.toUpperCase()}</span>
                 <span className="block gradient-text text-glow">{data.last_name.toUpperCase()}</span>
@@ -116,15 +116,9 @@ export default function Hero({ data }: { data: CVData }) {
                 className="relative flex items-center gap-2.5 px-4 py-2.5 rounded-xl border border-primary/18 overflow-hidden group cursor-default"
                 style={{ background: "rgba(180,190,254,0.05)" }}
               >
-                {/* Shimmer sweep on hover */}
                 <span className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/6 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 pointer-events-none" />
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-                <Typewriter
-                  text={data.profession}
-                  delay={700}
-                  speed={30}
-                  className="font-mono text-sm text-foreground/90 relative z-10"
-                />
+                <Typewriter text={data.profession} delay={700} speed={30} className="font-mono text-sm text-foreground/90 relative z-10" />
               </div>
               {data.location && (
                 <div
@@ -224,85 +218,81 @@ export default function Hero({ data }: { data: CVData }) {
 
           {/* ── Right: Photo ── */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.8, y: 24 }}
+            initial={{ opacity: 0, scale: 0.85, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ delay: 0.18, type: "spring", stiffness: 65, damping: 17 }}
             className="flex justify-center lg:justify-end order-1 lg:order-2"
           >
-            <div className="relative">
-              {/* Outer pulsing aura */}
+            {/*
+              Wrapper gives explicit padding so absolute decorators don't overflow
+              p-10 = 40px on all sides (matches the glow blur radius)
+            */}
+            <div className="relative p-10">
+
+              {/* Soft outer glow — contained in the padding area */}
               <div
-                className="absolute -inset-10 rounded-3xl opacity-25 blur-[80px]"
+                className="absolute inset-0 rounded-3xl"
                 style={{
-                  background: "conic-gradient(from 0deg, #b4befe, #cba6f7, #fab387, #89dceb, #b4befe)",
+                  background: "conic-gradient(from 0deg, rgba(180,190,254,0.18), rgba(203,166,247,0.14), rgba(250,179,135,0.12), rgba(137,220,235,0.10), rgba(180,190,254,0.18))",
                   animation: "ring-spin 14s linear infinite",
-                }}
-              />
-              {/* Secondary pulse ring */}
-              <div
-                className="absolute -inset-6 rounded-3xl opacity-15 blur-[40px]"
-                style={{
-                  background: "conic-gradient(from 180deg, #cba6f7, #b4befe, #89dceb, #cba6f7)",
-                  animation: "ring-spin 9s linear infinite reverse",
+                  filter: "blur(55px)",
+                  opacity: 0.7,
                 }}
               />
 
-              {/* Spinning gradient ring */}
-              <div
-                className="absolute -inset-[5px] rounded-2xl z-0"
-                style={{
-                  background: "conic-gradient(from 0deg, #b4befe, #cba6f7, #fab387, #89dceb, #a6e3a1, #b4befe)",
-                  animation: "ring-spin 7s linear infinite",
-                  filter: "blur(3px)",
-                }}
-              />
-              {/* Gap layer */}
-              <div
-                className="absolute -inset-[4px] rounded-2xl z-0"
-                style={{ background: "var(--color-background)" }}
-              />
-
-              {/* Photo */}
-              <div className="relative z-10 w-[260px] h-[260px] sm:w-[300px] sm:h-[300px] lg:w-[340px] lg:h-[340px] rounded-2xl overflow-hidden group"
-                style={{ boxShadow: "0 0 100px rgba(180,190,254,0.2), 0 40px 120px rgba(0,0,0,0.85)" }}
-              >
-                <img
-                  src={mainPhoto || "https://picsum.photos/seed/profile/400/400"}
-                  alt={`${data.first_name} ${data.last_name}`}
-                  className="w-full h-full object-cover transition-all duration-700 group-hover:scale-[1.07] group-hover:brightness-110"
-                  referrerPolicy="no-referrer"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-background/45 via-transparent to-transparent" />
-              </div>
-
-              {/* ONLINE badge */}
-              <motion.div
-                initial={{ opacity: 0, y: 12, scale: 0.8 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ delay: 1.1, type: "spring", stiffness: 300 }}
-                className="absolute -bottom-5 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full border border-emerald-400/25 font-mono text-[10px] text-emerald-400 flex items-center gap-1.5 whitespace-nowrap z-20"
-                style={{
-                  background: "rgba(8,8,16,0.88)",
-                  backdropFilter: "blur(12px)",
-                  boxShadow: "0 4px 24px rgba(74,222,128,0.15)",
-                }}
-              >
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                ONLINE
-              </motion.div>
-
-              {/* Corner brackets */}
-              {(["top-left", "top-right", "bottom-left", "bottom-right"] as const).map((pos) => (
+              {/* Photo box — the actual sizing anchor */}
+              <div className="relative">
+                {/* Spinning gradient ring */}
                 <div
-                  key={pos}
-                  className={`absolute w-7 h-7 z-20 pointer-events-none ${
-                    pos === "top-left"     ? "-top-3 -left-3 border-t-2 border-l-2" :
-                    pos === "top-right"    ? "-top-3 -right-3 border-t-2 border-r-2" :
-                    pos === "bottom-left"  ? "-bottom-3 -left-3 border-b-2 border-l-2" :
-                                            "-bottom-3 -right-3 border-b-2 border-r-2"
-                  } border-primary/55`}
+                  className="absolute -inset-[5px] rounded-2xl z-0"
+                  style={{
+                    background: "conic-gradient(from 0deg, #b4befe, #cba6f7, #fab387, #89dceb, #a6e3a1, #b4befe)",
+                    animation: "ring-spin 7s linear infinite",
+                    filter: "blur(3px)",
+                  }}
                 />
-              ))}
+                {/* Gap (background fill between ring and photo) */}
+                <div
+                  className="absolute -inset-[4px] rounded-2xl z-0"
+                  style={{ background: "var(--color-background)" }}
+                />
+
+                {/* Photo */}
+                <div
+                  className="relative z-10 w-[260px] h-[280px] sm:w-[280px] sm:h-[300px] lg:w-[320px] lg:h-[340px] rounded-2xl overflow-hidden group"
+                  style={{ boxShadow: "0 0 80px rgba(180,190,254,0.18), 0 32px 80px rgba(0,0,0,0.75)" }}
+                >
+                  <img
+                    src={mainPhoto || "https://picsum.photos/seed/profile/400/500"}
+                    alt={`${data.first_name} ${data.last_name}`}
+                    className="w-full h-full object-cover object-top transition-all duration-700 group-hover:scale-[1.06] group-hover:brightness-110"
+                    referrerPolicy="no-referrer"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-background/40 via-transparent to-transparent" />
+                </div>
+
+                {/* ONLINE badge — positioned below photo, inside the padding area */}
+                <motion.div
+                  initial={{ opacity: 0, y: 10, scale: 0.8 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ delay: 1.1, type: "spring", stiffness: 300 }}
+                  className="absolute -bottom-7 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full border border-emerald-400/25 font-mono text-[10px] text-emerald-400 flex items-center gap-1.5 whitespace-nowrap z-20"
+                  style={{
+                    background: "rgba(8,8,16,0.88)",
+                    backdropFilter: "blur(12px)",
+                    boxShadow: "0 4px 24px rgba(74,222,128,0.15)",
+                  }}
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  ONLINE
+                </motion.div>
+
+                {/* Corner brackets */}
+                <div className="absolute -top-3 -left-3 w-7 h-7 border-t-2 border-l-2 border-primary/55 z-20 pointer-events-none" />
+                <div className="absolute -top-3 -right-3 w-7 h-7 border-t-2 border-r-2 border-primary/55 z-20 pointer-events-none" />
+                <div className="absolute -bottom-3 -left-3 w-7 h-7 border-b-2 border-l-2 border-primary/55 z-20 pointer-events-none" />
+                <div className="absolute -bottom-3 -right-3 w-7 h-7 border-b-2 border-r-2 border-primary/55 z-20 pointer-events-none" />
+              </div>
             </div>
           </motion.div>
         </div>
@@ -313,7 +303,7 @@ export default function Hero({ data }: { data: CVData }) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 2.2 }}
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 font-mono text-[10px] text-muted-foreground/35 pointer-events-none select-none"
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 font-mono text-[10px] text-muted-foreground/35 pointer-events-none select-none"
       >
         <span className="tracking-widest uppercase">scroll</span>
         <div
