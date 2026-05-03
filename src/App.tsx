@@ -15,6 +15,7 @@ import Gallery from "./components/Gallery";
 import Footer from "./components/Footer";
 import AIChat from "./components/AIChat";
 import CustomCursor from "./components/CustomCursor";
+import ParticleBackground from "./components/ParticleBackground";
 import { TooltipProvider } from "./components/ui/tooltip";
 
 const ADMIN_SEQUENCE = ["ArrowDown", "ArrowDown", "ArrowUp", "ArrowUp"];
@@ -163,6 +164,7 @@ export default function App() {
       {data && (
         <>
           <CustomCursor />
+          <ParticleBackground />
           <div className="scanline" />
           <div className="min-h-screen text-foreground font-sans selection:bg-primary/30 selection:text-primary relative z-[2] md:cursor-none">
             <Navbar data={data} />

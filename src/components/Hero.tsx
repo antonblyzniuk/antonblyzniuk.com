@@ -1,151 +1,10 @@
-import { useEffect, useRef, useCallback, type RefObject, type CSSProperties } from "react";
+import { type CSSProperties } from "react";
 import { motion } from "motion/react";
 import { CVData } from "../types";
 import { Github, Linkedin, Mail, Globe, Download } from "lucide-react";
 import Typewriter from "./Typewriter";
 import { sendTelegramNotification } from "../services/notifications";
 
-interface Particle {
-  x: number;
-  y: number;
-  vx: number;
-  vy: number;
-  idx: number;
-}
-
-function useParticleCanvas(containerRef: RefObject<HTMLDivElement | null>) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const mouseRef = useRef({ x: -9999, y: -9999 });
-  const particlesRef = useRef<Particle[]>([]);
-  const rafRef = useRef<number>(0);
-
-  const initParticles = useCallback((canvas: HTMLCanvasElement) => {
-    const isMobile = window.innerWidth < 640;
-    const isTablet = window.innerWidth < 1024;
-    const count = isMobile ? 0 : isTablet ? 60 : 120;
-    particlesRef.current = Array.from({ length: count }, (_, idx) => ({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      vx: (Math.random() - 0.5) * 0.6,
-      vy: (Math.random() - 0.5) * 0.6,
-      idx,
-    }));
-  }, []);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    const container = containerRef.current;
-    if (!canvas || !container) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    function resize() {
-      if (!canvas || !container) return;
-      canvas.width = container.offsetWidth;
-      canvas.height = container.offsetHeight;
-      initParticles(canvas);
-    }
-
-    function draw() {
-      if (!canvas || !ctx) return;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      const ps = particlesRef.current;
-      const mouse = mouseRef.current;
-
-      // Update particles
-      for (const p of ps) {
-        // Mouse repulsion
-        const dx = p.x - mouse.x;
-        const dy = p.y - mouse.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < 150 && dist > 0) {
-          const force = (150 - dist) / 150;
-          p.vx += (dx / dist) * force * 0.4;
-          p.vy += (dy / dist) * force * 0.4;
-        }
-
-        // Speed limit
-        const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
-        if (speed > 2) {
-          p.vx = (p.vx / speed) * 2;
-          p.vy = (p.vy / speed) * 2;
-        }
-        // Gentle return to original velocity
-        p.vx *= 0.98;
-        p.vy *= 0.98;
-        if (Math.abs(p.vx) < 0.1) p.vx += (Math.random() - 0.5) * 0.1;
-        if (Math.abs(p.vy) < 0.1) p.vy += (Math.random() - 0.5) * 0.1;
-
-        p.x += p.vx;
-        p.y += p.vy;
-
-        // Bounce
-        if (p.x < 0) { p.x = 0; p.vx *= -1; }
-        if (p.x > canvas.width) { p.x = canvas.width; p.vx *= -1; }
-        if (p.y < 0) { p.y = 0; p.vy *= -1; }
-        if (p.y > canvas.height) { p.y = canvas.height; p.vy *= -1; }
-      }
-
-      // Draw connections
-      for (let i = 0; i < ps.length; i++) {
-        for (let j = i + 1; j < ps.length; j++) {
-          const dx = ps[i].x - ps[j].x;
-          const dy = ps[i].y - ps[j].y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 120) {
-            const alpha = (1 - dist / 120) * 0.15;
-            const isViolet = (ps[i].idx + ps[j].idx) % 2 === 0;
-            ctx.strokeStyle = isViolet
-              ? `rgba(124,106,255,${alpha})`
-              : `rgba(0,255,204,${alpha * 0.5})`;
-            ctx.lineWidth = 0.8;
-            ctx.beginPath();
-            ctx.moveTo(ps[i].x, ps[i].y);
-            ctx.lineTo(ps[j].x, ps[j].y);
-            ctx.stroke();
-          }
-        }
-      }
-
-      // Draw dots
-      for (const p of ps) {
-        ctx.fillStyle = "rgba(124,106,255,0.4)";
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, 1.5, 0, Math.PI * 2);
-        ctx.fill();
-      }
-    }
-
-    function loop() {
-      draw();
-      rafRef.current = requestAnimationFrame(loop);
-    }
-
-    const onMouseMove = (e: MouseEvent) => {
-      const rect = canvas!.getBoundingClientRect();
-      mouseRef.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
-    };
-    const onMouseLeave = () => {
-      mouseRef.current = { x: -9999, y: -9999 };
-    };
-
-    resize();
-    loop();
-
-    window.addEventListener("resize", resize);
-    container.addEventListener("mousemove", onMouseMove);
-    container.addEventListener("mouseleave", onMouseLeave);
-
-    return () => {
-      cancelAnimationFrame(rafRef.current);
-      window.removeEventListener("resize", resize);
-      container.removeEventListener("mousemove", onMouseMove);
-      container.removeEventListener("mouseleave", onMouseLeave);
-    };
-  }, [containerRef, initParticles]);
-
-  return canvasRef;
-}
 
 function CharReveal({ text, className, style, delay = 0 }: {
   text: string;
@@ -184,21 +43,10 @@ function getIcon(name: string) {
 }
 
 export default function Hero({ data }: { data: CVData }) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const canvasRef = useParticleCanvas(containerRef);
   const mainPhoto = data.photos.find((p) => p.is_main)?.image || data.photos[0]?.image;
 
   return (
-    <section
-      ref={containerRef}
-      className="h-screen overflow-hidden flex flex-col justify-center relative"
-    >
-      {/* Particle canvas */}
-      <canvas
-        ref={canvasRef}
-        className="absolute inset-0 z-0 pointer-events-none hidden sm:block"
-      />
-
+    <section className="h-screen overflow-hidden flex flex-col justify-center relative">
       {/* Radial vignette */}
       <div
         className="absolute inset-0 z-[1] pointer-events-none"
