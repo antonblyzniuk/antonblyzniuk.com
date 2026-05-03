@@ -1,86 +1,111 @@
-export default function AnimatedBackground() {
+import { useEffect, useRef } from "react";
+
+const CHARS = "01ABCDEFabcdef∑∆πΩλ∞";
+
+interface Column {
+  x: number;
+  y: number;
+  speed: number;
+  trail: number[];
+  colorBase: "violet" | "mint";
+}
+
+export default function FallingNumbers() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const FONT_SIZE = 13;
+    const TRAIL_LENGTH = 20;
+    const OPACITY_BASE = 0.07;
+
+    let cols: Column[] = [];
+    let rafId: number;
+
+    function resize() {
+      if (!canvas) return;
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      initCols();
+    }
+
+    function initCols() {
+      if (!canvas) return;
+      const numCols = Math.floor(canvas.width / FONT_SIZE);
+      cols = Array.from({ length: numCols }, (_, i) => ({
+        x: i * FONT_SIZE,
+        y: Math.random() * -canvas!.height,
+        speed: 0.8 + Math.random() * 1.7,
+        trail: [],
+        colorBase: Math.random() < 0.5 ? "violet" : "mint",
+      }));
+    }
+
+    function draw() {
+      if (!canvas || !ctx) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      for (const col of cols) {
+        const trailLen = Math.floor(col.y / FONT_SIZE);
+        const startRow = Math.max(0, trailLen - TRAIL_LENGTH);
+
+        for (let t = startRow; t <= trailLen; t++) {
+          const isLead = t === trailLen;
+          const fadeRatio = (t - startRow) / TRAIL_LENGTH;
+          const alpha = isLead ? OPACITY_BASE * 8 : OPACITY_BASE * fadeRatio;
+
+          if (alpha < 0.003) continue;
+
+          const char = CHARS[Math.floor(Math.random() * CHARS.length)];
+          const py = t * FONT_SIZE;
+
+          if (isLead) {
+            ctx.fillStyle = `rgba(255, 255, 255, ${Math.min(alpha, 0.55)})`;
+            ctx.shadowColor = col.colorBase === "violet" ? "#7c6aff" : "#00ffcc";
+            ctx.shadowBlur = 6;
+          } else {
+            const r = col.colorBase === "violet" ? [124, 106, 255] : [0, 255, 204];
+            ctx.fillStyle = `rgba(${r[0]}, ${r[1]}, ${r[2]}, ${alpha})`;
+            ctx.shadowBlur = 0;
+          }
+
+          ctx.font = `${FONT_SIZE}px "JetBrains Mono", monospace`;
+          ctx.fillText(char, col.x, py);
+        }
+
+        col.y += col.speed;
+        if (col.y > canvas.height + TRAIL_LENGTH * FONT_SIZE) {
+          col.y = Math.random() * -FONT_SIZE * TRAIL_LENGTH;
+        }
+      }
+
+      ctx.shadowBlur = 0;
+    }
+
+    function loop() {
+      draw();
+      rafId = requestAnimationFrame(loop);
+    }
+
+    resize();
+    loop();
+
+    window.addEventListener("resize", resize);
+    return () => {
+      cancelAnimationFrame(rafId);
+      window.removeEventListener("resize", resize);
+    };
+  }, []);
+
   return (
-    <div className="fixed inset-0 pointer-events-none z-[1] overflow-hidden">
-      {/* Dot grid — fades toward edges */}
-      <div
-        className="absolute inset-0 dot-grid"
-        style={{
-          maskImage: "radial-gradient(ellipse 90% 90% at 50% 50%, black 20%, transparent 85%)",
-          WebkitMaskImage: "radial-gradient(ellipse 90% 90% at 50% 50%, black 20%, transparent 85%)",
-          opacity: 0.6,
-        }}
-      />
-
-      {/* Orb 1 — top-left, lavender */}
-      <div
-        className="absolute rounded-full"
-        style={{
-          width: "60vw",
-          height: "60vw",
-          top: "-20vw",
-          left: "-15vw",
-          background: "radial-gradient(circle, rgba(180,190,254,0.08) 0%, transparent 70%)",
-          animation: "orb1 18s ease-in-out infinite",
-        }}
-      />
-      {/* Orb 2 — bottom-right, peach */}
-      <div
-        className="absolute rounded-full"
-        style={{
-          width: "50vw",
-          height: "50vw",
-          bottom: "-15vw",
-          right: "-10vw",
-          background: "radial-gradient(circle, rgba(250,179,135,0.07) 0%, transparent 70%)",
-          animation: "orb2 22s ease-in-out infinite",
-        }}
-      />
-      {/* Orb 3 — mid-left, mauve */}
-      <div
-        className="absolute rounded-full"
-        style={{
-          width: "35vw",
-          height: "35vw",
-          top: "40%",
-          left: "5%",
-          background: "radial-gradient(circle, rgba(203,166,247,0.05) 0%, transparent 70%)",
-          animation: "orb3 26s ease-in-out infinite",
-        }}
-      />
-      {/* Orb 4 — top-right, blue */}
-      <div
-        className="absolute rounded-full"
-        style={{
-          width: "40vw",
-          height: "40vw",
-          top: "10%",
-          right: "5%",
-          background: "radial-gradient(circle, rgba(137,180,250,0.05) 0%, transparent 70%)",
-          animation: "orb4 30s ease-in-out infinite",
-        }}
-      />
-
-      <style>{`
-        @keyframes orb1 {
-          0%, 100% { transform: translate(0,    0)    scale(1); }
-          33%       { transform: translate(4vw,  6vw)  scale(1.08); }
-          66%       { transform: translate(-3vw, 3vw)  scale(0.94); }
-        }
-        @keyframes orb2 {
-          0%, 100% { transform: translate(0,    0)    scale(1); }
-          40%       { transform: translate(-5vw,-4vw)  scale(1.1); }
-          70%       { transform: translate(3vw, -6vw)  scale(0.92); }
-        }
-        @keyframes orb3 {
-          0%, 100% { transform: translate(0,   0)    scale(1); }
-          50%       { transform: translate(6vw,-5vw)  scale(1.12); }
-        }
-        @keyframes orb4 {
-          0%, 100% { transform: translate(0,   0)    scale(1); }
-          30%       { transform: translate(-4vw,5vw)  scale(0.9); }
-          65%       { transform: translate(2vw, 8vw)  scale(1.06); }
-        }
-      `}</style>
-    </div>
+    <canvas
+      ref={canvasRef}
+      className="fixed inset-0 pointer-events-none z-[1]"
+      style={{ opacity: 1 }}
+    />
   );
 }

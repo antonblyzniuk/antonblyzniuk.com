@@ -1,42 +1,8 @@
-import { useState, type ReactNode } from "react";
-import { useMotionValue, useSpring, motion, AnimatePresence } from "motion/react";
+import { useState } from "react";
+import { motion, AnimatePresence } from "motion/react";
 import { CVData, Project } from "../types";
-import { Github, ExternalLink, Folder, X, Globe, Code2, ArrowUpRight } from "lucide-react";
+import { Github, ExternalLink, X, Globe, Code2, ArrowUpRight } from "lucide-react";
 import { Button } from "./ui/button";
-
-function TiltCard({
-  children,
-  className = "",
-  onClick,
-}: {
-  children: ReactNode;
-  className?: string;
-  onClick?: () => void;
-}) {
-  const rawX = useMotionValue(0);
-  const rawY = useMotionValue(0);
-  const rotateY = useSpring(rawX, { stiffness: 260, damping: 24 });
-  const rotateX = useSpring(rawY, { stiffness: 260, damping: 24 });
-
-  return (
-    <motion.div
-      style={{ rotateX, rotateY, transformPerspective: 1100 }}
-      onMouseMove={(e) => {
-        const rect = e.currentTarget.getBoundingClientRect();
-        rawX.set(((e.clientX - rect.left) / rect.width - 0.5) * 10);
-        rawY.set(((e.clientY - rect.top) / rect.height - 0.5) * -10);
-      }}
-      onMouseLeave={() => {
-        rawX.set(0);
-        rawY.set(0);
-      }}
-      onClick={onClick}
-      className={className}
-    >
-      {children}
-    </motion.div>
-  );
-}
 
 function ProjectCard({
   project,
@@ -51,15 +17,30 @@ function ProjectCard({
 }) {
   return (
     <motion.div
+      layout
       initial={{ opacity: 0, y: 28 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ delay: index * 0.09 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 20, scale: 0.95 }}
+      transition={{ delay: index * 0.08, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
       className={featured ? "md:col-span-2" : ""}
     >
-      <TiltCard
+      <div
         onClick={onClick}
-        className="group cursor-pointer bento-card hover:border-primary/35 overflow-hidden transition-all duration-300 hover:shadow-[0_24px_70px_rgba(0,0,0,0.6),0_0_50px_rgba(180,190,254,0.1)] block w-full"
+        className="group cursor-pointer liquid-card rounded-2xl overflow-hidden transition-all duration-300 relative z-[1] will-change-transform block"
+        style={{
+          transform: "translateY(0px)",
+          boxShadow: "none",
+        }}
+        onMouseEnter={(e) => {
+          const el = e.currentTarget as HTMLDivElement;
+          el.style.transform = "translateY(-12px)";
+          el.style.boxShadow = "0 24px 70px rgba(0,0,0,0.6), 0 0 50px rgba(124,106,255,0.1)";
+        }}
+        onMouseLeave={(e) => {
+          const el = e.currentTarget as HTMLDivElement;
+          el.style.transform = "translateY(0px)";
+          el.style.boxShadow = "none";
+        }}
       >
         {/* Image */}
         {project.image ? (
@@ -73,64 +54,62 @@ function ProjectCard({
             <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/15 to-transparent" />
 
             {/* Hover overlay */}
-            <div className="absolute inset-0 bg-primary/7 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[1px]">
-              <div className="p-3 rounded-xl bg-primary/20 border border-primary/40 shadow-[0_0_28px_rgba(180,190,254,0.3)] translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                <ArrowUpRight className="w-5 h-5 text-primary" />
-              </div>
-            </div>
-
-            {/* Tab bar */}
-            <div className="absolute top-0 left-0 right-0 px-4 py-2.5 flex items-center justify-between">
-              <div className="flex items-center gap-2 font-mono text-[10px] text-white/55 glass rounded-md px-2 py-1 backdrop-blur-sm">
-                <Folder className="w-3 h-3 text-accent/70 shrink-0" />
-                <span className="truncate max-w-[120px]">
-                  {project.name.toLowerCase().replace(/\s+/g, "_")}.sh
-                </span>
-              </div>
-              <div className="flex gap-1.5 glass rounded-md px-2 py-1 backdrop-blur-sm">
-                <div className="w-2 h-2 rounded-full bg-destructive/60" />
-                <div className="w-2 h-2 rounded-full bg-accent/60" />
-                <div className="w-2 h-2 rounded-full bg-primary/60" />
+            <div
+              className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+              style={{ background: "rgba(4,4,10,0.65)", backdropFilter: "blur(2px)" }}
+            >
+              <div
+                className="px-5 py-3 rounded-xl font-mono text-sm font-bold flex items-center gap-2 translate-y-4 group-hover:translate-y-0 transition-transform duration-300"
+                style={{
+                  background: "rgba(124,106,255,0.15)",
+                  border: "1px solid rgba(124,106,255,0.4)",
+                  color: "#a89aff",
+                }}
+              >
+                View Project
+                <ArrowUpRight className="w-4 h-4" />
               </div>
             </div>
           </div>
         ) : (
           <div
-            className={`${featured ? "aspect-[3/2] sm:aspect-[16/7]" : "aspect-video"} bg-secondary/25 flex items-center justify-center border-b border-primary/5 group-hover:bg-secondary/35 transition-colors`}
+            className={`${featured ? "aspect-[3/2] sm:aspect-[16/7]" : "aspect-video"} flex items-center justify-center border-b`}
+            style={{ background: "rgba(13,13,32,0.5)", borderColor: "rgba(124,106,255,0.08)" }}
           >
-            <Code2 className="w-12 h-12 text-primary/10" />
+            <Code2 className="w-12 h-12" style={{ color: "rgba(124,106,255,0.1)" }} />
           </div>
         )}
 
         {/* Content */}
-        <div className={`${featured ? "p-6 md:p-8" : "p-5"} space-y-3`}>
+        <div className={`${featured ? "p-6 md:p-8" : "p-5"} space-y-3 relative z-[1]`}>
           <h3
-            className={`font-display font-bold text-foreground group-hover:text-primary transition-colors leading-snug ${featured ? "text-xl md:text-2xl" : "text-base"}`}
+            className={`font-display font-bold text-foreground group-hover:text-primary-light transition-colors leading-snug ${featured ? "text-xl md:text-2xl" : "text-base"}`}
           >
             {project.name}
           </h3>
           <p
-            className={`text-muted-foreground/70 leading-relaxed font-mono ${featured ? "text-sm line-clamp-3" : "text-xs line-clamp-2"}`}
+            className={`text-muted-foreground leading-relaxed font-mono ${featured ? "text-sm line-clamp-3" : "text-xs line-clamp-2"}`}
           >
             {project.description}
           </p>
           {project.links.length > 0 && (
-            <div className="flex items-center gap-3 pt-2 border-t border-primary/5">
+            <div className="flex items-center gap-3 pt-2 border-t" style={{ borderColor: "rgba(124,106,255,0.07)" }}>
               {project.links.slice(0, 3).map((link, j) => (
-                <span key={j} className="flex items-center gap-1 text-[10px] font-mono text-muted-foreground/40">
-                  {link.name.toLowerCase().includes("github")
-                    ? <Github className="w-3 h-3" />
-                    : <Globe className="w-3 h-3" />}
+                <span key={j} className="flex items-center gap-1 text-[10px] font-mono" style={{ color: "rgba(74,74,106,0.6)" }}>
+                  {link.name.toLowerCase().includes("github") ? <Github className="w-3 h-3" /> : <Globe className="w-3 h-3" />}
                   <span className="truncate max-w-[64px]">{link.name}</span>
                 </span>
               ))}
-              <span className="ml-auto text-[10px] font-mono text-primary/35 group-hover:text-primary/65 transition-colors flex items-center gap-1">
+              <span
+                className="ml-auto text-[10px] font-mono flex items-center gap-1 group-hover:text-primary-light transition-colors"
+                style={{ color: "rgba(124,106,255,0.4)" }}
+              >
                 open <ExternalLink className="w-2.5 h-2.5" />
               </span>
             </div>
           )}
         </div>
-      </TiltCard>
+      </div>
     </motion.div>
   );
 }
@@ -141,49 +120,82 @@ export default function Projects({ data }: { data: CVData }) {
 
   return (
     <section id="projects" className="py-24 scroll-mt-24 relative overflow-x-hidden">
-      <div className="section-num absolute top-4 right-0 select-none pointer-events-none">04</div>
-
       <div className="max-w-6xl mx-auto relative z-10">
         {/* Section header */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
           className="mb-14"
         >
           <div className="section-eyebrow mb-5">
             <div className="h-px flex-1 max-w-[48px] bg-gradient-to-r from-transparent to-primary/25" />
-            <span>04 · projects</span>
+            <span>04 · work</span>
             <div className="h-px w-6 bg-primary/20" />
           </div>
           <h2
-            className="font-display font-black tracking-tight leading-[0.86]"
-            style={{ fontSize: "clamp(3rem, 8vw, 7rem)" }}
+            className="font-display font-black leading-[0.86]"
+            style={{ fontSize: "clamp(3rem, 8vw, 7rem)", letterSpacing: "-0.04em" }}
           >
-            <span className="block text-foreground">Selected</span>
-            <span className="block gradient-text">Works</span>
+            <span className="block text-foreground">SELECTED</span>
+            <span className="block gradient-text">WORK</span>
           </h2>
         </motion.div>
 
+        {/* Filter bar — only "ALL" since Project has no category field */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.1, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          className="flex gap-2 mb-8 overflow-x-auto pb-1"
+        >
+          <button
+            className="flex-none px-4 py-2 rounded-full font-mono text-xs uppercase tracking-widest transition-all duration-200"
+            style={{
+              background: "rgba(124,106,255,0.15)",
+              border: "1px solid rgba(124,106,255,0.4)",
+              color: "#a89aff",
+            }}
+          >
+            ALL
+          </button>
+        </motion.div>
+
         {/* Project grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          {featured && (
-            <ProjectCard project={featured} index={0} featured onClick={() => setSelected(featured)} />
-          )}
-          {rest.map((project, i) => (
-            <ProjectCard key={i} project={project} index={i + 1} onClick={() => setSelected(project)} />
-          ))}
-        </div>
+        <motion.div layout className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <AnimatePresence mode="popLayout">
+            {featured && (
+              <ProjectCard
+                key={featured.name}
+                project={featured}
+                index={0}
+                featured
+                onClick={() => setSelected(featured)}
+              />
+            )}
+            {rest.map((project, i) => (
+              <ProjectCard
+                key={project.name}
+                project={project}
+                index={i + 1}
+                onClick={() => setSelected(project)}
+              />
+            ))}
+          </AnimatePresence>
+        </motion.div>
       </div>
 
-      {/* ── Modal ── */}
+      {/* Modal */}
       <AnimatePresence>
         {selected && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-10 bg-background/92 backdrop-blur-2xl"
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-10"
+            style={{ background: "rgba(4,4,10,0.92)", backdropFilter: "blur(24px)" }}
             onClick={() => setSelected(null)}
           >
             <motion.div
@@ -191,16 +203,20 @@ export default function Projects({ data }: { data: CVData }) {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.92, y: 16 }}
               transition={{ type: "spring", stiffness: 260, damping: 28 }}
-              className="relative max-w-4xl w-full max-h-full bento-card overflow-hidden border-primary/22 shadow-[0_40px_120px_rgba(0,0,0,0.85),0_0_60px_rgba(180,190,254,0.1)]"
+              className="relative max-w-4xl w-full max-h-full liquid-card rounded-2xl overflow-hidden relative z-[1]"
+              style={{ boxShadow: "0 40px 120px rgba(0,0,0,0.85), 0 0 60px rgba(124,106,255,0.1)" }}
               onClick={(e) => e.stopPropagation()}
             >
               {/* Modal header */}
-              <div className="px-5 py-3 border-b border-primary/10 flex items-center justify-between">
+              <div
+                className="px-5 py-3 flex items-center justify-between relative z-[1]"
+                style={{ borderBottom: "1px solid rgba(124,106,255,0.1)" }}
+              >
                 <div className="flex items-center gap-3">
                   <div className="flex gap-1.5">
                     <div className="w-3 h-3 rounded-full bg-destructive/60" />
-                    <div className="w-3 h-3 rounded-full bg-accent/60" />
-                    <div className="w-3 h-3 rounded-full bg-primary/60" />
+                    <div className="w-3 h-3 rounded-full" style={{ background: "rgba(255,204,0,0.6)" }} />
+                    <div className="w-3 h-3 rounded-full" style={{ background: "rgba(124,106,255,0.6)" }} />
                   </div>
                   <div className="text-xs font-mono text-muted-foreground uppercase tracking-widest flex items-center gap-2">
                     <Code2 className="w-3.5 h-3.5" />
@@ -209,7 +225,7 @@ export default function Projects({ data }: { data: CVData }) {
                 </div>
                 <button
                   onClick={() => setSelected(null)}
-                  className="p-2.5 rounded-xl hover:bg-primary/10 text-muted-foreground hover:text-primary transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
+                  className="p-2.5 rounded-xl hover:bg-primary/10 text-muted-foreground hover:text-primary transition-colors"
                   aria-label="Close"
                 >
                   <X className="w-4 h-4" />
@@ -229,31 +245,39 @@ export default function Projects({ data }: { data: CVData }) {
                   </div>
                 )}
 
-                <div className="p-6 md:p-10 space-y-6">
+                <div className="p-6 md:p-10 space-y-6 relative z-[1]">
                   <h2 className="font-display text-3xl md:text-4xl font-black tracking-tight gradient-text">
                     {selected.name}
                   </h2>
-                  <div className="p-5 rounded-xl glass border border-primary/10 font-mono text-sm text-foreground/85 leading-relaxed">
-                    <span className="text-primary/38 mr-3">&gt;</span>
+                  <div
+                    className="p-5 rounded-xl font-mono text-sm leading-relaxed"
+                    style={{
+                      background: "rgba(8,8,22,0.6)",
+                      border: "1px solid rgba(124,106,255,0.1)",
+                      color: "rgba(232,232,240,0.85)",
+                    }}
+                  >
+                    <span style={{ color: "rgba(124,106,255,0.4)", marginRight: "0.75rem" }}>&gt;</span>
                     {selected.description}
                   </div>
                   {selected.links.length > 0 && (
                     <div className="space-y-3">
                       <div className="text-[10px] font-mono text-muted-foreground uppercase tracking-[0.22em]">
-                        Available_Deployments
+                        Available Deployments
                       </div>
                       <div className="flex flex-wrap gap-3">
                         {selected.links.map((link, k) => (
                           <Button
                             key={k}
                             variant="outline"
-                            className="gap-2.5 border-primary/18 hover:border-primary hover:bg-primary/8 font-mono text-sm"
+                            className="gap-2.5 font-mono text-sm"
+                            style={{
+                              borderColor: "rgba(124,106,255,0.2)",
+                            }}
                             asChild
                           >
                             <a href={link.url} target="_blank" rel="noopener noreferrer">
-                              {link.name.toLowerCase().includes("github")
-                                ? <Github className="w-4 h-4" />
-                                : <Globe className="w-4 h-4" />}
+                              {link.name.toLowerCase().includes("github") ? <Github className="w-4 h-4" /> : <Globe className="w-4 h-4" />}
                               {link.name}
                               <ExternalLink className="w-3 h-3 opacity-45" />
                             </a>
@@ -265,9 +289,12 @@ export default function Projects({ data }: { data: CVData }) {
                 </div>
               </div>
 
-              <div className="px-6 py-2.5 border-t border-primary/8 flex items-center justify-between font-mono text-[9px] text-muted-foreground">
-                <span className="text-primary/45">status: inspecting</span>
-                <span className="text-primary font-bold tracking-widest">READY_</span>
+              <div
+                className="px-6 py-2.5 flex items-center justify-between font-mono text-[9px] text-muted-foreground relative z-[1]"
+                style={{ borderTop: "1px solid rgba(124,106,255,0.08)" }}
+              >
+                <span style={{ color: "rgba(124,106,255,0.45)" }}>status: inspecting</span>
+                <span className="text-primary font-bold tracking-widest text-shimmer">READY_</span>
               </div>
             </motion.div>
           </motion.div>

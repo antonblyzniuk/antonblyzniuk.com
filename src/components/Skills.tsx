@@ -1,73 +1,36 @@
-import { motion } from "motion/react";
+import { useState, useRef } from "react";
+import { motion, AnimatePresence, useScroll, useTransform } from "motion/react";
 import { CVData } from "../types";
-import { cn } from "../lib/utils";
 
 const levelOrder: Record<string, number> = { expert: 4, advanced: 3, intermediate: 2, beginner: 1 };
 
-function getLevelDots(level: string | null) {
-  const map: Record<string, number> = { expert: 4, advanced: 3, intermediate: 2, beginner: 1 };
-  return map[level?.toLowerCase() ?? ""] ?? 0;
-}
-
-function getLevelColors(level: string | null) {
+function getLevelWidth(level: string | null): number {
   switch (level?.toLowerCase()) {
-    case "expert":
-      return {
-        chip: "border-primary/28 bg-primary/8 text-primary hover:border-primary/65 hover:bg-primary/15 hover:shadow-[0_0_24px_rgba(180,190,254,0.22)]",
-        dot: "bg-primary",
-        glow: "0 0 24px rgba(180,190,254,0.25)",
-      };
-    case "advanced":
-      return {
-        chip: "border-[#cba6f7]/22 bg-[#cba6f7]/7 text-[#cba6f7] hover:border-[#cba6f7]/50 hover:bg-[#cba6f7]/14",
-        dot: "bg-[#cba6f7]",
-        glow: "",
-      };
-    case "intermediate":
-      return {
-        chip: "border-accent/22 bg-accent/7 text-accent hover:border-accent/50 hover:bg-accent/14",
-        dot: "bg-accent",
-        glow: "",
-      };
-    default:
-      return {
-        chip: "border-border/70 bg-surface/60 text-muted-foreground hover:border-border",
-        dot: "bg-muted-foreground/50",
-        glow: "",
-      };
+    case "expert": return 100;
+    case "advanced": return 78;
+    case "intermediate": return 52;
+    case "beginner": return 26;
+    default: return 0;
   }
 }
 
-function getLevelBarColor(level: string | null) {
-  switch (level?.toLowerCase()) {
-    case "expert":       return "bg-gradient-to-r from-primary to-[#cba6f7]";
-    case "advanced":     return "bg-gradient-to-r from-[#cba6f7] to-primary/70";
-    case "intermediate": return "bg-gradient-to-r from-accent to-accent/70";
-    default:             return "bg-muted-foreground/50";
-  }
+function getLevelLabel(level: string | null): string {
+  return level?.toUpperCase() ?? "N/A";
 }
 
-function getLevelWidth(level: string | null) {
-  switch (level?.toLowerCase()) {
-    case "expert":       return "100%";
-    case "advanced":     return "78%";
-    case "intermediate": return "52%";
-    case "beginner":     return "26%";
-    default:             return "0%";
-  }
-}
-
-const catColors: Record<number, { line: string; label: string }> = {
-  0: { line: "from-primary/60 to-transparent", label: "text-primary/60" },
-  1: { line: "from-[#cba6f7]/60 to-transparent", label: "text-[#cba6f7]/60" },
-  2: { line: "from-accent/60 to-transparent", label: "text-accent/60" },
-  3: { line: "from-[#89dceb]/60 to-transparent", label: "text-[#89dceb]/60" },
-};
+const catColorAccents = [
+  { border: "#7c6aff", text: "#a89aff" },
+  { border: "#00ffcc", text: "#00ffcc" },
+  { border: "#ff6b6b", text: "#ff6b6b" },
+  { border: "#ffcc00", text: "#ffcc00" },
+];
 
 export default function Skills({ data }: { data: CVData }) {
-  const hasLevels     = data.skills.some((s) => s.level);
-  const hasCategories = data.skills.some((s) => s.category);
+  const sectionRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
+  const bgTextY = useTransform(scrollYProgress, [0, 1], ["-5%", "5%"]);
 
+  const hasCategories = data.skills.some((s) => s.category);
   const sorted = [...data.skills].sort((a, b) => {
     const la = levelOrder[a.level?.toLowerCase() ?? ""] ?? 0;
     const lb = levelOrder[b.level?.toLowerCase() ?? ""] ?? 0;
@@ -81,160 +44,184 @@ export default function Skills({ data }: { data: CVData }) {
         acc[cat].push(skill);
         return acc;
       }, {} as Record<string, typeof sorted>)
-    : null;
+    : { All: sorted };
+
+  const categories = Object.keys(grouped);
+  const [activeCategory, setActiveCategory] = useState(categories[0] ?? "All");
+  const activeSkills = grouped[activeCategory] ?? sorted;
 
   return (
-    <section id="skills" className="py-24 scroll-mt-24 relative overflow-x-hidden">
-      <div className="section-num absolute top-4 right-0 select-none pointer-events-none">02</div>
+    <section ref={sectionRef} id="skills" className="py-24 scroll-mt-24 relative overflow-x-hidden">
+      {/* Parallax background text */}
+      <motion.div
+        style={{ y: bgTextY }}
+        className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden"
+        aria-hidden="true"
+      >
+        <span
+          style={{
+            fontFamily: "var(--font-syne, Syne, sans-serif)",
+            fontSize: "clamp(6rem, 22vw, 20rem)",
+            fontWeight: 900,
+            color: "transparent",
+            WebkitTextStroke: "1px rgba(124,106,255,0.025)",
+            lineHeight: 1,
+            letterSpacing: "-0.05em",
+          }}
+        >
+          SKILLS
+        </span>
+      </motion.div>
 
       <div className="max-w-6xl mx-auto relative z-10">
         {/* Section header */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
           className="mb-14"
         >
           <div className="section-eyebrow mb-5">
             <div className="h-px flex-1 max-w-[48px] bg-gradient-to-r from-transparent to-primary/25" />
-            <span>02 · skills</span>
+            <span>02 · capabilities</span>
             <div className="h-px w-6 bg-primary/20" />
           </div>
           <h2
-            className="font-display font-black tracking-tight leading-[0.86]"
-            style={{ fontSize: "clamp(3rem, 8vw, 7rem)" }}
+            className="font-display font-black leading-[0.86]"
+            style={{ fontSize: "clamp(3rem, 8vw, 7rem)", letterSpacing: "-0.04em" }}
           >
-            <span className="block text-foreground">Tech</span>
-            <span className="block gradient-text">Stack</span>
+            <span className="block text-foreground">TECH</span>
+            <span className="block gradient-text">CAPABILITIES</span>
           </h2>
         </motion.div>
 
-        {/* Skills display */}
-        {hasLevels && grouped ? (
-          <div className="space-y-10">
-            {Object.entries(grouped).map(([category, skills], catIdx) => {
-              const cc = catColors[catIdx % 4];
-              return (
-                <motion.div
-                  key={catIdx}
-                  initial={{ opacity: 0, y: 18 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: catIdx * 0.08 }}
+        {/* Two-panel layout — hidden on mobile */}
+        <div className="flex flex-col lg:flex-row gap-8">
+
+          {/* Left panel: category list (40%) */}
+          <motion.div
+            initial={{ opacity: 0, x: -40 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            className="w-full lg:w-[40%]"
+          >
+            {/* Mobile: horizontal scrollable tabs */}
+            <div className="lg:hidden flex gap-2 overflow-x-auto pb-2 scrollbar-none mb-6">
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setActiveCategory(cat)}
+                  className="flex-none px-4 py-2 rounded-full font-mono text-xs uppercase tracking-widest transition-all duration-200"
+                  style={{
+                    background: activeCategory === cat ? "rgba(124,106,255,0.15)" : "rgba(8,8,22,0.6)",
+                    border: `1px solid ${activeCategory === cat ? "rgba(124,106,255,0.4)" : "rgba(124,106,255,0.1)"}`,
+                    color: activeCategory === cat ? "#a89aff" : "#4a4a6a",
+                  }}
                 >
-                  <div className="flex items-center gap-3 mb-5 font-mono text-[11px] text-muted-foreground uppercase tracking-[0.22em]">
-                    <span className={`font-bold ${cc.label}`}>##</span>
-                    <span>{category}</span>
-                    <span className={`flex-1 h-px bg-gradient-to-r ${cc.line}`} />
-                    <span className="text-muted-foreground/40 text-[10px]">{skills.length} modules</span>
-                  </div>
-                  <div className="flex flex-wrap gap-2.5">
-                    {skills.map((skill, i) => {
-                      const colors = getLevelColors(skill.level);
-                      const dots = getLevelDots(skill.level);
-                      return (
-                        <motion.div
-                          key={i}
-                          initial={{ opacity: 0, scale: 0.85 }}
-                          whileInView={{ opacity: 1, scale: 1 }}
-                          viewport={{ once: true }}
-                          transition={{
-                            delay: catIdx * 0.05 + i * 0.03,
-                            type: "spring",
-                            stiffness: 300,
-                            damping: 22,
-                          }}
-                          whileHover={{ y: -4, scale: 1.04 }}
-                          className={cn(
-                            "flex items-center gap-2 px-4 py-2.5 rounded-xl border font-mono text-sm cursor-default transition-all duration-200",
-                            colors.chip
-                          )}
-                          style={colors.glow ? { boxShadow: "none" } : undefined}
-                        >
-                          <span>{skill.name}</span>
-                          {dots > 0 && (
-                            <span className="flex items-center gap-0.5 ml-0.5">
-                              {[1, 2, 3, 4].map((d) => (
-                                <span
-                                  key={d}
-                                  className={cn(
-                                    "w-[5px] h-[5px] rounded-full transition-opacity",
-                                    d <= dots ? colors.dot : "bg-current opacity-15"
-                                  )}
-                                />
-                              ))}
-                            </span>
-                          )}
-                        </motion.div>
-                      );
-                    })}
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
-        ) : hasLevels ? (
-          /* Flat list with gradient progress bars */
-          <div className="bento-card p-5 sm:p-7">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-0.5">
-              {sorted.map((skill, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, x: -10 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.035 }}
-                  className="flex items-center gap-3 py-2.5 px-2 rounded-lg hover:bg-primary/5 transition-colors group"
-                >
-                  <span className="text-accent/45 text-xs shrink-0">$</span>
-                  <span className="font-mono text-sm text-foreground/75 flex-1 truncate group-hover:text-foreground transition-colors">
-                    {skill.name}
-                  </span>
-                  {skill.level && (
-                    <>
-                      <div className="w-20 h-1 bg-secondary/80 rounded-full overflow-hidden shrink-0">
-                        <motion.div
-                          initial={{ width: 0 }}
-                          whileInView={{ width: getLevelWidth(skill.level) }}
-                          viewport={{ once: true }}
-                          transition={{ delay: i * 0.03 + 0.2, duration: 0.8, ease: "easeOut" }}
-                          className={cn("h-full rounded-full", getLevelBarColor(skill.level))}
-                        />
-                      </div>
-                      <span className="text-[10px] font-mono uppercase tracking-wider w-16 text-right shrink-0 text-muted-foreground/45 group-hover:text-muted-foreground/75 transition-opacity">
-                        {skill.level}
-                      </span>
-                    </>
-                  )}
-                </motion.div>
+                  {cat}
+                </button>
               ))}
             </div>
-          </div>
-        ) : (
-          /* Badge cloud */
-          <div className="flex flex-wrap gap-3">
-            {data.skills.map((skill, i) => (
+
+            {/* Desktop: clickable rows */}
+            <div className="hidden lg:block space-y-1">
+              {categories.map((cat, i) => {
+                const accent = catColorAccents[i % catColorAccents.length];
+                const isActive = activeCategory === cat;
+                return (
+                  <motion.button
+                    key={cat}
+                    onClick={() => setActiveCategory(cat)}
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.06, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                    className="w-full text-left px-4 py-3 rounded-lg font-mono text-sm flex items-center gap-3 group transition-all duration-200"
+                    style={{
+                      borderLeft: `2px solid ${isActive ? accent.border : "transparent"}`,
+                      background: isActive ? `${accent.border}0a` : "transparent",
+                    }}
+                  >
+                    <motion.span
+                      animate={{ x: isActive ? 4 : 0, color: isActive ? accent.text : "#4a4a6a" }}
+                      transition={{ duration: 0.2 }}
+                      className="font-bold"
+                    >
+                      →
+                    </motion.span>
+                    <span
+                      style={{ color: isActive ? accent.text : "#4a4a6a" }}
+                      className="uppercase tracking-widest text-xs flex-1 transition-colors duration-200 group-hover:text-foreground"
+                    >
+                      {cat}
+                    </span>
+                    <span className="text-[10px]" style={{ color: isActive ? accent.border : "rgba(74,74,106,0.4)" }}>
+                      {grouped[cat]?.length ?? 0}
+                    </span>
+                  </motion.button>
+                );
+              })}
+            </div>
+          </motion.div>
+
+          {/* Right panel: skill bars (60%) */}
+          <div className="w-full lg:w-[60%]">
+            <AnimatePresence mode="wait">
               <motion.div
-                key={i}
-                initial={{ opacity: 0, scale: 0.82 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.035, type: "spring", stiffness: 280, damping: 20 }}
-                whileHover={{ y: -4, scale: 1.06 }}
-                className="px-4 py-2.5 bento-card border-primary/15 hover:border-primary/40 hover:bg-primary/8 font-mono text-sm text-muted-foreground hover:text-primary transition-all duration-200 cursor-default"
+                key={activeCategory}
+                initial={{ opacity: 0, x: 30 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                className="space-y-3"
               >
-                <span className="text-accent/55 mr-2">#</span>
-                {skill.name}
+                {activeSkills.map((skill, i) => (
+                  <motion.div
+                    key={`${activeCategory}-${skill.name}`}
+                    initial={{ opacity: 0, x: 30 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: i * 0.04, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                    className="group"
+                  >
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="font-mono text-sm text-foreground/85 group-hover:text-foreground transition-colors">
+                        {skill.name}
+                      </span>
+                      {skill.level && (
+                        <span className="font-mono text-[10px] uppercase tracking-widest" style={{ color: "#4a4a6a" }}>
+                          {getLevelLabel(skill.level)}
+                        </span>
+                      )}
+                    </div>
+                    {skill.level && (
+                      <div
+                        className="h-[2px] rounded-full overflow-hidden"
+                        style={{ background: "rgba(124,106,255,0.08)" }}
+                      >
+                        <motion.div
+                          initial={{ width: 0 }}
+                          whileInView={{ width: `${getLevelWidth(skill.level)}%` }}
+                          viewport={{ once: true }}
+                          transition={{ delay: i * 0.04 + 0.1, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+                          className="h-full rounded-full"
+                          style={{ background: "linear-gradient(90deg, #7c6aff, #00ffcc)" }}
+                        />
+                      </div>
+                    )}
+                  </motion.div>
+                ))}
               </motion.div>
-            ))}
+            </AnimatePresence>
           </div>
-        )}
+        </div>
 
         {/* Languages */}
         {data.languages.length > 0 && (
           <div className="mt-16">
             <div className="flex items-center gap-3 mb-6 font-mono text-[11px] text-muted-foreground uppercase tracking-[0.22em]">
-              <span className="text-accent/65 font-bold">##</span>
+              <span style={{ color: "rgba(255,107,107,0.7)" }} className="font-bold">##</span>
               <span>Languages</span>
               <span className="flex-1 h-px bg-gradient-to-r from-accent/20 to-transparent" />
             </div>
@@ -245,14 +232,14 @@ export default function Skills({ data }: { data: CVData }) {
                   initial={{ opacity: 0, y: 12 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ delay: i * 0.07 }}
+                  transition={{ delay: i * 0.07, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
                   whileHover={{ y: -4 }}
-                  className="bento-card border-accent/12 hover:border-accent/30 p-4 transition-all duration-200 group"
+                  className="liquid-card rounded-xl p-4 group relative z-[1]"
                 >
-                  <div className="font-mono text-sm font-bold text-foreground group-hover:text-accent transition-colors truncate">
+                  <div className="font-mono text-sm font-bold text-foreground/85 group-hover:text-primary-light transition-colors truncate relative z-[1]">
                     {lang.name}
                   </div>
-                  <div className="text-[10px] text-muted-foreground uppercase tracking-wider mt-1.5">
+                  <div className="text-[10px] text-muted-foreground uppercase tracking-wider mt-1.5 relative z-[1]">
                     {lang.level}
                   </div>
                 </motion.div>

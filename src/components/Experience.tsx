@@ -1,190 +1,272 @@
-import { useMotionValue, useSpring, motion } from "motion/react";
+import { motion } from "motion/react";
 import { CVData } from "../types";
 import { Briefcase, GraduationCap, MapPin } from "lucide-react";
-import { Badge } from "./ui/badge";
 
 type ExpUnit = CVData["experience_units"][number];
 type EduUnit = CVData["education_units"][number];
 
-function ExpCard({
+function TimelineCard({
   item,
-  i,
-  colorType,
+  index,
+  side,
+  type,
 }: {
   item: ExpUnit | EduUnit;
-  i: number;
-  colorType: "primary" | "accent";
+  index: number;
+  side: "left" | "right";
+  type: "exp" | "edu";
 }) {
-  const rawX = useMotionValue(0);
-  const rawY = useMotionValue(0);
-  const rotateY = useSpring(rawX, { stiffness: 280, damping: 26 });
-  const rotateX = useSpring(rawY, { stiffness: 280, damping: 26 });
-
-  const isExp = colorType === "primary";
-  const clr = isExp
-    ? {
-        node: "border-primary/22 group-hover:border-primary/55 group-hover:shadow-[0_0_22px_rgba(180,190,254,0.2)]",
-        icon: "text-primary",
-        bar: "from-primary/60 via-primary/20 to-transparent",
-        card: "border-primary/9 hover:border-primary/28",
-        title: "group-hover:text-primary",
-        org: "text-accent",
-        badge: "border-primary/18 text-primary/55",
-      }
-    : {
-        node: "border-accent/22 group-hover:border-accent/55 group-hover:shadow-[0_0_22px_rgba(250,179,135,0.2)]",
-        icon: "text-accent",
-        bar: "from-accent/60 via-accent/20 to-transparent",
-        card: "border-accent/9 hover:border-accent/28",
-        title: "group-hover:text-accent",
-        org: "text-primary",
-        badge: "border-accent/18 text-accent/55",
-      };
-
+  const isExp = type === "exp";
   const isExpItem = "organization" in item;
-  const name        = item.name;
-  const description = item.description;
-  const fromDate    = item.from_date;
-  const toDate      = item.to_date;
-  const location    = item.location;
-  const org         = isExpItem ? (item as ExpUnit).organization : undefined;
-  const degree      = !isExpItem ? (item as EduUnit).degree : undefined;
-  const field       = !isExpItem ? (item as EduUnit).field_of_study : undefined;
+  const org = isExpItem ? (item as ExpUnit).organization : undefined;
+  const degree = !isExpItem ? (item as EduUnit).degree : undefined;
+  const field = !isExpItem ? (item as EduUnit).field_of_study : undefined;
+  const accentColor = isExp ? "#7c6aff" : "#00ffcc";
+  const accentColorDim = isExp ? "rgba(124,106,255,0.3)" : "rgba(0,255,204,0.3)";
 
   return (
-    <motion.div
-      initial={{ opacity: 0, x: -18 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      viewport={{ once: true }}
-      transition={{ delay: i * 0.08, type: "spring", stiffness: 100, damping: 18 }}
-      style={{ rotateX, rotateY, transformPerspective: 1000 }}
-      onMouseMove={(e) => {
-        const rect = e.currentTarget.getBoundingClientRect();
-        rawX.set(((e.clientX - rect.left) / rect.width - 0.5) * 6);
-        rawY.set(((e.clientY - rect.top) / rect.height - 0.5) * -6);
-      }}
-      onMouseLeave={() => {
-        rawX.set(0);
-        rawY.set(0);
-      }}
-      className="relative flex items-start gap-5 group"
+    <div
+      className={`relative flex items-start gap-0 ${
+        side === "right" ? "flex-row-reverse" : "flex-row"
+      }`}
     >
-      {/* Timeline node */}
-      <div className="shrink-0 w-10 h-10 z-10 relative">
-        <div className={`absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity blur-md ${isExp ? "bg-primary/10" : "bg-accent/10"}`} />
-        <div className={`w-full h-full rounded-xl glass border ${clr.node} flex items-center justify-center transition-all`}>
-          {isExpItem
-            ? <Briefcase className={`w-4 h-4 ${clr.icon}`} />
-            : <GraduationCap className={`w-4 h-4 ${clr.icon}`} />
-          }
+      {/* Card */}
+      <motion.div
+        initial={{ opacity: 0, x: side === "left" ? -60 : 60 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        viewport={{ once: true, margin: "-80px" }}
+        transition={{ delay: index * 0.1, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+        className="w-[calc(50%-28px)] group"
+      >
+        <div
+          className="liquid-card rounded-2xl p-5 relative z-[1] group-hover:border-opacity-30 transition-all duration-300"
+          style={{
+            borderColor: `${accentColor}15`,
+          }}
+          onMouseEnter={(e) => {
+            (e.currentTarget as HTMLDivElement).style.borderColor = `${accentColor}30`;
+          }}
+          onMouseLeave={(e) => {
+            (e.currentTarget as HTMLDivElement).style.borderColor = `${accentColor}15`;
+          }}
+        >
+          {/* Date above card */}
+          <div
+            className="font-mono text-[10px] uppercase tracking-widest mb-2 relative z-[1]"
+            style={{ color: accentColorDim }}
+          >
+            {item.from_date} — {item.to_date}
+          </div>
+
+          {/* Company */}
+          {(org || degree || field) && (
+            <div
+              className="font-display font-bold text-base mb-1 gradient-text relative z-[1]"
+            >
+              {org ?? [degree, field].filter(Boolean).join(" · ")}
+            </div>
+          )}
+
+          {/* Role */}
+          <h4 className="font-display font-bold text-xl leading-snug text-foreground mb-2 relative z-[1]">
+            {item.name}
+          </h4>
+
+          {/* Location */}
+          {item.location && (
+            <div className="flex items-center gap-1 font-mono text-xs text-muted-foreground mb-3 relative z-[1]">
+              <MapPin className="w-3 h-3" />
+              {item.location}
+            </div>
+          )}
+
+          {/* Description */}
+          {item.description && (
+            <div className="space-y-1 relative z-[1]">
+              {item.description.split(". ").filter(Boolean).slice(0, 3).map((sentence, i) => (
+                <p key={i} className="flex items-start gap-2 font-mono text-xs text-muted-foreground leading-relaxed">
+                  <span style={{ color: accentColor }} className="mt-0.5 shrink-0">▸</span>
+                  {sentence.replace(/\.$/, "")}.
+                </p>
+              ))}
+            </div>
+          )}
         </div>
+      </motion.div>
+
+      {/* Center dot on the line */}
+      <div className="w-14 flex-none flex items-center justify-center pt-6 relative">
+        <motion.div
+          initial={{ scale: 0 }}
+          whileInView={{ scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: index * 0.1 + 0.2, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+          className="w-3 h-3 rounded-full relative z-10 group-hover:scale-125"
+          style={{
+            background: "#04040a",
+            border: `2px solid ${accentColor}`,
+          }}
+        />
       </div>
 
-      {/* Card */}
-      <div className="flex-1 min-w-0">
-        <div
-          className={`relative bento-card overflow-hidden transition-all duration-300 group-hover:shadow-[0_12px_40px_rgba(0,0,0,0.5)] ${clr.card}`}
-          style={{ transformStyle: "preserve-3d" }}
-        >
-          <div className={`absolute left-0 top-0 bottom-0 w-[2px] bg-gradient-to-b ${clr.bar}`} />
-          <div className="p-4 pl-5">
-            <div className="flex flex-wrap items-start justify-between gap-2 mb-1.5">
-              <h4 className={`text-sm font-bold text-foreground transition-colors leading-snug ${clr.title}`}>
-                {name}
-              </h4>
-              <Badge
-                variant="outline"
-                className={`font-mono text-[9px] shrink-0 px-2 ${clr.badge}`}
-              >
-                {fromDate} — {toDate}
-              </Badge>
-            </div>
-            {(org || degree || field || location) && (
-              <div className="flex flex-wrap items-center gap-2 mb-2.5">
-                {(org || degree || field) && (
-                  <span className={`text-sm font-mono font-medium ${clr.org}`}>
-                    {org ?? [degree, field].filter(Boolean).join(" · ")}
-                  </span>
-                )}
-                {location && (
-                  <>
-                    <span className="text-muted-foreground/25 text-xs">·</span>
-                    <span className="flex items-center gap-1 text-xs text-muted-foreground/50 font-mono">
-                      <MapPin className="w-2.5 h-2.5" />
-                      {location}
-                    </span>
-                  </>
-                )}
-              </div>
-            )}
-            {description && (
-              <p className="text-xs text-muted-foreground/70 leading-relaxed font-mono">
-                {description}
-              </p>
-            )}
-          </div>
-        </div>
-      </div>
-    </motion.div>
+      {/* Empty side */}
+      <div className="w-[calc(50%-28px)]" />
+    </div>
   );
 }
 
 export default function Experience({ data }: { data: CVData }) {
+  const all = [
+    ...data.experience_units.map((e, i) => ({ item: e, type: "exp" as const, globalIdx: i })),
+    ...data.education_units.map((e, i) => ({ item: e, type: "edu" as const, globalIdx: data.experience_units.length + i })),
+  ].sort((a, b) => {
+    const ya = parseInt(a.item.to_date) || 0;
+    const yb = parseInt(b.item.to_date) || 0;
+    return yb - ya;
+  });
+
   return (
     <section id="experience" className="py-24 scroll-mt-24 relative overflow-x-hidden">
-      <div className="section-num absolute top-4 right-0 select-none pointer-events-none">03</div>
-
       <div className="max-w-6xl mx-auto relative z-10">
         {/* Section header */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
           className="mb-14"
         >
           <div className="section-eyebrow mb-5">
             <div className="h-px flex-1 max-w-[48px] bg-gradient-to-r from-transparent to-primary/25" />
-            <span>03 · experience</span>
+            <span>03 · timeline</span>
             <div className="h-px w-6 bg-primary/20" />
           </div>
           <h2
-            className="font-display font-black tracking-tight leading-[0.86]"
-            style={{ fontSize: "clamp(3rem, 8vw, 7rem)" }}
+            className="font-display font-black leading-[0.86]"
+            style={{ fontSize: "clamp(3rem, 8vw, 7rem)", letterSpacing: "-0.04em" }}
           >
-            <span className="block text-foreground">Career</span>
-            <span className="block gradient-text">Timeline</span>
+            <span className="block text-foreground">CAREER</span>
+            <span className="block gradient-text">TIMELINE</span>
           </h2>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        {/* Desktop: alternating timeline */}
+        <div className="hidden lg:block relative">
+          {/* Center vertical line */}
+          <div
+            className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-[2px]"
+            style={{
+              background: "linear-gradient(to bottom, #7c6aff, #00ffcc 50%, #7c6aff)",
+              opacity: 0.35,
+            }}
+          />
 
-          {/* ── Experience column ── */}
+          <div className="space-y-8">
+            {all.map(({ item, type, globalIdx }, i) => (
+              <TimelineCard
+                key={`${type}-${globalIdx}`}
+                item={item}
+                index={i}
+                side={i % 2 === 0 ? "left" : "right"}
+                type={type}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Mobile/Tablet: single column */}
+        <div className="lg:hidden grid grid-cols-1 gap-8">
+          {/* Experience */}
           <div>
-            <div className="flex items-center gap-2.5 font-mono text-[11px] text-muted-foreground uppercase tracking-[0.18em] mb-8">
-              <Briefcase className="w-3.5 h-3.5 text-primary/55" />
-              <span>Experience_Log</span>
-              <span className="ml-auto text-primary/38">{data.experience_units.length} entries</span>
+            <div className="flex items-center gap-2.5 font-mono text-[11px] text-muted-foreground uppercase tracking-[0.18em] mb-6">
+              <Briefcase className="w-3.5 h-3.5" style={{ color: "#7c6aff" }} />
+              <span>Experience</span>
+              <span className="ml-auto text-xs" style={{ color: "rgba(124,106,255,0.4)" }}>
+                {data.experience_units.length} entries
+              </span>
             </div>
-            <div className="relative space-y-5 before:absolute before:inset-0 before:ml-[19px] before:h-full before:w-px before:bg-gradient-to-b before:from-primary/55 before:via-primary/12 before:to-transparent">
+            <div
+              className="relative space-y-5"
+              style={{
+                paddingLeft: "1.5rem",
+                borderLeft: "2px solid rgba(124,106,255,0.2)",
+              }}
+            >
               {data.experience_units.map((exp, i) => (
-                <ExpCard key={i} item={exp} i={i} colorType="primary" />
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.08, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  <div className="liquid-card rounded-xl p-4 relative z-[1]">
+                    <div className="font-mono text-[10px] uppercase tracking-widest mb-1.5" style={{ color: "rgba(124,106,255,0.5)" }}>
+                      {exp.from_date} — {exp.to_date}
+                    </div>
+                    {exp.organization && (
+                      <div className="gradient-text font-bold text-sm mb-1 relative z-[1]">{exp.organization}</div>
+                    )}
+                    <h4 className="font-display font-bold text-base text-foreground mb-2 relative z-[1]">{exp.name}</h4>
+                    {exp.location && (
+                      <div className="flex items-center gap-1 font-mono text-xs text-muted-foreground mb-2 relative z-[1]">
+                        <MapPin className="w-3 h-3" />{exp.location}
+                      </div>
+                    )}
+                    {exp.description && (
+                      <p className="font-mono text-xs text-muted-foreground leading-relaxed relative z-[1]">
+                        {exp.description}
+                      </p>
+                    )}
+                  </div>
+                </motion.div>
               ))}
             </div>
           </div>
 
-          {/* ── Education column ── */}
-          <div>
-            <div className="flex items-center gap-2.5 font-mono text-[11px] text-muted-foreground uppercase tracking-[0.18em] mb-8">
-              <GraduationCap className="w-3.5 h-3.5 text-accent/55" />
-              <span>Education_Log</span>
-              <span className="ml-auto text-accent/38">{data.education_units.length} entries</span>
+          {/* Education */}
+          {data.education_units.length > 0 && (
+            <div>
+              <div className="flex items-center gap-2.5 font-mono text-[11px] text-muted-foreground uppercase tracking-[0.18em] mb-6">
+                <GraduationCap className="w-3.5 h-3.5" style={{ color: "#00ffcc" }} />
+                <span>Education</span>
+                <span className="ml-auto text-xs" style={{ color: "rgba(0,255,204,0.4)" }}>
+                  {data.education_units.length} entries
+                </span>
+              </div>
+              <div
+                className="relative space-y-5"
+                style={{ paddingLeft: "1.5rem", borderLeft: "2px solid rgba(0,255,204,0.2)" }}
+              >
+                {data.education_units.map((edu, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.08, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                  >
+                    <div className="liquid-card rounded-xl p-4 relative z-[1]">
+                      <div className="font-mono text-[10px] uppercase tracking-widest mb-1.5" style={{ color: "rgba(0,255,204,0.5)" }}>
+                        {edu.from_date} — {edu.to_date}
+                      </div>
+                      {(edu.degree || edu.field_of_study) && (
+                        <div className="gradient-text font-bold text-sm mb-1 relative z-[1]">
+                          {[edu.degree, edu.field_of_study].filter(Boolean).join(" · ")}
+                        </div>
+                      )}
+                      <h4 className="font-display font-bold text-base text-foreground mb-2 relative z-[1]">{edu.name}</h4>
+                      {edu.description && (
+                        <p className="font-mono text-xs text-muted-foreground leading-relaxed relative z-[1]">
+                          {edu.description}
+                        </p>
+                      )}
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
             </div>
-            <div className="relative space-y-5 before:absolute before:inset-0 before:ml-[19px] before:h-full before:w-px before:bg-gradient-to-b before:from-accent/55 before:via-accent/12 before:to-transparent">
-              {data.education_units.map((edu, i) => (
-                <ExpCard key={i} item={edu} i={i} colorType="accent" />
-              ))}
-            </div>
-          </div>
+          )}
         </div>
       </div>
     </section>

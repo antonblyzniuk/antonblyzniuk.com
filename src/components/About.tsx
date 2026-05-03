@@ -1,176 +1,205 @@
-import { useRef } from "react";
-import { motion, useInView } from "motion/react";
+import { useRef, useState, useEffect } from "react";
+import { motion, useInView, useScroll, useTransform } from "motion/react";
 import { CVData } from "../types";
-import { MapPin, Phone, Mail, Code2, Layers, BookOpen, Briefcase, Award } from "lucide-react";
+import { MapPin, Phone, Mail, Code2, Layers, Briefcase, Award } from "lucide-react";
+
+const fadeUp = {
+  initial: { opacity: 0, y: 40 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, margin: "-80px" },
+  transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] },
+};
 
 function AnimatedCounter({ value, suffix = "" }: { value: number; suffix?: string }) {
   const ref = useRef<HTMLSpanElement>(null);
   const isInView = useInView(ref, { once: true });
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (!isInView) return;
+    let start = 0;
+    const step = Math.max(1, Math.floor(value / 30));
+    const interval = setInterval(() => {
+      start += step;
+      if (start >= value) {
+        setCount(value);
+        clearInterval(interval);
+      } else {
+        setCount(start);
+      }
+    }, 40);
+    return () => clearInterval(interval);
+  }, [isInView, value]);
 
   return (
     <span ref={ref}>
-      {isInView ? (
-        <motion.span
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.4 }}
-        >
-          <motion.span
-            initial={{ y: 16, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ type: "spring", stiffness: 120, damping: 18, delay: 0.1 }}
-          >
-            {value}
-          </motion.span>
-          {suffix}
-        </motion.span>
-      ) : (
-        <span>0{suffix}</span>
-      )}
+      {count}{suffix}
     </span>
   );
 }
 
 export default function About({ data }: { data: CVData }) {
+  const sectionRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
+  const numY = useTransform(scrollYProgress, [0, 1], ["-10%", "10%"]);
+
   const sysInfo = [
-    { key: "USER",       value: `${data.first_name} ${data.last_name}` },
-    { key: "ROLE",       value: data.profession },
-    ...(data.location ? [{ key: "LOC",  value: data.location, icon: MapPin  }] : []),
-    { key: "EMAIL",      value: data.email,      icon: Mail   },
-    ...(data.phone    ? [{ key: "PHONE", value: data.phone,   icon: Phone   }] : []),
-    { key: "STATUS",     value: "Online",         icon: null   },
+    { key: "USER", value: `${data.first_name} ${data.last_name}` },
+    { key: "ROLE", value: data.profession },
+    ...(data.location ? [{ key: "LOC", value: data.location, Icon: MapPin }] : []),
+    { key: "EMAIL", value: data.email, Icon: Mail },
+    ...(data.phone ? [{ key: "PHONE", value: data.phone, Icon: Phone }] : []),
+    { key: "STATUS", value: "Online", isStatus: true },
   ] as const;
 
   const stats = [
-    {
-      label: "Projects",
-      value: data.projects.length,
-      suffix: "+",
-      icon: Code2,
-      color: "primary" as const,
-    },
-    {
-      label: "Positions",
-      value: data.experience_units.length,
-      suffix: "",
-      icon: Briefcase,
-      color: "accent" as const,
-    },
-    {
-      label: "Skills",
-      value: data.skills.length,
-      suffix: "+",
-      icon: Layers,
-      color: "mauve" as const,
-    },
-    {
-      label: "Certs",
-      value: data.certifications.length,
-      suffix: "",
-      icon: Award,
-      color: "sky" as const,
-    },
+    { label: "Projects", value: data.projects.length, suffix: "+", Icon: Code2, color: "#7c6aff" },
+    { label: "Positions", value: data.experience_units.length, suffix: "", Icon: Briefcase, color: "#ff6b6b" },
+    { label: "Skills", value: data.skills.length, suffix: "+", Icon: Layers, color: "#a89aff" },
+    { label: "Certs", value: data.certifications.length, suffix: "", Icon: Award, color: "#00ffcc" },
   ];
 
-  const colorMap = {
-    primary: { border: "border-primary/18", text: "text-primary", bg: "bg-primary/8" },
-    accent:  { border: "border-accent/18",  text: "text-accent",  bg: "bg-accent/8"  },
-    mauve:   { border: "border-[#cba6f7]/18", text: "text-[#cba6f7]", bg: "bg-[#cba6f7]/8" },
-    sky:     { border: "border-[#89dceb]/18", text: "text-[#89dceb]", bg: "bg-[#89dceb]/8" },
-  };
-
   return (
-    <section id="about" className="py-24 scroll-mt-24 relative overflow-x-hidden">
-      <div className="section-num absolute top-4 right-0 select-none pointer-events-none">01</div>
+    <section ref={sectionRef} id="about" className="py-24 scroll-mt-24 relative overflow-x-hidden">
+      {/* Parallax section number */}
+      <motion.div
+        style={{ y: numY }}
+        className="absolute top-4 right-0 select-none pointer-events-none font-syne font-black"
+        aria-hidden="true"
+      >
+        <span
+          style={{
+            fontFamily: "var(--font-syne, Syne, sans-serif)",
+            fontSize: "10rem",
+            fontWeight: 900,
+            lineHeight: 0.85,
+            color: "transparent",
+            WebkitTextStroke: "1px rgba(124,106,255,0.04)",
+          }}
+        >
+          01
+        </span>
+      </motion.div>
 
       <div className="max-w-6xl mx-auto relative z-10">
-        {/* Section header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="mb-14"
-        >
+        {/* Section header with clip-path reveal */}
+        <div className="mb-14">
           <div className="section-eyebrow mb-5">
             <div className="h-px flex-1 max-w-[48px] bg-gradient-to-r from-transparent to-primary/25" />
             <span>01 · about</span>
             <div className="h-px w-6 bg-primary/20" />
           </div>
           <h2
-            className="font-display font-black tracking-tight leading-[0.86]"
-            style={{ fontSize: "clamp(3rem, 8vw, 7rem)" }}
+            className="font-display font-black leading-[0.86]"
+            style={{ fontSize: "clamp(3rem, 8vw, 7rem)", letterSpacing: "-0.04em" }}
           >
-            <span className="block text-foreground">System</span>
-            <span className="block gradient-text">Overview</span>
+            <motion.span
+              className="block text-foreground overflow-hidden"
+              initial={{ clipPath: "inset(0 100% 0 0)" }}
+              whileInView={{ clipPath: "inset(0 0% 0 0)" }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            >
+              SYSTEM
+            </motion.span>
+            <motion.span
+              className="block gradient-text overflow-hidden"
+              initial={{ clipPath: "inset(0 100% 0 0)" }}
+              whileInView={{ clipPath: "inset(0 0% 0 0)" }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.7, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
+            >
+              OVERVIEW
+            </motion.span>
           </h2>
-        </motion.div>
+        </div>
 
-        {/* Bio + sys-info row */}
+        {/* Bio + sys-info */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 items-start mb-5">
 
-          {/* ── Bio card ── */}
+          {/* Bio card with fake terminal + typewriter */}
           <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
+            {...fadeUp}
+            transition={{ ...fadeUp.transition, delay: 0.1 }}
             className="lg:col-span-2"
           >
-            <div className="h-full bento-card p-7 sm:p-9">
-              <div className="flex items-center gap-2 font-mono text-[10px] text-muted-foreground uppercase tracking-[0.22em] mb-6">
-                <span className="text-primary/60">#</span>
-                profile_summary.txt
+            <div className="h-full liquid-card rounded-2xl p-7 sm:p-9 relative z-[1]">
+              {/* Fake terminal header */}
+              <div className="flex items-center gap-2 mb-6 pb-4 border-b border-primary/10">
+                <span className="flex gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-destructive/50" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-accent-3/50" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-accent-2/50" />
+                </span>
+                <span className="font-mono text-[10px] text-muted-foreground uppercase tracking-[0.22em] ml-2">
+                  profile_summary.txt
+                </span>
               </div>
-              <p className="text-base sm:text-[17px] text-foreground/75 leading-[1.75] font-mono">
+              <p className="text-base sm:text-[17px] leading-[1.75] font-mono" style={{ color: "rgba(232,232,240,0.75)" }}>
                 {data.about}
               </p>
-              <div className="mt-8 pt-5 border-t border-primary/7 font-mono text-xs text-muted-foreground/40 flex items-center gap-2">
-                <span className="text-primary/35">$</span>
-                <span>cat profile_summary.txt —{" "}<span className="text-primary/50">EOF</span></span>
+              <div className="mt-8 pt-5 border-t border-primary/7 font-mono text-xs flex items-center gap-2" style={{ color: "rgba(74,74,106,0.5)" }}>
+                <span style={{ color: "rgba(124,106,255,0.4)" }}>$</span>
+                <span>cat profile_summary.txt</span>
+                <span style={{ color: "rgba(124,106,255,0.6)" }} className="ml-1">EOF</span>
               </div>
             </div>
           </motion.div>
 
-          {/* ── Sys-info panel ── */}
+          {/* Sys-info panel */}
           <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
+            {...fadeUp}
+            transition={{ ...fadeUp.transition, delay: 0.2 }}
           >
-            <div className="bento-card overflow-hidden">
-              <div className="px-5 py-3 border-b border-primary/7 flex items-center gap-2.5 font-mono text-[10px] text-muted-foreground uppercase tracking-widest">
+            <div className="liquid-card rounded-2xl overflow-hidden relative z-[1]">
+              <div className="px-5 py-3 border-b border-primary/10 flex items-center gap-2.5 font-mono text-[10px] text-muted-foreground uppercase tracking-widest">
                 <span className="flex gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-destructive/50" />
-                  <span className="w-2 h-2 rounded-full bg-accent/50" />
-                  <span className="w-2 h-2 rounded-full bg-primary/50" />
+                  <span className="w-2 h-2 rounded-full bg-accent-3/50" />
+                  <span className="w-2 h-2 rounded-full bg-accent-2/50" />
                 </span>
                 {data.first_name.toLowerCase()}_profile
               </div>
               <div className="p-5 space-y-0.5 font-mono text-sm">
                 {sysInfo.map((item, i) => {
-                  const Icon = "icon" in item && item.icon ? item.icon : null;
+                  const Icon = "Icon" in item && item.Icon ? item.Icon : null;
+                  const isStatus = "isStatus" in item && item.isStatus;
                   return (
                     <motion.div
                       key={i}
-                      initial={{ opacity: 0, x: 12 }}
+                      initial={{ opacity: 0, x: 20 }}
                       whileInView={{ opacity: 1, x: 0 }}
                       viewport={{ once: true }}
-                      transition={{ delay: 0.08 + i * 0.055 }}
-                      className="flex items-start justify-between gap-3 py-2.5 border-b border-primary/5 last:border-0"
+                      transition={{ delay: 0.08 + i * 0.055, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                      className="flex items-start justify-between gap-3 py-2.5 border-b last:border-0"
+                      style={{ borderColor: "rgba(124,106,255,0.07)" }}
                     >
                       <span className="text-muted-foreground text-[10px] uppercase tracking-widest shrink-0 pt-0.5">
                         {item.key}
                       </span>
                       <span
-                        className={`text-right text-xs leading-snug flex items-center gap-1.5 min-w-0 ${
-                          item.key === "STATUS" ? "text-emerald-400 font-semibold" : "text-primary"
-                        }`}
+                        className="text-right text-xs leading-snug flex items-center gap-1.5 min-w-0"
+                        style={{ color: isStatus ? "#4ade80" : "#a89aff" }}
                       >
                         {Icon && <Icon className="w-3 h-3 shrink-0 opacity-60" />}
-                        {item.key === "STATUS" ? (
-                          <span className="flex items-center gap-1.5">
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                        {isStatus ? (
+                          <span className="flex items-center gap-1.5 font-semibold">
+                            {/* Two concentric pulsing rings */}
+                            <span className="relative flex items-center justify-center w-3 h-3">
+                              <motion.span
+                                className="absolute rounded-full border border-emerald-400"
+                                style={{ width: "100%", height: "100%" }}
+                                animate={{ scale: [1, 1.8], opacity: [0.5, 0] }}
+                                transition={{ duration: 1.5, repeat: Infinity, ease: "easeOut" }}
+                              />
+                              <motion.span
+                                className="absolute rounded-full border border-emerald-400"
+                                style={{ width: "100%", height: "100%" }}
+                                animate={{ scale: [1, 1.4], opacity: [0.4, 0] }}
+                                transition={{ duration: 1.5, repeat: Infinity, ease: "easeOut", delay: 0.4 }}
+                              />
+                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                            </span>
                             {item.value}
                           </span>
                         ) : (
@@ -185,34 +214,59 @@ export default function About({ data }: { data: CVData }) {
           </motion.div>
         </div>
 
-        {/* ── Stats row ── */}
+        {/* Holographic stats */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-5">
-          {stats.map((stat, i) => {
-            const colors = colorMap[stat.color];
-            const Icon = stat.icon;
-            return (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.3 + i * 0.07, type: "spring", stiffness: 160, damping: 20 }}
-                className={`bento-card p-5 flex flex-col gap-3 ${colors.border}`}
+          {stats.map((stat, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ delay: 0.3 + i * 0.07, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+              whileHover={{ y: -8 }}
+              className="liquid-card rounded-2xl p-5 flex flex-col gap-3 group relative z-[1]"
+              style={{ boxShadow: "none" }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLDivElement).style.boxShadow =
+                  `0 0 30px ${stat.color}25, 0 0 80px ${stat.color}10`;
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLDivElement).style.boxShadow = "none";
+              }}
+            >
+              {/* Shimmer sweep on hover */}
+              <div
+                className="absolute inset-0 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-500"
+                style={{
+                  background: `linear-gradient(105deg, transparent 30%, ${stat.color}12 50%, transparent 70%)`,
+                  backgroundSize: "200% 100%",
+                  animation: "shimmer 1.5s ease-in-out",
+                }}
+              />
+
+              <div
+                className="w-10 h-10 rounded-full flex items-center justify-center"
+                style={{
+                  background: `${stat.color}15`,
+                  border: `1px solid ${stat.color}25`,
+                  boxShadow: `0 0 12px ${stat.color}20`,
+                }}
               >
-                <div className={`w-9 h-9 rounded-xl ${colors.bg} ${colors.border} border flex items-center justify-center`}>
-                  <Icon className={`w-4 h-4 ${colors.text}`} />
+                <stat.Icon className="w-5 h-5" style={{ color: stat.color }} />
+              </div>
+              <div>
+                <div
+                  className="font-display font-black text-5xl leading-none relative z-[1]"
+                  style={{ color: stat.color }}
+                >
+                  <AnimatedCounter value={stat.value} suffix={stat.suffix} />
                 </div>
-                <div>
-                  <div className={`font-display font-black text-3xl ${colors.text} leading-none`}>
-                    <AnimatedCounter value={stat.value} suffix={stat.suffix} />
-                  </div>
-                  <div className="font-mono text-[10px] text-muted-foreground uppercase tracking-widest mt-1">
-                    {stat.label}
-                  </div>
+                <div className="font-mono text-[10px] uppercase tracking-widest mt-1" style={{ color: "#4a4a6a" }}>
+                  {stat.label}
                 </div>
-              </motion.div>
-            );
-          })}
+              </div>
+            </motion.div>
+          ))}
         </div>
       </div>
     </section>
