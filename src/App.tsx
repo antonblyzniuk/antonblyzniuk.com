@@ -16,6 +16,7 @@ import Footer from "./components/Footer";
 import AIChat from "./components/AIChat";
 import CustomCursor from "./components/CustomCursor";
 import ParticleBackground from "./components/ParticleBackground";
+import WindowFrame from "./components/WindowFrame";
 import { TooltipProvider } from "./components/ui/tooltip";
 
 const ADMIN_SEQUENCE = ["ArrowDown", "ArrowDown", "ArrowUp", "ArrowUp"];
@@ -169,14 +170,30 @@ export default function App() {
           <div className="min-h-screen text-foreground font-sans selection:bg-primary/30 selection:text-primary relative z-[2] md:cursor-none">
             <Navbar data={data} />
             <main className="container mx-auto px-4 sm:px-6 lg:px-8">
-              <Hero data={data} />
-              <About data={data} />
-              <Skills data={data} />
-              <Experience data={data} />
-              <Achievements data={data} />
-              <Projects data={data} />
-              <CustomSections data={data} />
-              <Gallery data={data} />
+              <WindowFrame title="hero.exe">
+                <Hero data={data} />
+              </WindowFrame>
+              <WindowFrame title="about.txt">
+                <About data={data} />
+              </WindowFrame>
+              <WindowFrame title="skills.json">
+                <Skills data={data} />
+              </WindowFrame>
+              <WindowFrame title="experience.log">
+                <Experience data={data} />
+              </WindowFrame>
+              <WindowFrame title="achievements.md">
+                <Achievements data={data} />
+              </WindowFrame>
+              <WindowFrame title="projects.tsx">
+                <Projects data={data} />
+              </WindowFrame>
+              <WindowFrame title="extras.sh">
+                <CustomSections data={data} />
+              </WindowFrame>
+              <WindowFrame title="gallery.png">
+                <Gallery data={data} />
+              </WindowFrame>
             </main>
             <Footer data={data} />
             <AIChat data={data} />
