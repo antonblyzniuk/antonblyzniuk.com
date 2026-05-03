@@ -13,7 +13,6 @@ import Achievements from "./components/Achievements";
 import CustomSections from "./components/CustomSections";
 import Gallery from "./components/Gallery";
 import Footer from "./components/Footer";
-import FallingNumbers from "./components/FallingNumbers";
 import AIChat from "./components/AIChat";
 import CustomCursor from "./components/CustomCursor";
 import { TooltipProvider } from "./components/ui/tooltip";
@@ -164,7 +163,6 @@ export default function App() {
       {data && (
         <>
           <CustomCursor />
-          <FallingNumbers />
           <div className="scanline" />
           <div className="min-h-screen text-foreground font-sans selection:bg-primary/30 selection:text-primary relative z-[2] md:cursor-none">
             <Navbar data={data} />
