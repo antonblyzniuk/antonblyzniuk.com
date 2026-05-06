@@ -1,4 +1,3 @@
-import { motion } from "motion/react";
 import { CVData } from "../types";
 import { Github, Linkedin, Mail, Terminal, Heart, ChevronRight, Globe } from "lucide-react";
 import { Button } from "./ui/button";
@@ -65,20 +64,6 @@ export default function Footer({ data }: FooterProps) {
                     </div>
                   </div>
                   
-                  <div className="pt-4 border-t border-primary/5">
-                    <div className="flex items-center justify-between text-[10px] font-mono text-muted-foreground mb-2">
-                      <span>CONNECTION_STATUS</span>
-                      <span className="text-emerald-500">ENCRYPTED</span>
-                    </div>
-                    <div className="w-full h-1 bg-secondary rounded-full overflow-hidden">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        whileInView={{ width: "100%" }}
-                        className="h-full bg-primary"
-                        transition={{ duration: 2, ease: "easeInOut" }}
-                      />
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
@@ -88,11 +73,8 @@ export default function Footer({ data }: FooterProps) {
                 <Terminal className="w-3 h-3" />
                 <span>© {currentYear} antonblyzniuk.com — ALL_RIGHTS_RESERVED</span>
               </div>
-              <div className="flex items-center gap-4">
-                <span className="flex items-center gap-1.5">
-                  Built with <Heart className="w-3 h-3 text-destructive fill-destructive" /> by Anton
-                </span>
-                <span className="text-primary">v2.4.0</span>
+              <div className="flex items-center gap-1.5">
+                Built with <Heart className="w-3 h-3 text-destructive fill-destructive" /> by Anton
               </div>
             </div>
           </div>

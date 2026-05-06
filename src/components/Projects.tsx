@@ -189,17 +189,6 @@ export default function Projects({ data }: ProjectsProps) {
                 </div>
               </div>
 
-              {/* Modal Footer */}
-              <div className="p-3 bg-secondary/80 border-t border-primary/10 flex items-center justify-between font-mono text-[9px] text-muted-foreground uppercase tracking-widest">
-                <div className="flex items-center gap-4">
-                  <span className="text-primary">Status: INSPECTING</span>
-                  <span>Buffer: 100%</span>
-                </div>
-                <div className="flex items-center gap-4">
-                  <span>ID: {selectedProject.name.toUpperCase().slice(0, 8)}</span>
-                  <span className="text-primary">READY_</span>
-                </div>
-              </div>
             </motion.div>
           </motion.div>
         )}

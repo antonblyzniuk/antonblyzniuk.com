@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Menu, X, Terminal, FileText, Check, Copy } from "lucide-react";
+import { Menu, X, FileText, Check, Copy } from "lucide-react";
 import { Button } from "./ui/button";
 import { CVData } from "../types";
 import { sendTelegramNotification } from "../services/notifications";
 import { cn } from "../lib/utils";
-import Typewriter from "./Typewriter";
+
 
 interface NavbarProps {
   data: CVData;
@@ -15,7 +15,6 @@ export default function Navbar({ data }: NavbarProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [connectionStatus, setConnectionStatus] = useState("initializing backend connection...");
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
@@ -25,14 +24,9 @@ export default function Navbar({ data }: NavbarProps) {
     window.addEventListener("scroll", handleScroll);
     window.addEventListener("keydown", handleKeyDown);
 
-    const timer = setTimeout(() => {
-      setConnectionStatus("connection established");
-    }, 3000);
-
     return () => {
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("keydown", handleKeyDown);
-      clearTimeout(timer);
     };
   }, []);
 
@@ -67,17 +61,10 @@ export default function Navbar({ data }: NavbarProps) {
           "w-full max-w-6xl"
         )}>
           {/* Terminal Header - Thinner */}
-          <div className="bg-secondary/50 border-b border-primary/10 px-3 py-1 flex items-center justify-between">
-            <div className="flex gap-1.5">
-              <div className="w-2 h-2 rounded-full bg-destructive/50" />
-              <div className="w-2 h-2 rounded-full bg-accent/50" />
-              <div className="w-2 h-2 rounded-full bg-primary/50" />
-            </div>
-            <div className="text-[9px] font-mono text-muted-foreground flex items-center gap-2 uppercase tracking-tighter overflow-hidden max-w-[40vw] sm:max-w-none">
-              <Terminal className="w-2.5 h-2.5 shrink-0" />
-              <span className="truncate"><Typewriter text={connectionStatus} speed={50} /></span>
-            </div>
-            <div className="w-8" />
+          <div className="bg-secondary/50 border-b border-primary/10 px-3 py-1 flex items-center gap-1.5">
+            <div className="w-2 h-2 rounded-full bg-destructive/50" />
+            <div className="w-2 h-2 rounded-full bg-accent/50" />
+            <div className="w-2 h-2 rounded-full bg-primary/50" />
           </div>
 
           <div className="px-3 sm:px-4 py-2 flex items-center justify-between gap-4">

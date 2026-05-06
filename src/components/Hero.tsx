@@ -92,13 +92,10 @@ export default function Hero({ data }: HeroProps) {
 
                   {/* Links Section - Redesigned as Active Connections */}
                   <div className="space-y-6 pt-4">
-                    <div className="flex items-center justify-between border-b border-primary/10 pb-2">
+                    <div className="flex items-center border-b border-primary/10 pb-2">
                       <div className="flex items-center gap-2 font-mono text-[10px] text-muted-foreground uppercase tracking-[0.2em]">
                         <Terminal className="w-3 h-3 text-primary" />
                         Active_Connections
-                      </div>
-                      <div className="font-mono text-[9px] text-primary/50 animate-pulse">
-                        SCANNING_PORTS...
                       </div>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -150,43 +147,10 @@ export default function Hero({ data }: HeroProps) {
                       ))}
                     </div>
 
-                    {/* Connection Stats */}
-                    <div className="flex items-center gap-4 pt-2 font-mono text-[9px] text-muted-foreground/50">
-                      <div className="flex items-center gap-1.5">
-                        <div className="w-1 h-1 rounded-full bg-primary" />
-                        TCP_LISTEN
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <div className="w-1 h-1 rounded-full bg-accent" />
-                        ENCRYPTED_TLS_1.3
-                      </div>
-                    </div>
                   </div>
                 </div>
               </div>
               
-              {/* Terminal Footer Status */}
-              <div className="pt-6 border-t border-primary/10 flex flex-wrap items-center justify-between gap-4 font-mono text-[10px] text-muted-foreground uppercase tracking-widest">
-                <div className="flex flex-wrap items-center gap-x-6 gap-y-1">
-                  <span className="flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    System Online
-                  </span>
-                  <span className="flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-                    v2.4.0-stable
-                  </span>
-                  <span className="hidden sm:flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-accent" />
-                    CPU: 12%
-                  </span>
-                </div>
-                <div className="flex items-center gap-4">
-                  <span className="hidden md:inline">UTF-8</span>
-                  <span className="hidden md:inline">Ln 1, Col 1</span>
-                  <span className="text-primary font-bold">READY_</span>
-                </div>
-              </div>
             </div>
           </div>
         </div>

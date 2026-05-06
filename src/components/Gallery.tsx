@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { CVData } from "../types";
-import { Terminal, Image as ImageIcon, Search, ChevronRight, X, Maximize2 } from "lucide-react";
+import { Image as ImageIcon, X, Maximize2 } from "lucide-react";
 import Typewriter from "./Typewriter";
 
 interface GalleryProps {
@@ -112,38 +112,11 @@ export default function Gallery({ data }: GalleryProps) {
                 />
               </div>
 
-              <div className="p-4 bg-secondary/80 border-t border-primary/10 flex flex-wrap items-center justify-between gap-4 font-mono text-[10px] text-muted-foreground uppercase tracking-widest">
-                <div className="flex items-center gap-4">
-                  <span className="text-primary truncate max-w-[40vw]">FILE: {selectedPhoto.split('/').pop()}</span>
-                  <span className="hidden sm:inline">TYPE: IMAGE/JPEG</span>
-                </div>
-                <div className="flex items-center gap-4">
-                  <span className="hidden sm:inline">ZOOM: 100%</span>
-                  <span className="text-accent">STATUS: RENDERED</span>
-                </div>
-              </div>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Terminal Status Line */}
-      <div className="mt-8 pt-4 border-t border-primary/5 flex items-center justify-between font-mono text-[10px] text-muted-foreground uppercase tracking-widest">
-        <div className="flex items-center gap-4">
-          <span className="flex items-center gap-1.5">
-            <ImageIcon className="w-3 h-3" />
-            {data.photos.length} Assets Loaded
-          </span>
-          <span className="flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-            Buffer Ready
-          </span>
-        </div>
-        <div className="flex items-center gap-4">
-          <span>1920x1080</span>
-          <span>SRGB</span>
-        </div>
-      </div>
     </div>
   </section>
   );
