@@ -1,6 +1,6 @@
 import { motion } from "motion/react";
 import { CVData } from "../types";
-import { Terminal, Github, Linkedin, Mail, ChevronRight, Monitor, ExternalLink, Globe } from "lucide-react";
+import { Github, Linkedin, Mail, ChevronRight, Monitor, Globe } from "lucide-react";
 import { Button } from "./ui/button";
 import Typewriter from "./Typewriter";
 
@@ -90,63 +90,22 @@ export default function Hero({ data }: HeroProps) {
                     </div>
                   </div>
 
-                  {/* Links Section - Redesigned as Active Connections */}
-                  <div className="space-y-6 pt-4">
-                    <div className="flex items-center border-b border-primary/10 pb-2">
-                      <div className="flex items-center gap-2 font-mono text-[10px] text-muted-foreground uppercase tracking-[0.2em]">
-                        <Terminal className="w-3 h-3 text-primary" />
-                        Active_Connections
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                      {data.links.map((link, i) => (
-                        <motion.div
-                          key={i}
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.8 + i * 0.1 }}
-                        >
-                          <a
-                            href={link.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="group flex items-center gap-3 p-2.5 rounded-xl bg-primary/5 border border-primary/10 hover:border-primary/40 hover:bg-primary/10 transition-all duration-300 relative overflow-hidden"
-                          >
-                            {/* Connection Status Indicator */}
-                            <div className="flex flex-col items-center gap-1 shrink-0">
-                              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)] group-hover:animate-ping" />
-                              <div className="w-[1px] h-3 bg-primary/20" />
-                            </div>
-                            
-                            {/* Icon & Label */}
-                            <div className="flex items-center gap-2.5 flex-1 min-w-0">
-                              <div className="p-1.5 rounded-lg bg-secondary border border-primary/5 group-hover:border-primary/20 group-hover:text-primary transition-all transform group-hover:scale-110 shrink-0">
-                                {getIcon(link.name)}
-                                <div className="absolute -top-1 -right-1 w-2 h-2 bg-primary/20 rounded-full blur-[2px] animate-pulse" />
-                              </div>
-                              <div className="flex flex-col overflow-hidden">
-                                <span className="text-xs font-bold group-hover:text-primary transition-colors truncate">
-                                  {link.name}
-                                </span>
-                                <div className="flex items-center gap-1.5 font-mono text-[7px] text-muted-foreground uppercase tracking-tighter opacity-60 group-hover:opacity-100 transition-opacity">
-                                  <span className="truncate max-w-[40%]">{link.url.replace(/^https?:\/\//, "").split("/")[0]}</span>
-                                  <span className="text-accent/50">{10 + i * 5}ms</span>
-                                </div>
-                              </div>
-                            </div>
-
-                            {/* Action Indicator */}
-                            <div className="flex items-center gap-2 font-mono text-[8px] text-muted-foreground group-hover:text-primary transition-colors shrink-0">
-                              <ExternalLink className="w-3 h-3 transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                            </div>
-
-                            {/* Hover background scanline */}
-                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-                          </a>
-                        </motion.div>
-                      ))}
-                    </div>
-
+                  <div className="flex flex-wrap gap-3 pt-4">
+                    {data.links.map((link, i) => (
+                      <motion.a
+                        key={i}
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.8 + i * 0.1 }}
+                        className="flex items-center gap-2 px-4 py-2 rounded-lg border border-primary/20 bg-primary/5 hover:bg-primary/10 hover:border-primary/50 hover:text-primary text-muted-foreground transition-all duration-200 font-mono text-sm"
+                      >
+                        {getIcon(link.name)}
+                        {link.name}
+                      </motion.a>
+                    ))}
                   </div>
                 </div>
               </div>
