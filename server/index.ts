@@ -52,7 +52,9 @@ app.get("/api/cv", async (_req: Request, res: Response) => {
     });
   }
 
-  const headers: Record<string, string> = {};
+  const headers: Record<string, string> = {
+    "User-Agent": "antonblyzniuk.com/1.0",
+  };
   const apiKey = process.env.PWB_API_KEY;
   const apiSecret = process.env.PWB_API_SECRET;
   if (apiKey && apiSecret) {
@@ -95,7 +97,10 @@ app.get("/api/cv", async (_req: Request, res: Response) => {
     return res.json(data);
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to fetch CV data.";
-    return res.status(502).json({ error: message });
+    const cause = error instanceof Error && (error as NodeJS.ErrnoException).cause
+      ? String((error as NodeJS.ErrnoException).cause)
+      : undefined;
+    return res.status(502).json({ error: message, cause });
   }
 });
 
