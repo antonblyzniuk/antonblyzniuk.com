@@ -43,7 +43,7 @@ type CVContext = {
   awards?: Array<{ title?: string; issuer?: string | null; description?: string | null }>;
 };
 
-app.get("/api/cv", async (_req: Request, res: Response) => {
+app.get("/api/v1/cv", async (_req: Request, res: Response) => {
   const url = process.env.PWB_API_URL;
 
   if (!url) {
