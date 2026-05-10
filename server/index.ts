@@ -27,19 +27,23 @@ type ChatMessage = {
 type CVContext = {
   first_name?: string;
   last_name?: string;
-  profession?: string;
+  headline?: string;
   email?: string;
-  about?: string;
-  pdf_resume?: string;
-  skills?: Array<{ name?: string }>;
+  phone?: string | null;
+  location?: string | null;
+  about?: string | null;
+  pdf_resume?: string | null;
+  skills?: Array<{ name?: string; category?: string | null; level?: string | null }>;
   links?: Array<{ name?: string; url?: string }>;
   languages?: Array<{ name?: string; level?: string }>;
-  experience_units?: Array<{ name?: string; description?: string; from_date?: string; to_date?: string }>;
-  education_units?: Array<{ name?: string; description?: string; from_date?: string; to_date?: string }>;
-  projects?: Array<{ name?: string; description?: string; links?: Array<{ name?: string; url?: string }> }>;
+  experience_units?: Array<{ title?: string; organization?: string | null; description?: string | null; from_date?: string; to_date?: string | null }>;
+  education_units?: Array<{ institution?: string; degree?: string | null; field_of_study?: string | null; description?: string | null; from_date?: string; to_date?: string | null }>;
+  portfolio_items?: Array<{ title?: string; description?: string | null; links?: Array<{ name?: string; url?: string }> }>;
+  certifications?: Array<{ name?: string; issuing_organization?: string }>;
+  awards?: Array<{ title?: string; issuer?: string | null; description?: string | null }>;
 };
 
-app.get("/api/cv", async (_req: Request, res: Response) => {
+app.get("/api/v1/cv", async (_req: Request, res: Response) => {
   const url = process.env.PWB_API_URL;
 
   if (!url) {
@@ -48,7 +52,9 @@ app.get("/api/cv", async (_req: Request, res: Response) => {
     });
   }
 
-  const headers: Record<string, string> = {};
+  const headers: Record<string, string> = {
+    "User-Agent": "antonblyzniuk.com/1.0",
+  };
   const apiKey = process.env.PWB_API_KEY;
   const apiSecret = process.env.PWB_API_SECRET;
   if (apiKey && apiSecret) {
@@ -67,48 +73,34 @@ app.get("/api/cv", async (_req: Request, res: Response) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const raw: any = await response.json();
 
-    // Map backend PWBUnit shape to the CVData shape the frontend expects
     const data = {
+      unit_name: raw.unit_name ?? "",
       first_name: raw.first_name ?? "",
       last_name: raw.last_name ?? "",
-      profession: raw.headline ?? "",
+      headline: raw.headline ?? "",
       email: raw.email ?? "",
       phone: raw.phone ?? null,
       location: raw.location ?? null,
-      about: raw.about ?? "",
+      about: raw.about ?? null,
       pdf_resume: raw.pdf_resume ?? null,
       photos: raw.photos ?? [],
       skills: raw.skills ?? [],
       links: raw.links ?? [],
       languages: raw.languages ?? [],
-      experience_units: (raw.experience_units ?? []).map((exp: any) => ({
-        name: exp.title ?? "",
-        organization: exp.organization ?? null,
-        description: exp.description ?? "",
-        from_date: exp.from_date ?? "",
-        to_date: exp.to_date ?? "Present",
-      })),
-      education_units: (raw.education_units ?? []).map((edu: any) => ({
-        name: edu.institution ?? "",
-        degree: edu.degree ?? null,
-        field_of_study: edu.field_of_study ?? null,
-        description: edu.description ?? "",
-        from_date: edu.from_date ?? "",
-        to_date: edu.to_date ?? "Present",
-        image: edu.image ?? null,
-      })),
-      projects: (raw.portfolio_items ?? []).map((item: any) => ({
-        name: item.title ?? "",
-        description: item.description ?? "",
-        links: item.links ?? [],
-        image: item.image ?? null,
-      })),
+      experience_units: raw.experience_units ?? [],
+      education_units: raw.education_units ?? [],
+      portfolio_items: raw.portfolio_items ?? [],
+      certifications: raw.certifications ?? [],
+      awards: raw.awards ?? [],
     };
 
     return res.json(data);
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to fetch CV data.";
-    return res.status(502).json({ error: message });
+    const cause = error instanceof Error && (error as NodeJS.ErrnoException).cause
+      ? String((error as NodeJS.ErrnoException).cause)
+      : undefined;
+    return res.status(502).json({ error: message, cause });
   }
 });
 
@@ -143,28 +135,34 @@ function compactCvContext(cv: CVContext) {
 
   return {
     name: fullName,
-    profession: cv.profession,
+    headline: cv.headline,
     email: cv.email,
+    phone: cv.phone,
+    location: cv.location,
     about: cv.about,
     resume: cv.pdf_resume,
-    skills: cv.skills?.map((skill) => skill.name).filter(Boolean),
+    skills: cv.skills?.map((s) => [s.name, s.level].filter(Boolean).join(" - ")).filter(Boolean),
     links: cv.links,
     languages: cv.languages,
     experience: cv.experience_units?.map((item) => ({
-      role: item.name,
-      dates: [item.from_date, item.to_date].filter(Boolean).join(" - "),
+      role: item.title,
+      organization: item.organization,
+      dates: [item.from_date, item.to_date ?? "Present"].join(" — "),
       description: item.description,
     })),
     education: cv.education_units?.map((item) => ({
-      name: item.name,
-      dates: [item.from_date, item.to_date].filter(Boolean).join(" - "),
+      institution: item.institution,
+      degree: [item.degree, item.field_of_study].filter(Boolean).join(", "),
+      dates: [item.from_date, item.to_date ?? "Present"].join(" — "),
       description: item.description,
     })),
-    projects: cv.projects?.map((project) => ({
-      name: project.name,
-      description: project.description,
-      links: project.links,
+    projects: cv.portfolio_items?.map((item) => ({
+      name: item.title,
+      description: item.description,
+      links: item.links,
     })),
+    certifications: cv.certifications?.map((c) => `${c.name} — ${c.issuing_organization}`),
+    awards: cv.awards?.map((a) => `${a.title}${a.issuer ? " from " + a.issuer : ""}`),
   };
 }
 
@@ -281,10 +279,66 @@ app.post("/api/ai-chat", async (req: Request, res: Response) => {
   });
 });
 
+function escapeHtml(str: string) {
+  return str.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+async function buildIndexHtml(): Promise<string> {
+  const raw = fs.readFileSync(path.join(distPath, "index.html"), "utf-8");
+  const apiUrl = process.env.PWB_API_URL;
+  if (!apiUrl) return raw;
+
+  try {
+    const headers: Record<string, string> = {};
+    const apiKey = process.env.PWB_API_KEY;
+    const apiSecret = process.env.PWB_API_SECRET;
+    if (apiKey && apiSecret) {
+      headers["X-Api-Key"] = apiKey;
+      headers["X-Api-Secret"] = apiSecret;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const cv: any = await fetch(apiUrl, { headers }).then((r) => r.json());
+
+    const name = `${cv.first_name ?? ""} ${cv.last_name ?? ""}`.trim();
+    const headline = cv.headline ?? "";
+    const title = headline ? `${name} — ${headline}` : name;
+    const about: string = cv.about ?? "";
+    const description = escapeHtml(about.slice(0, 160) || title);
+    const image: string = cv.photos?.find((p: { is_main: boolean }) => p.is_main)?.image
+      ?? cv.photos?.[0]?.image
+      ?? "";
+
+    const ogTags = [
+      `<meta name="description" content="${escapeHtml(description)}" />`,
+      `<meta property="og:type" content="website" />`,
+      `<meta property="og:title" content="${escapeHtml(title)}" />`,
+      `<meta property="og:description" content="${escapeHtml(description)}" />`,
+      image ? `<meta property="og:image" content="${image}" />` : "",
+      `<meta name="twitter:card" content="summary_large_image" />`,
+      `<meta name="twitter:title" content="${escapeHtml(title)}" />`,
+      `<meta name="twitter:description" content="${escapeHtml(description)}" />`,
+      image ? `<meta name="twitter:image" content="${image}" />` : "",
+    ].filter(Boolean).join("\n    ");
+
+    return raw
+      .replace(/<title>[^<]*<\/title>/, `<title>${escapeHtml(title)}</title>`)
+      .replace("<!-- OG tags injected by server in production -->", ogTags);
+  } catch {
+    return raw;
+  }
+}
+
 if (isProduction) {
+  let cachedHtml: string | null = null;
   app.use(express.static(distPath));
-  app.get("*", (_req, res) => {
-    res.sendFile(path.join(distPath, "index.html"));
+  app.get("*", async (_req, res) => {
+    try {
+      if (!cachedHtml) cachedHtml = await buildIndexHtml();
+      res.setHeader("Content-Type", "text/html");
+      res.send(cachedHtml);
+    } catch {
+      res.sendFile(path.join(distPath, "index.html"));
+    }
   });
 } else {
   const vite = await createViteServer({

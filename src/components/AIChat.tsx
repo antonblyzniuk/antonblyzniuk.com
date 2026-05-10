@@ -12,10 +12,14 @@ interface AIChatProps {
 
 const initialMessage: AIChatMessage = {
   role: "assistant",
-  content: "Hi! I am the AI assistant for this portfolio. Ask me about Anton's tech stack, experience, education, or projects.",
+  content: "Hi! Ask me anything about Anton — his stack, experience, projects, or whether he's open to work.",
 };
 
-const quickPrompts = ["Tell me about Anton's projects", "What is Anton's tech stack?", "Summarize Anton's experience"];
+const quickPrompts = [
+  "Are you open to work?",
+  "What's your strongest skill?",
+  "Show me your best project",
+];
 
 function renderInlineMarkdown(text: string) {
   const nodes: ReactNode[] = [];
@@ -183,7 +187,7 @@ export default function AIChat({ data }: AIChatProps) {
   };
 
   return (
-    <div className="fixed bottom-5 right-4 z-[90] sm:bottom-6 sm:right-6">
+    <div className="fixed bottom-5 left-4 z-[90] sm:bottom-6 sm:left-6">
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -200,7 +204,7 @@ export default function AIChat({ data }: AIChatProps) {
                   <span>AI Assistant</span>
                 </div>
                 <p className="mt-1 truncate text-xs text-muted-foreground">
-                  Ask about Anton's experience, stack, or projects.
+                  Ask anything about Anton
                 </p>
               </div>
               <button
@@ -303,7 +307,7 @@ export default function AIChat({ data }: AIChatProps) {
         aria-label="Open AI chat"
       >
         <MessageCircle className="h-5 w-5" />
-        <span className="hidden sm:inline">AI chat</span>
+        <span className="hidden sm:inline">Ask Anton</span>
       </Button>
     </div>
   );

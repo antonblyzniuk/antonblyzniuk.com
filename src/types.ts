@@ -1,5 +1,8 @@
 export interface Skill {
   name: string;
+  category: string | null;
+  level: string | null;
+  order: number;
 }
 
 export interface Link {
@@ -13,28 +16,58 @@ export interface Language {
 }
 
 export interface ExperienceUnit {
-  name: string;
+  id: number;
+  title: string;
   organization: string | null;
-  description: string;
+  location: string | null;
+  description: string | null;
   from_date: string;
-  to_date: string;
+  to_date: string | null;
+  order: number;
 }
 
 export interface EducationUnit {
-  name: string;
+  id: number;
+  institution: string;
   degree: string | null;
   field_of_study: string | null;
-  description: string;
+  location: string | null;
+  description: string | null;
   from_date: string;
-  to_date: string;
+  to_date: string | null;
   image: string | null;
+  order: number;
 }
 
-export interface Project {
-  name: string;
-  description: string;
+export interface PortfolioItem {
+  id: number;
+  title: string;
+  category: string | null;
+  description: string | null;
+  date: string | null;
   links: Link[];
   image: string | null;
+  order: number;
+}
+
+export interface Certification {
+  id: number;
+  name: string;
+  issuing_organization: string;
+  issue_date: string | null;
+  expiry_date: string | null;
+  credential_id: string | null;
+  credential_url: string | null;
+  order: number;
+}
+
+export interface Award {
+  id: number;
+  title: string;
+  issuer: string | null;
+  date: string | null;
+  description: string | null;
+  order: number;
 }
 
 export interface Photo {
@@ -44,19 +77,22 @@ export interface Photo {
 }
 
 export interface CVData {
+  unit_name: string;
   first_name: string;
   last_name: string;
-  profession: string;
+  headline: string;
   email: string;
-  phone?: string | null;
-  location?: string | null;
-  about: string;
+  phone: string | null;
+  location: string | null;
+  about: string | null;
   pdf_resume: string | null;
+  photos: Photo[];
   skills: Skill[];
   links: Link[];
   languages: Language[];
   experience_units: ExperienceUnit[];
   education_units: EducationUnit[];
-  projects: Project[];
-  photos: Photo[];
+  portfolio_items: PortfolioItem[];
+  certifications: Certification[];
+  awards: Award[];
 }

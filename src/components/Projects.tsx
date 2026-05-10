@@ -1,210 +1,96 @@
-import { useState } from "react";
-import { motion, AnimatePresence } from "motion/react";
-import { CVData, Project } from "../types";
-import { Github, ExternalLink, Terminal, Search, Folder, X, Globe, Code2 } from "lucide-react";
-import { Button } from "./ui/button";
-import { Badge } from "./ui/badge";
-import Typewriter from "./Typewriter";
+import { motion } from "motion/react";
+import { CVData } from "../types";
+import { Github, ExternalLink, Globe } from "lucide-react";
 
 interface ProjectsProps {
   data: CVData;
 }
 
+function getLinkIcon(name: string) {
+  return name.toLowerCase().includes("github")
+    ? <Github className="w-3.5 h-3.5" />
+    : <Globe className="w-3.5 h-3.5" />;
+}
+
 export default function Projects({ data }: ProjectsProps) {
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  if (data.portfolio_items.length === 0) return null;
+
+  const items = [...data.portfolio_items].sort((a, b) => a.order - b.order);
 
   return (
-    <section id="projects" className="py-20 scroll-mt-20">
-      <div className="max-w-6xl mx-auto">
-        <div className="mb-12">
-          <div className="flex items-center gap-2 mb-4 font-mono text-xs sm:text-sm overflow-hidden">
-            <span className="text-primary shrink-0">root@portfolio:</span>
-            <span className="text-accent shrink-0">~</span>
-            <span className="text-foreground truncate">$ <Typewriter text="find ./projects -type d" speed={50} /></span>
-          </div>
-          <motion.h2
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-4xl md:text-5xl font-bold tracking-tight text-glow"
-          >
-            Selected Works
-          </motion.h2>
-        </div>
+    <section id="projects" className="py-12 scroll-mt-20">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5 }}
+      >
+        <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-8">Projects</h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {data.projects.map((project, i) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {items.map((item, i) => (
             <motion.div
-              key={i}
-              layoutId={`project-${project.name.toLowerCase().replace(/\s+/g, "_")}`}
-              initial={{ opacity: 0, y: 20 }}
+              key={item.id}
+              initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              onClick={() => setSelectedProject(project)}
-              className="terminal-window bg-secondary/20 border-primary/10 overflow-hidden group hover:border-primary/30 transition-all cursor-pointer"
+              transition={{ delay: i * 0.07 }}
+              className="group relative flex flex-col overflow-hidden rounded-xl border border-border bg-card hover:border-primary/30 transition-all duration-200 hover:shadow-lg hover:shadow-primary/5"
             >
-              {/* Project Header */}
-              <div className="bg-secondary/50 border-b border-primary/10 px-4 py-2 flex items-center justify-between">
-                <div className="flex items-center gap-2 font-mono text-[10px] text-muted-foreground uppercase tracking-widest min-w-0">
-                  <Folder className="w-3 h-3 text-accent shrink-0" />
-                  <span className="truncate">{project.name.toLowerCase().replace(/\s+/g, "_")}</span>
-                </div>
-                <div className="flex gap-1.5">
-                  <div className="w-2 h-2 rounded-full bg-primary/30" />
-                  <div className="w-2 h-2 rounded-full bg-primary/10" />
-                </div>
-              </div>
+              {/* Left accent bar */}
+              <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-primary/20 group-hover:bg-primary/60 transition-colors duration-200" />
 
-              {project.image && (
-                <div className="relative aspect-video overflow-hidden">
-                  <motion.img
-                    src={project.image}
-                    alt={project.name}
-                    className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
+              {item.image && (
+                <div className="aspect-video overflow-hidden bg-card/50">
+                  <img
+                    src={item.image}
+                    alt={item.title}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     referrerPolicy="no-referrer"
                   />
-                  <div className="absolute inset-0 bg-secondary/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4 backdrop-blur-sm">
-                    <div className="p-3 rounded-xl bg-primary/20 border border-primary/40 transform scale-90 group-hover:scale-100 transition-transform">
-                      <Search className="w-6 h-6 text-primary" />
-                    </div>
-                  </div>
                 </div>
               )}
 
-              <div className="p-6 space-y-4">
-                <div className="space-y-2">
-                  <h3 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors">
-                    <Typewriter text={project.name} speed={50} delay={500 + i * 200} />
+              <div className="flex flex-col flex-1 pl-5 pr-5 py-5 gap-3">
+                <div className="flex items-start justify-between gap-3">
+                  <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors leading-snug">
+                    {item.title}
                   </h3>
-                  <div className="text-sm text-muted-foreground leading-relaxed font-mono line-clamp-2">
-                    <span className="text-primary mr-2">#</span>
-                    {project.description}
-                  </div>
+                  {item.category && (
+                    <span className="shrink-0 text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 mt-0.5">
+                      {item.category}
+                    </span>
+                  )}
                 </div>
 
-                <div className="flex flex-wrap gap-2 pt-2">
-                  {project.name.split(" ").slice(0, 3).map((tag, j) => (
-                    <Badge
-                      key={j}
-                      variant="outline"
-                      className="font-mono text-[10px] border-primary/10 text-muted-foreground"
-                    >
-                      {tag.toLowerCase()}
-                    </Badge>
-                  ))}
-                </div>
+                {item.description && (
+                  <p className="text-sm text-muted-foreground leading-relaxed flex-1">
+                    {item.description}
+                  </p>
+                )}
+
+                {item.links.length > 0 && (
+                  <div className="flex flex-wrap gap-1 pt-1 mt-auto">
+                    {item.links.map((link, j) => (
+                      <a
+                        key={j}
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-primary transition-colors px-2.5 py-1.5 rounded-md hover:bg-primary/5 border border-transparent hover:border-primary/20"
+                      >
+                        {getLinkIcon(link.name)}
+                        {link.name}
+                        <ExternalLink className="w-3 h-3 opacity-40" />
+                      </a>
+                    ))}
+                  </div>
+                )}
               </div>
             </motion.div>
           ))}
         </div>
-
-      {/* Project Modal */}
-      <AnimatePresence>
-        {selectedProject && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-10 bg-background/95 backdrop-blur-xl"
-            onClick={() => setSelectedProject(null)}
-          >
-            <motion.div
-              layoutId={`project-${selectedProject.name.toLowerCase().replace(/\s+/g, "_")}`}
-              className="relative max-w-6xl w-full max-h-full terminal-window overflow-hidden bg-secondary/40 border-primary/30 shadow-2xl"
-              onClick={(e) => e.stopPropagation()}
-              transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            >
-              {/* Modal Header */}
-              <div className="bg-secondary/80 border-b border-primary/10 px-4 py-3 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="flex gap-1.5">
-                    <div className="w-3 h-3 rounded-full bg-destructive/60" />
-                    <div className="w-3 h-3 rounded-full bg-accent/60" />
-                    <div className="w-3 h-3 rounded-full bg-primary/60" />
-                  </div>
-                  <div className="text-xs font-mono text-muted-foreground uppercase tracking-widest flex items-center gap-2">
-                    <Code2 className="w-3.5 h-3.5" />
-                    Project_Inspector.sh
-                  </div>
-                </div>
-                <button
-                  onClick={() => setSelectedProject(null)}
-                  className="p-2.5 rounded-md hover:bg-primary/10 text-muted-foreground hover:text-primary transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
-                  aria-label="Close project"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              <div className="overflow-y-auto max-h-[calc(90vh-100px)]">
-                {selectedProject.image && (
-                  <div className="relative w-full max-h-[40vh] sm:max-h-none sm:aspect-video overflow-hidden">
-                    <img
-                      src={selectedProject.image}
-                      alt={selectedProject.name}
-                      className="w-full h-full object-cover"
-                      referrerPolicy="no-referrer"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-secondary to-transparent opacity-60" />
-                  </div>
-                )}
-
-                <div className="p-4 md:p-6 lg:p-10 space-y-8">
-                  <div className="space-y-4">
-                    <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-glow">
-                      {selectedProject.name}
-                    </h2>
-                    <div className="p-6 rounded-lg bg-primary/5 border border-primary/10 font-mono text-sm md:text-base text-foreground leading-relaxed">
-                      <span className="text-primary mr-3 font-bold">&gt;</span>
-                      {selectedProject.description}
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <div className="text-[10px] font-mono text-muted-foreground uppercase tracking-[0.2em]">
-                      Available_Deployments
-                    </div>
-                    <div className="flex flex-wrap gap-4">
-                      {selectedProject.links.map((link, k) => (
-                        <Button
-                          key={k}
-                          variant="outline"
-                          className="gap-3 border-primary/20 hover:border-primary hover:bg-primary/5 group"
-                          asChild
-                        >
-                          <a href={link.url} target="_blank" rel="noopener noreferrer">
-                            {link.name.toLowerCase().includes("github") ? (
-                              <Github className="w-5 h-5" />
-                            ) : (
-                              <Globe className="w-5 h-5" />
-                            )}
-                            <span className="font-mono text-sm">{link.name}</span>
-                            <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
-                          </a>
-                        </Button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Modal Footer */}
-              <div className="p-3 bg-secondary/80 border-t border-primary/10 flex items-center justify-between font-mono text-[9px] text-muted-foreground uppercase tracking-widest">
-                <div className="flex items-center gap-4">
-                  <span className="text-primary">Status: INSPECTING</span>
-                  <span>Buffer: 100%</span>
-                </div>
-                <div className="flex items-center gap-4">
-                  <span>ID: {selectedProject.name.toUpperCase().slice(0, 8)}</span>
-                  <span className="text-primary">READY_</span>
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  </section>
+      </motion.div>
+    </section>
   );
 }

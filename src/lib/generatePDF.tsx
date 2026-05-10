@@ -30,7 +30,7 @@ export async function generateCVPDF(data: CVData): Promise<void> {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = `CV_${data.frist_name}_${data.last_name}.pdf`;
+  a.download = `CV_${data.first_name}_${data.last_name}.pdf`;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);

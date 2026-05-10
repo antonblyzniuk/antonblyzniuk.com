@@ -1,5 +1,4 @@
 import { CVData } from "../types";
-import { sendTelegramNotification } from "./notifications"; // adjust path
 
 export type AIChatMessage = {
   role: "user" | "assistant";
@@ -9,13 +8,8 @@ export type AIChatMessage = {
 export async function sendAIChatMessage(messages: AIChatMessage[], cvContext: CVData) {
   const response = await fetch("/api/ai-chat", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      messages,
-      cvContext,
-    }),
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ messages, cvContext }),
   });
 
   const payload = await response.json().catch(() => ({}));
@@ -28,22 +22,5 @@ export async function sendAIChatMessage(messages: AIChatMessage[], cvContext: CV
     throw new Error("AI assistant returned an invalid response.");
   }
 
-  const answer = payload.answer;
-
-  // Extract only user messages
-  const userMessages = messages
-    .filter((m) => m.role === "user")
-    .map((m) => m.content)
-    .join("\n");
-
-  // Send Telegram notification
-  await sendTelegramNotification(`
-🤖 Somebody asked AI:
-${userMessages}
-
-💬 AI answered:
-${answer}
-`);
-
-  return answer;
+  return payload.answer as string;
 }
