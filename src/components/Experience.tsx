@@ -1,131 +1,135 @@
 import { motion } from "motion/react";
 import { CVData } from "../types";
-import { Terminal, Calendar, ChevronRight, GitCommitVertical } from "lucide-react";
-import { Badge } from "./ui/badge";
-import Typewriter from "./Typewriter";
+import { MapPin } from "lucide-react";
 
 interface ExperienceProps {
   data: CVData;
 }
 
+function formatDate(date: string | null) {
+  if (!date) return "Present";
+  const [year, month] = date.split("-");
+  const d = new Date(Number(year), Number(month) - 1);
+  return d.toLocaleDateString("en-US", { month: "short", year: "numeric" });
+}
+
 export default function Experience({ data }: ExperienceProps) {
+  const hasExperience = data.experience_units.length > 0;
+  const hasEducation = data.education_units.length > 0;
+
+  if (!hasExperience && !hasEducation) return null;
+
+  const experience = [...data.experience_units].sort((a, b) => a.order - b.order);
+  const education = [...data.education_units].sort((a, b) => a.order - b.order);
+
   return (
-    <section id="experience" className="py-20 scroll-mt-20">
-      <div className="max-w-6xl mx-auto">
-        <div className="mb-12">
-          <div className="flex items-center gap-2 mb-4 font-mono text-xs sm:text-sm overflow-hidden">
-            <span className="text-primary shrink-0">root@portfolio:</span>
-            <span className="text-accent shrink-0">~</span>
-            <span className="text-foreground truncate">$ <Typewriter text="journalctl --unit=career --no-pager" speed={50} /></span>
-          </div>
-          <motion.h2
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-glow"
-          >
-            System Logs: Career & Education
-          </motion.h2>
-        </div>
+    <section id="experience" className="py-12 scroll-mt-20">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5 }}
+      >
+        <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-8">Experience</h2>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Experience Column */}
-          <div className="space-y-6">
-            <div className="flex items-center gap-2 font-mono text-xs text-muted-foreground uppercase tracking-widest mb-4">
-              <Terminal className="w-4 h-4" />
-              [ EXPERIENCE_LOG ]
-            </div>
-            
-            <div className="space-y-6">
-              <div className="relative space-y-8 before:absolute before:inset-0 before:ml-5 before:-translate-x-px before:h-full before:w-0.5 before:bg-gradient-to-b before:from-primary/50 before:via-primary/20 before:to-transparent">
-                {data.experience_units.map((exp, i) => (
+        <div className="space-y-8">
+          {hasExperience && (
+            <div>
+              <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-6">
+                Work
+              </h3>
+              <div>
+                {experience.map((exp, i) => (
                   <motion.div
-                    key={i}
-                    initial={{ opacity: 0, x: -20 }}
+                    key={exp.id}
+                    initial={{ opacity: 0, x: -12 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
-                    transition={{ delay: i * 0.1 }}
-                    className="relative flex items-start gap-6 group"
+                    transition={{ delay: i * 0.08, duration: 0.4 }}
+                    className="relative pl-6 pb-8 last:pb-0"
                   >
-                    <div className="absolute left-0 w-10 h-10 rounded-xl bg-secondary border border-primary/20 flex items-center justify-center z-10 group-hover:border-primary/50 transition-colors shadow-[0_0_15px_rgba(158,206,106,0.1)]">
-                      <GitCommitVertical className="w-5 h-5 text-primary" />
-                    </div>
-                    
-                    <div className="flex-1 pt-1 ml-10">
-                      <div className="bg-secondary/20 p-5 rounded-lg border border-primary/5 hover:border-primary/20 transition-all group-hover:bg-secondary/30">
-                        <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
-                          <h4 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors">
-                            <Typewriter text={exp.name} speed={50} delay={500 + i * 200} />
-                          </h4>
-                          <Badge variant="outline" className="font-mono text-[10px] border-primary/20 text-primary">
-                            {exp.from_date} — {exp.to_date}
-                          </Badge>
-                        </div>
-                        {exp.organization && (
-                          <div className="text-sm text-accent font-mono mb-3">{exp.organization}</div>
-                        )}
-                        <div className="text-sm text-muted-foreground leading-relaxed font-mono">
-                          <span className="text-accent mr-2">{">>"}</span>
-                          <Typewriter text={exp.description} speed={10} delay={1000 + i * 300} />
-                        </div>
+                    <div className="absolute left-0 top-0 bottom-0 w-px bg-border" />
+                    <div className="absolute left-[-4px] top-2 w-2 h-2 rounded-full bg-primary ring-2 ring-background" />
+                    <div className="card card-hover p-5">
+                      <div className="flex flex-wrap items-start justify-between gap-2 mb-1">
+                        <h4 className="font-semibold text-foreground">{exp.title}</h4>
+                        <span className="text-xs font-mono text-muted-foreground whitespace-nowrap shrink-0">
+                          {formatDate(exp.from_date)} — {formatDate(exp.to_date)}
+                        </span>
                       </div>
+                      {exp.organization && (
+                        <p className="text-sm text-primary font-medium mb-1">{exp.organization}</p>
+                      )}
+                      {exp.location && (
+                        <p className="text-xs text-muted-foreground flex items-center gap-1 mb-2">
+                          <MapPin className="w-3 h-3" />
+                          {exp.location}
+                        </p>
+                      )}
+                      {exp.description && (
+                        <p className="text-sm text-muted-foreground leading-relaxed mt-2">{exp.description}</p>
+                      )}
                     </div>
                   </motion.div>
                 ))}
               </div>
             </div>
-          </div>
+          )}
 
-          {/* Education Column */}
-          <div className="space-y-6">
-            <div className="flex items-center gap-2 font-mono text-xs text-muted-foreground uppercase tracking-widest mb-4">
-              <Terminal className="w-4 h-4" />
-              [ EDUCATION_LOG ]
-            </div>
-
-            <div className="space-y-6">
-              <div className="relative space-y-8 before:absolute before:inset-0 before:ml-5 before:-translate-x-px before:h-full before:w-0.5 before:bg-gradient-to-b before:from-accent/50 before:via-accent/20 before:to-transparent">
-                {data.education_units.map((edu, i) => (
+          {hasEducation && (
+            <div>
+              <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-6">
+                Education
+              </h3>
+              <div>
+                {education.map((edu, i) => (
                   <motion.div
-                    key={i}
-                    initial={{ opacity: 0, x: -20 }}
+                    key={edu.id}
+                    initial={{ opacity: 0, x: -12 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
-                    transition={{ delay: i * 0.1 }}
-                    className="relative flex items-start gap-6 group"
+                    transition={{ delay: i * 0.08, duration: 0.4 }}
+                    className="relative pl-6 pb-8 last:pb-0"
                   >
-                    <div className="absolute left-0 w-10 h-10 rounded-xl bg-secondary border border-accent/20 flex items-center justify-center z-10 group-hover:border-accent/50 transition-colors shadow-[0_0_15px_rgba(224,175,104,0.1)]">
-                      <ChevronRight className="w-5 h-5 text-accent" />
-                    </div>
-                    
-                    <div className="flex-1 pt-1 ml-10">
-                      <div className="bg-secondary/20 p-5 rounded-lg border border-accent/5 hover:border-accent/20 transition-all group-hover:bg-secondary/30">
-                        <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
-                          <h4 className="text-lg font-bold text-foreground group-hover:text-accent transition-colors">
-                            <Typewriter text={edu.name} speed={50} delay={500 + i * 200} />
-                          </h4>
-                          <Badge variant="outline" className="font-mono text-[10px] border-accent/20 text-accent">
-                            {edu.from_date} — {edu.to_date}
-                          </Badge>
-                        </div>
-                        {(edu.degree || edu.field_of_study) && (
-                          <div className="text-sm text-primary font-mono mb-3">
-                            {[edu.degree, edu.field_of_study].filter(Boolean).join(" · ")}
-                          </div>
-                        )}
-                        <div className="text-sm text-muted-foreground leading-relaxed font-mono">
-                          <span className="text-primary mr-2">#</span>
-                          <Typewriter text={edu.description} speed={10} delay={1000 + i * 300} />
-                        </div>
+                    <div className="absolute left-0 top-0 bottom-0 w-px bg-border" />
+                    <div className="absolute left-[-4px] top-2 w-2 h-2 rounded-full bg-primary/50 ring-2 ring-background" />
+                    <div className="card card-hover p-5">
+                      <div className="flex flex-wrap items-start justify-between gap-2 mb-1">
+                        <h4 className="font-semibold text-foreground">{edu.institution}</h4>
+                        <span className="text-xs font-mono text-muted-foreground whitespace-nowrap shrink-0">
+                          {formatDate(edu.from_date)} — {formatDate(edu.to_date)}
+                        </span>
                       </div>
+                      {(edu.degree || edu.field_of_study) && (
+                        <p className="text-sm text-primary/70 font-medium mb-1">
+                          {[edu.degree, edu.field_of_study].filter(Boolean).join(" · ")}
+                        </p>
+                      )}
+                      {edu.location && (
+                        <p className="text-xs text-muted-foreground flex items-center gap-1 mb-2">
+                          <MapPin className="w-3 h-3" />
+                          {edu.location}
+                        </p>
+                      )}
+                      {edu.description && (
+                        <p className="text-sm text-muted-foreground leading-relaxed mt-2">{edu.description}</p>
+                      )}
+                      {edu.image && (
+                        <img
+                          src={edu.image}
+                          alt={edu.institution}
+                          className="mt-3 w-10 h-10 object-contain rounded"
+                          referrerPolicy="no-referrer"
+                        />
+                      )}
                     </div>
                   </motion.div>
                 ))}
               </div>
             </div>
-          </div>
+          )}
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }
