@@ -108,7 +108,7 @@ export default function Navbar({ data }: NavbarProps) {
               className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors px-3 py-1.5 rounded-md hover:bg-white/5"
             >
               {copied ? <Check className="w-3.5 h-3.5 text-accent" /> : <Copy className="w-3.5 h-3.5" />}
-              <span>{copied ? "Copied!" : data.email}</span>
+              <span>Copy email</span>
             </button>
 
             {data.pdf_resume && (
