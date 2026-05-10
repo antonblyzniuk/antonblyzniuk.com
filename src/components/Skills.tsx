@@ -1,96 +1,94 @@
 import { motion } from "motion/react";
 import { CVData } from "../types";
-import { Badge } from "./ui/badge";
-import Typewriter from "./Typewriter";
 
 interface SkillsProps {
   data: CVData;
 }
 
 export default function Skills({ data }: SkillsProps) {
+  if (data.skills.length === 0 && data.languages.length === 0) return null;
+
+  const skills = [...data.skills].sort((a, b) => a.order - b.order);
+  const mid = Math.ceil(skills.length / 2);
+  const coreSkills = skills.slice(0, mid);
+  const toolSkills = skills.slice(mid);
+
   return (
-    <section id="skills" className="py-20 scroll-mt-20">
-      <div className="max-w-6xl mx-auto">
-        <div className="mb-12">
-          <div className="flex items-center gap-2 mb-4 font-mono text-xs sm:text-sm overflow-hidden">
-            <span className="text-primary shrink-0">root@portfolio:</span>
-            <span className="text-accent shrink-0">~</span>
-            <span className="text-foreground truncate">$ <Typewriter text="ls --expertise" speed={50} /></span>
-          </div>
-          <motion.h2
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-4xl md:text-5xl font-bold tracking-tight text-glow"
-          >
-            Tech Stack
-          </motion.h2>
-        </div>
+    <section id="skills" className="py-12 scroll-mt-20">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5 }}
+      >
+        <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-8">Skills</h2>
 
-        <div className="terminal-window bg-secondary/20 p-4 sm:p-8 border-primary/10">
-          <div className="flex flex-wrap gap-4 justify-center">
-            {data.skills.map((skill, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ 
-                  delay: i * 0.05,
-                  type: "spring",
-                  stiffness: 260,
-                  damping: 20 
-                }}
-                whileHover={{ scale: 1.1, y: -5 }}
-                className="group"
-              >
-                <Badge
-                  variant="secondary"
-                  className="bg-secondary/80 hover:bg-primary/20 text-muted-foreground hover:text-primary border border-primary/10 hover:border-primary/40 transition-all font-mono text-sm py-2 px-4 shadow-[0_0_10px_rgba(158,206,106,0.05)] hover:shadow-[0_0_20px_rgba(158,206,106,0.2)] whitespace-normal"
-                >
-                  <span className="text-accent mr-2">#</span>
-                  <Typewriter text={skill.name} speed={50} delay={1000 + i * 100} />
-                </Badge>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-
-        {/* Languages Section */}
-        <div className="mt-16">
-          <div className="flex items-center gap-2 mb-8 font-mono text-sm">
-            <span className="text-primary">root@portfolio:</span>
-            <span className="text-accent">~</span>
-            <span className="text-foreground">$ locale -a</span>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {data.languages.map((lang, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="terminal-window bg-secondary/40 p-4 border-primary/5 flex items-center justify-between group overflow-hidden"
-              >
-                <div className="font-mono">
-                  <div className="text-sm font-bold text-foreground group-hover:text-primary transition-colors">
-                    <Typewriter text={lang.name} speed={50} delay={1500 + i * 200} />
-                  </div>
-                  <div className="text-[10px] text-muted-foreground uppercase tracking-tighter">
-                    {lang.level}
-                  </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+          {/* Skills — takes 2/3 width */}
+          <div className="lg:col-span-2 space-y-5">
+            <div className="space-y-2">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Core</p>
+              <div className="flex flex-wrap gap-2">
+                {coreSkills.map((skill, i) => (
+                  <motion.span
+                    key={skill.name}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.04 }}
+                    className="inline-flex items-center px-3.5 py-2 rounded-lg text-sm font-semibold bg-primary/10 border border-primary/20 text-primary hover:bg-primary/15 transition-colors"
+                  >
+                    {skill.name}
+                  </motion.span>
+                ))}
+              </div>
+            </div>
+            {toolSkills.length > 0 && (
+              <div className="space-y-2">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Tools & Frameworks</p>
+                <div className="flex flex-wrap gap-2">
+                  {toolSkills.map((skill, i) => (
+                    <motion.span
+                      key={skill.name}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      whileInView={{ opacity: 1, scale: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: 0.2 + i * 0.04 }}
+                      className="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium bg-card border border-border text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors"
+                    >
+                      {skill.name}
+                    </motion.span>
+                  ))}
                 </div>
-                <motion.div 
-                  animate={{ opacity: [0.3, 1, 0.3] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                  className="w-2 h-2 rounded-full bg-primary" 
-                />
-              </motion.div>
-            ))}
+              </div>
+            )}
           </div>
+
+          {/* Languages — right column */}
+          {data.languages.length > 0 && (
+            <div className="space-y-3">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                Languages
+              </p>
+              <div className="space-y-2">
+                {data.languages.map((lang, i) => (
+                  <motion.div
+                    key={lang.name}
+                    initial={{ opacity: 0, x: 12 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.1 }}
+                    className="card px-4 py-3 flex items-center justify-between"
+                  >
+                    <span className="text-sm font-semibold">{lang.name}</span>
+                    <span className="text-xs text-muted-foreground">{lang.level}</span>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }

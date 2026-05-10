@@ -1,88 +1,62 @@
 import { CVData } from "../types";
-import { Github, Linkedin, Mail, Terminal, Heart, ChevronRight, Globe } from "lucide-react";
-import { Button } from "./ui/button";
-import Typewriter from "./Typewriter";
+import { Github, Linkedin, Mail, Globe, Instagram, Send } from "lucide-react";
 
 interface FooterProps {
   data: CVData;
 }
 
+function getLinkIcon(name: string) {
+  const n = name.toLowerCase();
+  if (n.includes("github")) return <Github className="w-4 h-4" />;
+  if (n.includes("linkedin")) return <Linkedin className="w-4 h-4" />;
+  if (n.includes("instagram")) return <Instagram className="w-4 h-4" />;
+  if (n.includes("telegram")) return <Send className="w-4 h-4" />;
+  if (n.includes("mail") || n.includes("email")) return <Mail className="w-4 h-4" />;
+  return <Globe className="w-4 h-4" />;
+}
+
 export default function Footer({ data }: FooterProps) {
-  const currentYear = new Date().getFullYear();
-
   return (
-    <footer className="py-20 border-t border-primary/10 relative overflow-hidden">
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="max-w-6xl mx-auto">
-          <div className="terminal-window bg-secondary/20 border-primary/10 p-5 sm:p-8 md:p-12">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-              <div className="space-y-6">
-                <div className="flex items-center gap-2 font-mono text-sm text-primary mb-4">
-                  <ChevronRight className="w-4 h-4" />
-                  <Typewriter text="./contact" speed={100} />
-                </div>
-                <h2 className="text-4xl font-bold tracking-tighter">
-                  Initialize <span className="text-primary text-glow">Connection</span>
-                </h2>
-                <div className="text-muted-foreground font-mono text-sm leading-relaxed">
-                  <Typewriter text="System is ready for new project requests or collaborative inquiries. Response latency: < 24 hours." speed={20} delay={500} />
-                </div>
-                <div className="flex flex-wrap gap-4">
-                  {data.links.map((link, i) => (
-                    <Button
-                      key={i}
-                      variant="outline"
-                      size="icon"
-                      className="border-primary/20 hover:border-primary hover:bg-primary/5 text-muted-foreground hover:text-primary transition-all"
-                      asChild
-                    >
-                      <a href={link.url} target="_blank" rel="noopener noreferrer">
-                        {link.name.toLowerCase().includes("github") ? (
-                          <Github className="w-5 h-5" />
-                        ) : link.name.toLowerCase().includes("linkedin") ? (
-                          <Linkedin className="w-5 h-5" />
-                        ) : (
-                          <Globe className="w-5 h-5" />
-                        )}
-                      </a>
-                    </Button>
-                  ))}
-                </div>
-              </div>
+    <footer className="border-t border-border mt-8">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl py-10">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
+          <div className="text-center sm:text-left">
+            <p className="font-semibold text-foreground">
+              {data.first_name} {data.last_name}
+            </p>
+            <p className="text-sm text-muted-foreground mt-0.5">{data.headline}</p>
+          </div>
 
-              <div className="space-y-8">
-                <div className="terminal-window bg-secondary/40 p-6 border-primary/5 space-y-4">
-                  <div className="flex items-center gap-4 group cursor-pointer" onClick={() => window.location.href = `mailto:${data.email}`}>
-                    <div className="p-3 rounded-xl bg-secondary border border-primary/10 group-hover:border-primary/40 transition-colors">
-                      <Mail className="w-5 h-5 text-primary" />
-                    </div>
-                    <div className="overflow-hidden">
-                      <div className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest">Direct Line</div>
-                      <div className="text-sm font-bold text-foreground group-hover:text-primary transition-colors truncate max-w-full">
-                        <Typewriter text={data.email} speed={50} delay={1000} />
-                      </div>
-                    </div>
-                  </div>
-                  
-                </div>
-              </div>
-            </div>
+          <div className="flex items-center gap-3">
+            <a
+              href={`mailto:${data.email}`}
+              className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <Mail className="w-4 h-4" />
+              {data.email}
+            </a>
+          </div>
 
-            <div className="mt-16 pt-8 border-t border-primary/10 flex flex-wrap items-center justify-between gap-6 font-mono text-[10px] text-muted-foreground uppercase tracking-widest">
-              <div className="flex items-center gap-2">
-                <Terminal className="w-3 h-3" />
-                <span>© {currentYear} antonblyzniuk.com — ALL_RIGHTS_RESERVED</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                Built with <Heart className="w-3 h-3 text-destructive fill-destructive" /> by Anton
-              </div>
-            </div>
+          <div className="flex items-center gap-2">
+            {data.links.map((link, i) => (
+              <a
+                key={i}
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={link.name}
+                className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-white/5 transition-colors"
+              >
+                {getLinkIcon(link.name)}
+              </a>
+            ))}
           </div>
         </div>
-      </div>
 
-      {/* Background Glow */}
-      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-1/2 bg-gradient-to-t from-primary/5 to-transparent -z-10" />
+        <div className="mt-8 pt-6 border-t border-border text-center text-xs text-muted-foreground">
+          © {new Date().getFullYear()} {data.first_name} {data.last_name}. All rights reserved.
+        </div>
+      </div>
     </footer>
   );
 }

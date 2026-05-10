@@ -281,10 +281,10 @@ function dateRange(from: string, to: string): string {
 export default function CVDocument({ data, photoSrc }: CVDocumentProps) {
   const contactLinks = data.links.filter((l) => !l.url.includes("mail.google.com"));
 
-  // Group projects into rows of 2 for the two-column layout
-  const projectRows: (typeof data.projects)[] = [];
-  for (let i = 0; i < data.projects.length; i += 2) {
-    projectRows.push(data.projects.slice(i, i + 2));
+  // Group portfolio items into rows of 2 for the two-column layout
+  const projectRows: (typeof data.portfolio_items)[] = [];
+  for (let i = 0; i < data.portfolio_items.length; i += 2) {
+    projectRows.push(data.portfolio_items.slice(i, i + 2));
   }
 
   return (
@@ -294,7 +294,7 @@ export default function CVDocument({ data, photoSrc }: CVDocumentProps) {
         {/* ── Fixed footer on every page ── */}
         <View fixed style={s.footer}>
           <Text style={s.footerName}>
-            {data.frist_name} {data.last_name} — {data.profession}
+            {data.first_name} {data.last_name} — {data.headline}
           </Text>
           <Text
             style={s.footerPage}
@@ -306,8 +306,8 @@ export default function CVDocument({ data, photoSrc }: CVDocumentProps) {
         <View style={s.header}>
           {photoSrc && <Image src={photoSrc} style={s.photo} />}
           <View style={s.headerRight}>
-            <Text style={s.headerName}>{data.frist_name} {data.last_name}</Text>
-            <Text style={s.headerProfession}>{data.profession}</Text>
+            <Text style={s.headerName}>{data.first_name} {data.last_name}</Text>
+            <Text style={s.headerProfession}>{data.headline}</Text>
             <View style={s.headerContacts}>
               <Text style={s.contactText}>{data.email}</Text>
               {contactLinks.map((l) => (
@@ -369,7 +369,7 @@ export default function CVDocument({ data, photoSrc }: CVDocumentProps) {
                 <View key={i} wrap={false}>
                   {i === 0 && <Text style={s.sectionTitle}>EXPERIENCE</Text>}
                   <View style={s.timelineItem}>
-                    <Text style={s.itemTitle}>{exp.name}</Text>
+                    <Text style={s.itemTitle}>{exp.title}</Text>
                     <Text style={s.itemDates}>{dateRange(exp.from_date, exp.to_date)}</Text>
                     {!!exp.description && (
                       <Text style={s.itemDesc}>{exp.description}</Text>
@@ -387,7 +387,7 @@ export default function CVDocument({ data, photoSrc }: CVDocumentProps) {
                 <View key={i} wrap={false}>
                   {i === 0 && <Text style={s.sectionTitle}>EDUCATION</Text>}
                   <View style={s.timelineItem}>
-                    <Text style={s.itemTitle}>{edu.name}</Text>
+                    <Text style={s.itemTitle}>{edu.institution}</Text>
                     <Text style={s.itemDates}>{dateRange(edu.from_date, edu.to_date)}</Text>
                     {!!edu.description && (
                       <Text style={s.itemDesc}>{edu.description}</Text>
@@ -407,14 +407,14 @@ export default function CVDocument({ data, photoSrc }: CVDocumentProps) {
                   <View style={s.projectRow}>
                     {pair.map((proj, colIdx) => (
                       <View
-                        key={proj.name}
+                        key={proj.title}
                         style={colIdx === 0 && pair.length === 2
                           ? s.projectCardLeft
                           : s.projectCard}
                       >
                         <View style={s.projectTitleRow}>
                           <Text style={s.projectBullet}>◆</Text>
-                          <Text style={s.projectTitle}>{proj.name}</Text>
+                          <Text style={s.projectTitle}>{proj.title}</Text>
                         </View>
                         {!!proj.description && (
                           <Text style={s.projectDesc}>{proj.description}</Text>
