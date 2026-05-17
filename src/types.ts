@@ -58,6 +58,7 @@ export interface Certification {
   expiry_date: string | null;
   credential_id: string | null;
   credential_url: string | null;
+  image: string | null;
   order: number;
 }
 
