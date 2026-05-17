@@ -56,53 +56,44 @@ export default function Certifications({ data }: CertificationsProps) {
                       className="card card-hover p-4 flex gap-3 items-start"
                     >
                       <BadgeCheck className="w-5 h-5 text-primary mt-0.5 shrink-0" />
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-start justify-between gap-2">
-                          <p className="font-semibold text-sm leading-snug">{cert.name}</p>
-                          <div className="flex items-center gap-1.5 shrink-0">
-                            {cert.image && (
-                              <button
-                                onClick={() => setLightboxUrl(cert.image)}
-                                className="text-muted-foreground hover:text-primary transition-colors"
-                                aria-label="View certificate"
-                              >
-                                <ZoomIn className="w-3.5 h-3.5" />
-                              </button>
-                            )}
+                      <div className="flex-1 min-w-0 flex gap-3 items-start">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start justify-between gap-2">
+                            <p className="font-semibold text-sm leading-snug">{cert.name}</p>
                             {cert.credential_url && (
                               <a
                                 href={cert.credential_url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-muted-foreground hover:text-primary transition-colors"
+                                className="shrink-0 text-muted-foreground hover:text-primary transition-colors"
                               >
                                 <ExternalLink className="w-3.5 h-3.5" />
                               </a>
                             )}
                           </div>
-                        </div>
-                        <p className="text-xs text-primary font-medium mt-0.5">
-                          {cert.issuing_organization}
-                        </p>
-                        {cert.issue_date && (
-                          <p className="text-xs text-muted-foreground mt-1">
-                            {formatMonthYear(cert.issue_date)}
-                            {cert.expiry_date && ` — ${formatMonthYear(cert.expiry_date)}`}
+                          <p className="text-xs text-primary font-medium mt-0.5">
+                            {cert.issuing_organization}
                           </p>
-                        )}
+                          {cert.issue_date && (
+                            <p className="text-xs text-muted-foreground mt-1">
+                              {formatMonthYear(cert.issue_date)}
+                              {cert.expiry_date && ` — ${formatMonthYear(cert.expiry_date)}`}
+                            </p>
+                          )}
+                        </div>
                         {cert.image && (
                           <button
                             onClick={() => setLightboxUrl(cert.image)}
-                            className="mt-3 w-full rounded-md overflow-hidden border border-border/50 relative group"
+                            className="shrink-0 w-20 h-14 rounded-md overflow-hidden border border-border/50 relative group"
                             aria-label="View certificate fullscreen"
                           >
                             <img
                               src={cert.image}
                               alt={`${cert.name} certificate`}
-                              className="w-full object-cover max-h-36"
+                              className="w-full h-full object-cover"
                             />
-                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
-                              <ZoomIn className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center">
+                              <ZoomIn className="w-4 h-4 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
                             </div>
                           </button>
                         )}
